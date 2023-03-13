@@ -3,16 +3,22 @@ mutable struct Identity <: Provider
 end
 
 
-function names(format::Vector{Symbol}; options::Vector{String}, locale)
-    println("foo")
-    load_assets("..", "data", locale, "identity", "names.json") |> println
-    return ["bar"]
+"""
+    names(format::Vector{Symbol} = []; sex::T = "both", locale::T = "en_US") where {T <: AbstractString}
+
+# Parameters
+
+- `format`
+- 
+- 
+"""
+function names(format::Vector{Symbol} = []; sex::T = "both", locale::T = "en_US") where {T <: AbstractString}
+    load!(container; locale = locale, provider = "identity", content = "names")
+    names = get(container, locale, "identity", "names")
+
+    if sex == "both"
+        return vcat(names["male"], names["female"])
+    end
 end
 
-#names() = names([], [])
 
-
-#function Base.rand(f::Function, n::Int; unique::Bool = false)
-#    println(option)
-#    println("estou qui")
-#end
