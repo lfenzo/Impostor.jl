@@ -11,19 +11,38 @@ DataContainer() = DataContainer(Dict())
 Base.empty!(d::DataContainer) = empty!(d.data)
 
 
-function haslocale(d::DataContainer, locale)
+@inline get(d::DataContainer, locale::T) where {T <: AbstractString} = d.data[locale]
+
+@inline get(d::DataContainer, locale::T, provider::T) where {T <: AbstractString} = d.data[locale][provider]
+
+@inline get(d::DataContainer, locale::T, provider::T, content::T) where {T <: AbstractString} = d.data[locale][provider][content]
+
+
+"""
+
+"""
+@inline function haslocale(d::DataContainer, locale) 
     return haskey(d.data, locale)
 end
 
-function hasprovider(d::DataContainer, locale, provider)
-    return haslocale(d, locale) && haskey(d.data[locale], provider)
+"""
+
+"""
+@inline function hasprovider(d::DataContainer, locale, provider)
+    return haslocale(d, locale) && haskey(get(d, locale), provider)
 end
 
-function hascontent(d::DataContainer, locale, provider, content)
-    return hasprovider(d, locale, provider) && haskey(d.data[locale][provider], content)
+"""
+
+"""
+@inline function hascontent(d::DataContainer, locale, provider, content)
+    return hasprovider(d, locale, provider) && haskey(get(d, locale, provider), content)
 end
 
 
+"""
+
+"""
 function load!(d::DataContainer; locale::T, provider::T, content::T) where {T <: AbstractString}
 
     _verify_load_parameters(locale, provider, content)
@@ -45,6 +64,9 @@ function load!(d::DataContainer; locale::T, provider::T, content::T) where {T <:
 end
 
 
+"""
+
+"""
 function _verify_load_parameters(locale::T, provider::T, content::T) where {T <: AbstractString}
 
     @assert(locale in readdir(joinpath(ASSETS_ROOT)),
