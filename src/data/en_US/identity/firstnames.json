@@ -1,8 +1,11 @@
 {
-    "names": {
+    "firstnames": {
         "male": [
             "Carl",
             "Charles",
+            "Daniel",
+            "John",
+            "Paul",
             "Zacharias"
         ],
         "female": [

@@ -1,24 +1,47 @@
-mutable struct Identity <: Provider
-    options::Vector{Symbol}
-end
-
-
 """
     names(format::Vector{Symbol} = []; sex::T = "both", locale::T = "en_US") where {T <: AbstractString}
 
 # Parameters
 
-- `format`
-- 
-- 
+- `sex` 
+- `locale`
 """
-function names(format::Vector{Symbol} = []; sex::T = "both", locale::T = "en_US") where {T <: AbstractString}
-    load!(container; locale = locale, provider = "identity", content = "names")
-    names = get(container, locale, "identity", "names")
+# possible return formats: Dict, Matrix, Dataframe 
+function names(format::Vector{Symbol} = [], n::Int = 1; sex::T = "both", locale::T = "en_US") where {T <: AbstractString}
 
-    if sex == "both"
-        return vcat(names["male"], names["female"])
+    sex_mask = rand(["male", "female"], n)
+    generated_values = Dict()
+
+    for f in format
+        if f == :firstname
+            generated_values[:firstname] = load!(sex_mask, "firstnames", "identity", locale)
+        end
+        if f == :surname
+            generated_values[:surname] = load!(n, "surnames", "identity", locale)
+        end
     end
 end
 
 
+"""
+
+"""
+function firstname(sex::T, n::Int = 1; locale::Vector{T} = ["en_US"]) :: Vector{T} where {T <: AbstractString}
+    return rand(load!("firstnames", "identity", locale; options = [sex]), n)
+end
+
+
+"""
+
+"""
+function prefix(sex::T, n::Int = 1; locale::Vector{T} = ["en_US"]) :: Vector{T} where {T <: AbstractString}
+    return rand(load!("prefixes", "identity", locale; options = [sex]), n)
+end
+
+
+"""
+
+"""
+function surname(n::Int = 1; locale::Vector{T} = ["en_US"]) :: Vector{T} where {T <: AbstractString}
+    return rand(load!("surnames", "identity", locale), n)
+end
