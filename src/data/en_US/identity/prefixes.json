@@ -1,0 +1,11 @@
+{
+    "prefixes": {
+        "male": [
+            "Mr.",
+            "Dr."
+        ],
+        "female": [
+            "Ms."
+        ]
+    }
+}
