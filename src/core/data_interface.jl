@@ -1,14 +1,21 @@
 const ASSETS_ROOT::String = joinpath("data")
 
 
-mutable struct DataContainer
-    data::Dict
+Base.@kwdef mutable struct DataContainer
+    data::Dict = Dict()
+    locale::Vector{String} = ["en_US"]
 end
 
-DataContainer() = DataContainer(Dict())
+DataContainer(s::String) = DataContainer(Dict(), [s])
+
+DataContainer(s::Vector{String}) = DataContainer(Dict(), s)
 
 
 Base.empty!(d::DataContainer) = empty!(d.data)
+
+setlocale!(d::DataContainer, loc::String) = setproperty!(d, :locale, [loc])
+
+setlocale!(d::DataContainer, loc::Vector{String}) = setproperty!(d, :locale, loc)
 
 
 """
@@ -55,7 +62,9 @@ end
 """
 
 """
-function load!(content::T, provider::T, locale::Vector{T} = ["en_US"]; options::Union{Vector{T}, Nothing} = nothing) where {T <: AbstractString}
+function load!(content::T, provider::T, locale::Vector{T} = ["en_US"];
+    options::Union{Vector{T}, NTuple{N, T}, Nothing} = nothing) where {N, T <: AbstractString}
+
     values = Vector{String}()
     for loc in locale
         if isnothing(options)
@@ -90,7 +99,7 @@ function load!(content::T, provider::T, locale::T) where {T <: AbstractString}
     # adding the provider to the data container in case it doesn't have it
     if !hascontent(container, locale, provider, content)
         open(joinpath(ASSETS_ROOT, locale, provider, content) * ".json", "r") do file
-            merge!(container.data[locale], Dict(provider => JSON3.read(file, Dict{String, Any})))
+            merge!(container.data[locale], Dict(provider => JSON3.read(file, Dict{String, Union{Dict, Vector{String}}})))
         end
     end
 

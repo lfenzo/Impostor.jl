@@ -1,8 +1,6 @@
 using JSON3
 using Random
-using Base.Iterators
 using Dates
-using DataFrames
 
 
 include("core/data_interface.jl")
@@ -32,7 +30,8 @@ function main()
         :knowledge_field,
     ]
 
-    return identity(30, features, DataFrame; sex = ["male", "female"])
+    println(identity(30, features; sex = ["male", "female"]))
+    #return identity(30, features, DataFrame; sex = ["male", "female"])
 end
 
 
