@@ -1,0 +1,25 @@
+{
+    "university": {
+        "business": [
+            "University of business"
+        ],
+        "humanities": [
+            "University of Humanities"
+        ],
+        "social-sciences": [
+            "University of Social Sciences"
+        ],
+        "natural-sciences": [
+            "University of natural sciences"
+        ],
+        "formal-sciences": [
+            "University of formal sciences"
+        ],
+        "public-administration": [
+            "University of public administration"
+        ],
+        "military": [
+            "Miliar university"
+        ]
+    }
+}
