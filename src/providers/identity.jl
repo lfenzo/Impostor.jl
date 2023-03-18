@@ -61,7 +61,7 @@ end
 """
 
 """
-function highschool(n::Int = 1; locale::Vector{T} = ["en_US"]) :: Union{T, Vector{T}} where {T <: AbstractString}
+function highschool(n::Int = 1; locale = getlocale(container)) :: Union{String, Vector{String}}
     return rand(load!("highschool", "identity", locale), n) |> return_unpacker
 end
 
@@ -69,14 +69,14 @@ end
 """
 
 """
-function bloodtype(n::Int = 1)
+function bloodtype(n::Int = 1) :: Union{String, Vector{String}}
     return [rand(["A", "B", "AB", "O"]) * rand(["+", "-"]) for _ in 1:n] |> return_unpacker
 end
 
 """
 
 """
-function occupation(n::Int = 1; locale::Vector{T} = ["en_US"]) :: Vector{T} where {T <: AbstractString}
+function occupation(n::Int = 1; locale = getlocale(container)) :: Union{String, Vector{String}}
     return rand(load!("occupation", "identity", locale), n) |> return_unpacker
 end
 
@@ -84,7 +84,7 @@ end
 """
 
 """
-function birthdate(n::Int; start::Date = Date(1900, 1, 1), stop::Date = today())
+function birthdate(n::Int; start::Date = Date(1900, 1, 1), stop::Date = today()) :: Union{Date, Vector{Date}}
     return random_date(n, start = start, stop = stop) |> return_unpacker
 end
 
@@ -92,15 +92,15 @@ end
 """
 
 """
-function firstname(n::Int = 1; locale::Vector{T} = ["en_US"]) :: Vector{T} where {T <: AbstractString}
+function firstname(n::Int = 1; locale = getlocale(container)) :: Union{String, Vector{String}}
     return rand(load!("firstnames", "identity", locale; options = ["female", "male"]), n) |> return_unpacker
 end
 
-function firstname(sex::T, n::Int = 1; locale::Vector{T} = ["en_US"]) :: Vector{T} where {T <: AbstractString}
+function firstname(sex::String, n::Int = 1; locale = getlocale(container)) :: Union{String, Vector{String}}
     return rand(load!("firstnames", "identity", locale; options = [sex]), n) |> return_unpacker
 end
 
-function firstname(sex_mask::Vector{T}, n::Int = 1; locale::Vector{T} = ["en_US"]) :: Vector{T} where {T <: AbstractString}
+function firstname(sex_mask::Vector{String}, n::Int = 1; locale = getlocale(container)) :: Union{String, Vector{String}}
     return load!(sex_mask, "firstnames", "identity", locale) |> return_unpacker
 end
 
@@ -108,15 +108,15 @@ end
 """
 
 """
-function prefix(n::Int = 1; locale::Vector{T} = ["en_US"]) :: Vector{T} where {T <: AbstractString}
+function prefix(n::Int = 1; locale = getlocale(container)) :: Union{String, Vector{String}}
     return rand(load!("prefixes", "identity", locale; options = ["female", "male"]), n) |> return_unpacker
 end
 
-function prefix(sex::T, n::Int = 1; locale::Vector{T} = ["en_US"]) :: Vector{T} where {T <: AbstractString}
+function prefix(sex::String, n::Int = 1; locale = getlocale(container)) :: Union{String, Vector{String}}
     return rand(load!("prefixes", "identity", locale; options = [sex]), n) |> return_unpacker
 end
 
-function prefix(sex_mask::Vector{T}, n::Int = 1; locale::Vector{T} = ["en_US"]) :: Vector{T} where {T <: AbstractString}
+function prefix(sex_mask::Vector{String}, n::Int = 1; locale = getlocale(container)) :: Union{String, Vector{String}}
     return load!(sex_mask, "prefixes", "identity", locale) |> return_unpacker
 end
 
@@ -124,7 +124,7 @@ end
 """
 
 """
-function surname(n::Int = 1; locale::Vector{T} = ["en_US"]) :: Union{T, Vector{T}} where {T <: AbstractString}
+function surname(n::Int = 1; locale = getlocale(container)) :: Union{String, Vector{String}}
     return rand(load!("surnames", "identity", locale), n) |> return_unpacker
 end
 
@@ -133,15 +133,15 @@ end
 """
 
 """
-function occupation(n::Int = 1; locale::Vector{T} = ["en_US"]) :: Union{T, Vector{T}} where {T <: AbstractString}
+function occupation(n::Int = 1; locale = getlocale(container)) :: Union{String, Vector{String}}
     return rand(load!("occupation", "identity", locale; options = KNOWLEDGE_FIELDS), n) |> return_unpacker
 end
 
-function occupation(field::T, n::Int = 1; locale::Vector{T} = ["en_US"]) :: Vector{T} where {T <: AbstractString}
+function occupation(field::String, n::Int = 1; locale = getlocale(container)) :: Union{String, Vector{String}}
     return rand(load!("occupation", "identity", locale; options = [field]), n) |> return_unpacker
 end
 
-function occupation(field_mask::Vector{T}, n::Int = 1; locale::Vector{T} = ["en_US"]) :: Vector{T} where {T <: AbstractString}
+function occupation(field_mask::Vector{String}, n::Int = 1; locale = getlocale(container)) :: Union{String, Vector{String}}
     return load!(field_mask, "occupation", "identity", locale) |> return_unpacker
 end
 
@@ -150,14 +150,14 @@ end
 """
 
 """
-function university(n::Int = 1; locale::Vector{T} = ["en_US"]) :: Union{T, Vector{T}} where {T <: AbstractString}
+function university(n::Int = 1; locale = getlocale(container)) :: Union{String, Vector{String}}
     return rand(load!("university", "identity", locale; options = KNOWLEDGE_FIELDS), n) |> return_unpacker
 end
 
-function university(field::T, n::Int = 1; locale::Vector{T} = ["en_US"]) :: Union{T, Vector{T}} where {T <: AbstractString}
+function university(field::String, n::Int = 1; locale = getlocale(container)) :: Union{String, Vector{String}}
     return rand(load!("university", "identity", locale; options = [field]), n) |> return_unpacher
 end
 
-function university(field_mask::Vector{T}, n::Int = 1; locale::Vector{T} = ["en_US"]) :: Union{T, Vector{T}} where {T <: AbstractString}
+function university(field_mask::Vector{String}, n::Int = 1; locale = getlocale(container)) :: Union{String, Vector{String}}
     return load!(field_mask, "university", "identity", locale) |> return_unpacker
 end
