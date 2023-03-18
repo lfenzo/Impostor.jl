@@ -1,6 +1,7 @@
 using JSON3
 using Random
 using Dates
+using DataFrames
 
 
 include("core/data_interface.jl")
@@ -12,11 +13,8 @@ include("providers/identity.jl")
 container::DataContainer = DataContainer()
 
 
-
 function main()
-    #println(firstname("female", 7))
-    #println(load!(["male", "male", "female", "female"], "firstnames", "identity", ["en_US"]))
-    #println(surname(7))
+
     features = [
         :prefix,
         :firstname,
@@ -30,8 +28,10 @@ function main()
         :knowledge_field,
     ]
 
-    println(identity(30, features; sex = ["male", "female"]))
     #return identity(30, features, DataFrame; sex = ["male", "female"])
+
+    setlocale!(container, ["pt_BR", "en_US"])
+    return surname(23)
 end
 
 

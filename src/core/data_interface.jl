@@ -17,6 +17,8 @@ setlocale!(d::DataContainer, loc::String) = setproperty!(d, :locale, [loc])
 
 setlocale!(d::DataContainer, loc::Vector{String}) = setproperty!(d, :locale, loc)
 
+getlocale(d::DataContainer) = d.locale
+
 
 """
 
@@ -43,7 +45,7 @@ end
 """
 
 """
-function load!(option_mask::AbstractVector, content::T, provider::T, locale::Vector{T} = ["en_US"]) where {T <: AbstractString}
+function load!(option_mask::AbstractVector, content::T, provider::T, locale::Vector{T} = getlocale(container)) where {T <: AbstractString}
 
     value_pools = Dict()
     for mask_value in unique(option_mask)
@@ -62,7 +64,7 @@ end
 """
 
 """
-function load!(content::T, provider::T, locale::Vector{T} = ["en_US"];
+function load!(content::T, provider::T, locale::Vector{T} = getlocale(container);
     options::Union{Vector{T}, NTuple{N, T}, Nothing} = nothing) where {N, T <: AbstractString}
 
     values = Vector{String}()
