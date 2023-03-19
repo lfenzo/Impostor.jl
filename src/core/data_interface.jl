@@ -1,5 +1,4 @@
-const ASSETS_ROOT::String = joinpath("data")
-
+const ASSETS_ROOT::String = pkgdir(Impostor, "src", "data")
 
 Base.@kwdef mutable struct DataContainer
     data::Dict = Dict()
@@ -13,11 +12,11 @@ DataContainer(s::Vector{String}) = DataContainer(Dict(), s)
 
 Base.empty!(d::DataContainer) = empty!(d.data)
 
-setlocale!(d::DataContainer, loc::String) = setproperty!(d, :locale, [loc])
+getlocale() = GLOBAL_CONTAINER.locale
 
-setlocale!(d::DataContainer, loc::Vector{String}) = setproperty!(d, :locale, loc)
+setlocale!(loc::String) = setproperty!(GLOBAL_CONTAINER, :locale, [loc])
 
-getlocale(d::DataContainer) = d.locale
+setlocale!(loc::Vector{String}) = setproperty!(GLOBAL_CONTAINER, :locale, loc)
 
 
 """
@@ -45,7 +44,7 @@ end
 """
 
 """
-function load!(option_mask::AbstractVector, content::T, provider::T, locale::Vector{T} = getlocale(container)) where {T <: AbstractString}
+function load!(option_mask::AbstractVector, content::T, provider::T, locale::Vector{T} = getlocale()) where {T <: AbstractString}
 
     value_pools = Dict()
     for mask_value in unique(option_mask)
@@ -64,7 +63,7 @@ end
 """
 
 """
-function load!(content::T, provider::T, locale::Vector{T} = getlocale(container);
+function load!(content::T, provider::T, locale::Vector{T} = getlocale();
     options::Union{Vector{T}, NTuple{N, T}, Nothing} = nothing) where {N, T <: AbstractString}
 
     values = Vector{String}()
@@ -93,19 +92,28 @@ function load!(content::T, provider::T, locale::T) where {T <: AbstractString}
     _verify_load_parameters(locale, provider, content)
 
     # adding the locale to the data container in case it doesn't have it
-    !haslocale(container, locale) && merge!(container.data, Dict(locale => Dict()))
+    if !haslocale(GLOBAL_CONTAINER, locale)
+        merge!(GLOBAL_CONTAINER.data, Dict(locale => Dict()))
+    end
 
     # adding the provider to the data container in case it doesn't have it
-    !hasprovider(container, locale, provider) && merge!(container.data[locale], Dict(provider => Dict()))
+    if !hasprovider(GLOBAL_CONTAINER, locale, provider)
+        merge!(GLOBAL_CONTAINER.data[locale], Dict(provider => Dict()))
+    end
 
-    # adding the provider to the data container in case it doesn't have it
-    if !hascontent(container, locale, provider, content)
+    # adding the content to the data container in case it doesn't have it
+    if !hascontent(GLOBAL_CONTAINER, locale, provider, content)
         open(joinpath(ASSETS_ROOT, locale, provider, content) * ".json", "r") do file
-            merge!(container.data[locale], Dict(provider => JSON3.read(file, Dict{String, Union{Dict, Vector{String}}})))
+            merge!(
+                GLOBAL_CONTAINER.data[locale],
+                Dict(
+                    provider => JSON3.read(file, Dict{String, Union{Dict, Vector{String}}})
+                )
+            )
         end
     end
 
-    return container.data[locale][provider][content]
+    return GLOBAL_CONTAINER.data[locale][provider][content]
 end
 
 
