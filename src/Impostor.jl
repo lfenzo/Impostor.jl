@@ -1,7 +1,22 @@
+module Impostor
+
+
 using JSON3
-using Random
 using Dates
-#using DataFrames
+
+
+export birthdate
+export bloodtype
+export firstname
+export getlocale
+export highschool
+export identity
+export name
+export occupation
+export prefix
+export setlocale!
+export surname
+export university
 
 
 include("core/data_interface.jl")
@@ -10,30 +25,7 @@ include("core/utils.jl")
 include("providers/identity.jl")
 
 
-container::DataContainer = DataContainer()
+GLOBAL_CONTAINER::DataContainer = DataContainer()
 
 
-function main()
-
-    features = [
-        :prefix,
-        :firstname,
-        :surname, 
-        :sex,
-        :birthdate,
-        :occupation,
-        :bloodtype,
-        :highschool,
-        :university,
-        :knowledge_field,
-    ]
-
-    #identity(30, features; sex = ["female"], fields = ["formal-sciences"]) |> println
-    identity(30, features) |> println
-
-#    setlocale!(container, ["pt_BR", "en_US"])
-#    return surname(23)
-end
-
-
-main()
+end # Impostor

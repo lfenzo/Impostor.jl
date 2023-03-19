@@ -1,3 +1,8 @@
+name = "Impostor"
+uuid = "c85fbf42-ee25-425e-8745-f7176d4f19ec"
+authors = ["lfenzo <lfenzo@orotonmail.com>"]
+version = "0.1.0"
+
 [deps]
-Distributions = "31c24e10-a181-5473-b8eb-7969acd0382f"
+Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
 JSON3 = "0f8b85d8-7281-11e9-16c2-39a750bddbf1"
