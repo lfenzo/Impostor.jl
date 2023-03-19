@@ -1,6 +1,6 @@
 # set of available values for the "knowledge filds", used in the occupation and 
 # the university functions
-const KNOWLEDGE_FIELDS = (
+const KNOWLEDGE_FIELDS::NTuple{T, String} where {T} = (
     "business",
     "humanities",
     "social-sciences",
@@ -15,11 +15,19 @@ const KNOWLEDGE_FIELDS = (
 
 """
 function identity(n::Int, formats::Union{Vector{Symbol}, Nothing}, sink = Dict;
-    sex::Vector{T}, locale::Vector{T} = ["en_US"]) where {T <: AbstractString}
+    sex::Vector{T} = ["male", "female"],
+    fields::Union{NTuple, Vector{T}} = KNOWLEDGE_FIELDS,
+    locale::Vector{T} = getlocale(container)
+) where {T <: AbstractString}
+
+    for field in fields
+        @assert field in KNOWLEDGE_FIELDS "Knowlege field '$field' not available"
+    end
+
+    sex_mask = rand(sex, n)
+    knowledge_field_mask = rand(fields, n)
 
     generated_names = Dict() 
-    sex_mask = rand(sex, n)
-    knowledge_field_mask = rand(KNOWLEDGE_FIELDS, n)
 
     for f in formats
         if f == :prefix

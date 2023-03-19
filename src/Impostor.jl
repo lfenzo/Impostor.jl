@@ -1,7 +1,7 @@
 using JSON3
 using Random
 using Dates
-using DataFrames
+#using DataFrames
 
 
 include("core/data_interface.jl")
@@ -28,10 +28,11 @@ function main()
         :knowledge_field,
     ]
 
-    #return identity(30, features, DataFrame; sex = ["male", "female"])
+    #identity(30, features; sex = ["female"], fields = ["formal-sciences"]) |> println
+    identity(30, features) |> println
 
-    setlocale!(container, ["pt_BR", "en_US"])
-    return surname(23)
+#    setlocale!(container, ["pt_BR", "en_US"])
+#    return surname(23)
 end
 
 
