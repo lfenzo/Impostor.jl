@@ -1,8 +1,10 @@
 const ASSETS_ROOT::String = pkgdir(Impostor, "src", "data")
+const DEFAULT_SESSION_LOCALE::Vector{String} = ["en_US"]
+
 
 Base.@kwdef mutable struct DataContainer
     data::Dict = Dict()
-    locale::Vector{String} = ["en_US"]
+    locale::Vector{String} = DEFAULT_SESSION_LOCALE
 end
 
 DataContainer(s::String) = DataContainer(Dict(), [s])
@@ -12,11 +14,40 @@ DataContainer(s::Vector{String}) = DataContainer(Dict(), s)
 
 Base.empty!(d::DataContainer) = empty!(d.data)
 
-getlocale() = GLOBAL_CONTAINER.locale
+getlocale() = SESSION_CONTAINER.locale
 
-setlocale!(loc::String) = setproperty!(GLOBAL_CONTAINER, :locale, [loc])
+setlocale!(loc::String) = setproperty!(SESSION_CONTAINER, :locale, [loc])
 
-setlocale!(loc::Vector{String}) = setproperty!(GLOBAL_CONTAINER, :locale, loc)
+setlocale!(loc::Vector{String}) = setproperty!(SESSION_CONTAINER, :locale, loc)
+
+function resetlocale!() :: Nothing
+    empty!(SESSION_CONTAINER)
+    SESSION_CONTAINER.locale = DEFAULT_SESSION_LOCALE
+    return nothing
+end
+
+
+"""
+
+"""
+@inline function locale_exists(locale) 
+    return locale in readdir(joinpath(ASSETS_ROOT))
+end
+
+"""
+
+"""
+@inline function provider_exists(locale, provider)
+    return locale_exists(locale) && provider in readdir(joinpath(ASSETS_ROOT, locale))
+end
+
+"""
+
+"""
+@inline function contant_exists(locale, provider, content)
+    return provider_exists(locale, provider) && content * ".json" in readdir(joinpath(ASSETS_ROOT, locale, provider))
+end
+
 
 
 """
@@ -39,6 +70,7 @@ end
 @inline function hascontent(d::DataContainer, locale, provider, content)
     return hasprovider(d, locale, provider) && haskey(d.data[locale][provider], content)
 end
+
 
 
 """
@@ -72,7 +104,8 @@ function load!(content::T, provider::T, locale::Vector{T} = getlocale();
             values = vcat(values, load!(content, provider, loc))
         else
             for option in options
-                values = vcat(values, load!(content, provider, loc)[option])
+                converted_values = convert(Vector{String}, load!(content, provider, loc)[option])
+                values = vcat(values, converted_values)
             end
         end
     end
@@ -92,28 +125,29 @@ function load!(content::T, provider::T, locale::T) where {T <: AbstractString}
     _verify_load_parameters(locale, provider, content)
 
     # adding the locale to the data container in case it doesn't have it
-    if !haslocale(GLOBAL_CONTAINER, locale)
-        merge!(GLOBAL_CONTAINER.data, Dict(locale => Dict()))
+    if !haslocale(SESSION_CONTAINER, locale)
+        merge!(SESSION_CONTAINER.data, Dict(locale => Dict()))
     end
 
     # adding the provider to the data container in case it doesn't have it
-    if !hasprovider(GLOBAL_CONTAINER, locale, provider)
-        merge!(GLOBAL_CONTAINER.data[locale], Dict(provider => Dict()))
+    if !hasprovider(SESSION_CONTAINER, locale, provider)
+        merge!(SESSION_CONTAINER.data[locale], Dict(provider => Dict()))
     end
 
     # adding the content to the data container in case it doesn't have it
-    if !hascontent(GLOBAL_CONTAINER, locale, provider, content)
+    if !hascontent(SESSION_CONTAINER, locale, provider, content)
         open(joinpath(ASSETS_ROOT, locale, provider, content) * ".json", "r") do file
             merge!(
-                GLOBAL_CONTAINER.data[locale],
+                SESSION_CONTAINER.data[locale],
                 Dict(
+                    # TODO possible point of type instability
                     provider => JSON3.read(file, Dict{String, Union{Dict, Vector{String}}})
                 )
             )
         end
     end
 
-    return GLOBAL_CONTAINER.data[locale][provider][content]
+    return SESSION_CONTAINER.data[locale][provider][content]
 end
 
 
@@ -122,13 +156,13 @@ end
 """
 function _verify_load_parameters(locale::T, provider::T, content::T) where {T <: AbstractString}
 
-    @assert(locale in readdir(joinpath(ASSETS_ROOT)),
+    @assert(locale_exists(locale),
         "Locale '$locale' not available.")
 
-    @assert(provider in readdir(joinpath(ASSETS_ROOT, locale)),
+    @assert(provider_exists(locale, provider), 
         "Provider '$provider' not available for locale '$locale'")
 
-    @assert(content * ".json" in readdir(joinpath(ASSETS_ROOT, locale, provider)),
+    @assert(contant_exists(locale, provider, content),
         "Content '$content' not available for locale '$locale' and provider '$provider'")
 
     return nothing

@@ -1,28 +1,11 @@
-# set of available values for the "knowledge filds", used in the occupation and 
-# the university functions
-const KNOWLEDGE_FIELDS::NTuple{T, String} where {T} = (
-    "business",
-    "humanities",
-    "social-sciences",
-    "natural-sciences",
-    "formal-sciences",
-    "public-administration",
-    "military",
-)
-
-
 """
 
 """
 function identity(n::Int, formats::Union{Vector{Symbol}, Nothing}, sink = Dict;
-    sex::Vector{T} = ["male", "female"],
-    fields::Union{NTuple, Vector{T}} = KNOWLEDGE_FIELDS,
+    sex::Vector{T} = SEXES[:options],
+    fields::Union{NTuple, Vector{T}} = KNOWLEDGE_FIELDS[:options],
     locale::Vector{T} = getlocale()
 ) where {T <: AbstractString}
-
-    for field in fields
-        @assert field in KNOWLEDGE_FIELDS "Knowlege field '$field' not available"
-    end
 
     sex_mask = rand(sex, n)
     knowledge_field_mask = rand(fields, n)
@@ -67,7 +50,14 @@ end
 
 
 """
+    highschool(n::Int = 1; locale = getlocale())
 
+Generate `n` high-school names from a given `locale`. If no `locale` is provided, the locale
+from the session is used.
+
+# Parameters
+- `n::Int = 1`: number high-school names to be generated
+- `locale::Vector{String}`: locale(s) from which the high-school names are sampled.
 """
 function highschool(n::Int = 1; locale = getlocale()) :: Union{String, Vector{String}}
     return rand(load!("highschool", "identity", locale), n) |> return_unpacker
@@ -94,17 +84,49 @@ end
 
 """
 
+Generate 
+
+# Parameters
+- `n::Int = 1`: number of firstnames to be generated
+- `locale::Vector{String}`: locale(s) from which the first names are sampled.
 """
 function firstname(n::Int = 1; locale = getlocale()) :: Union{String, Vector{String}}
-    return rand(load!("firstnames", "identity", locale; options = ["female", "male"]), n) |> return_unpacker
+    return rand(load!("firstname", "identity", locale; options = SEXES[:options]), n) |> return_unpacker
 end
 
-function firstname(sex::String, n::Int = 1; locale = getlocale()) :: Union{String, Vector{String}}
-    return rand(load!("firstnames", "identity", locale; options = [sex]), n) |> return_unpacker
+"""
+
+Generate `n` first names from a given `locale`, optionally provide a `sex` specifying the genres of
+the first names to be generated. If no `locale` is provided, the locale from the session is used.
+
+# Parameters
+- `n::Int = 1`: number of firstnames to be generated
+- `sex::String`: string specifying the sex of the first names with the following options:
+    - `"female"`
+    - `"male"`
+- `locale::Vector{String}`: locale(s) from which the first names are sampled.
+
+# Example
+"""
+function firstname(sexes::Vector{String}, n::Int = 1; locale = getlocale()) :: Union{String, Vector{String}}
+    return rand(load!("firstname", "identity", locale; options = sexes), n) |> return_unpacker
 end
 
-function firstname(sex_mask::Vector{String}, n::Int = 1; locale = getlocale()) :: Union{String, Vector{String}}
-    return load!(sex_mask, "firstnames", "identity", locale) |> return_unpacker
+"""
+    firstname(sex_mask::Vector{String}, n::Int = 1; locale = getlocale())
+
+Generate a vector of first names, but instead of randomly sampling names from both sexes, use a
+predefined `sex_mask` to generate names according to their sexes in the order specified in
+`sex_mask`.
+
+# Parameters
+- `n::Int = 1`: number of firstnames to be generated
+- `sex_mask::Vector{String}`: sex mask specified by a string with the following options:
+    - `"female"`
+    - `"male"`
+"""
+function firstname(sex_mask::Vector{String}; locale = getlocale()) :: Union{String, Vector{String}}
+    return load!(sex_mask, "firstname", "identity", locale) |> return_unpacker
 end
 
 
@@ -113,24 +135,32 @@ end
 
 """
 function prefix(n::Int = 1; locale = getlocale()) :: Union{String, Vector{String}}
-    return rand(load!("prefixes", "identity", locale; options = ["female", "male"]), n) |> return_unpacker
+    return rand(load!("prefix", "identity", locale; options = SEXES[:options]), n) |> return_unpacker
 end
 
-function prefix(sex::String, n::Int = 1; locale = getlocale()) :: Union{String, Vector{String}}
-    return rand(load!("prefixes", "identity", locale; options = [sex]), n) |> return_unpacker
+function prefix(sexes::Vector{String}, n::Int = 1; locale = getlocale()) :: Union{String, Vector{String}}
+    return rand(load!("prefix", "identity", locale; options = sexes), n) |> return_unpacker
 end
 
-function prefix(sex_mask::Vector{String}, n::Int = 1; locale = getlocale()) :: Union{String, Vector{String}}
-    return load!(sex_mask, "prefixes", "identity", locale) |> return_unpacker
+function prefix(sex_mask::Vector{String}; locale = getlocale()) :: Union{String, Vector{String}}
+    return load!(sex_mask, "prefix", "identity", locale) |> return_unpacker
 end
 
 
 
 """
+    surname(n::Int = 1; locale = getlocale())
 
+Generate a random `surname` using the provided `locale` as source. If no `locale` is provided,
+the locale from the session will be used.
+
+# Parameters
+
+- `n::Int = 1`: number of surnames to be generated
+- `locale::Vector{String}`: locale(s) to be used when generating the surnames
 """
 function surname(n::Int = 1; locale = getlocale()) :: Union{String, Vector{String}}
-    return rand(load!("surnames", "identity", locale), n) |> return_unpacker
+    return rand(load!("surname", "identity", locale), n) |> return_unpacker
 end
 
 
@@ -139,14 +169,14 @@ end
 
 """
 function occupation(n::Int = 1; locale = getlocale()) :: Union{String, Vector{String}}
-    return rand(load!("occupation", "identity", locale; options = KNOWLEDGE_FIELDS), n) |> return_unpacker
+    return rand(load!("occupation", "identity", locale; options = KNOWLEDGE_FIELDS[:options]), n) |> return_unpacker
 end
 
-function occupation(field::String, n::Int = 1; locale = getlocale()) :: Union{String, Vector{String}}
-    return rand(load!("occupation", "identity", locale; options = [field]), n) |> return_unpacker
+function occupation(fields::Vector{String}, n::Int = 1; locale = getlocale()) :: Union{String, Vector{String}}
+    return rand(load!("occupation", "identity", locale; options = fields), n) |> return_unpacker
 end
 
-function occupation(field_mask::Vector{String}, n::Int = 1; locale = getlocale()) :: Union{String, Vector{String}}
+function occupation(field_mask::Vector{String}; locale = getlocale()) :: Union{String, Vector{String}}
     return load!(field_mask, "occupation", "identity", locale) |> return_unpacker
 end
 
@@ -156,13 +186,13 @@ end
 
 """
 function university(n::Int = 1; locale = getlocale()) :: Union{String, Vector{String}}
-    return rand(load!("university", "identity", locale; options = KNOWLEDGE_FIELDS), n) |> return_unpacker
+    return rand(load!("university", "identity", locale; options = KNOWLEDGE_FIELDS[:options]), n) |> return_unpacker
 end
 
-function university(field::String, n::Int = 1; locale = getlocale()) :: Union{String, Vector{String}}
-    return rand(load!("university", "identity", locale; options = [field]), n) |> return_unpacher
+function university(fields::Vector{String}, n::Int = 1; locale = getlocale()) :: Union{String, Vector{String}}
+    return rand(load!("university", "identity", locale; options = fields), n) |> return_unpacker
 end
 
-function university(field_mask::Vector{String}, n::Int = 1; locale = getlocale()) :: Union{String, Vector{String}}
+function university(field_mask::Vector{String}; locale = getlocale()) :: Union{String, Vector{String}}
     return load!(field_mask, "university", "identity", locale) |> return_unpacker
 end
