@@ -1,1 +1,5 @@
-A highly customizable synthetic data generator
+# Impostor.jl
+
+---------
+
+[WIP]
