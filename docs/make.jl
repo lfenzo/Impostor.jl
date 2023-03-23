@@ -4,6 +4,7 @@ using Documenter
 
 makedocs(
     sitename = "Impostor.jl",
+    modules = [Impostor],
     pages = [
         "Home" => "index.md",
         "Providers" => [
