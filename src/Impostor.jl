@@ -3,7 +3,10 @@ module Impostor
 
 using JSON3
 using Dates
+using StatsBase
 
+
+export ImpostorTemplate
 
 export getlocale
 export setlocale!
@@ -16,8 +19,8 @@ export identity
 export birthdate
 export bloodtype
 export firstname
+export fullname
 export highschool
-export name
 export occupation
 export prefix
 export surname
@@ -26,6 +29,7 @@ export university
 
 include("core/utils.jl")
 include("core/data_interface.jl")
+include("core/impostor_template.jl")
 
 include("providers/identity.jl")
 include("providers/relation_restrictions.jl")
