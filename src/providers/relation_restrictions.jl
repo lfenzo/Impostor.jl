@@ -23,6 +23,7 @@ const SEXES::Dict{Symbol, Vector{String}} = Dict(
     ],
     :provider_functions => [
         "firstname",
+        "fullname",
         "prefix",
     ],
     :options => [
