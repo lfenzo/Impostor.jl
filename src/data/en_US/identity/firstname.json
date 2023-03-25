@@ -1,6 +1,7 @@
 {
     "firstname": {
         "male": [
+            "Alfred",
             "Carl",
             "Charles",
             "Daniel",
@@ -9,8 +10,12 @@
             "Zacharias"
         ],
         "female": [
+            "Amanda",
             "Abgail",
+            "Kate",
+            "Mary",
             "Milly",
+            "Melissa",
             "Sophie"
         ]
     }
