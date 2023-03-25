@@ -44,7 +44,7 @@ end
 """
 
 """
-@inline function contant_exists(locale, provider, content)
+@inline function content_exists(locale, provider, content)
     return provider_exists(locale, provider) && content * ".json" in readdir(joinpath(ASSETS_ROOT, locale, provider))
 end
 
@@ -162,7 +162,7 @@ function _verify_load_parameters(locale::T, provider::T, content::T) where {T <:
     @assert(provider_exists(locale, provider), 
         "Provider '$provider' not available for locale '$locale'")
 
-    @assert(contant_exists(locale, provider, content),
+    @assert(content_exists(locale, provider, content),
         "Content '$content' not available for locale '$locale' and provider '$provider'")
 
     return nothing

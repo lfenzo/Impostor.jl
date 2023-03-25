@@ -4,9 +4,13 @@ module Impostor
 using JSON3
 using Dates
 
+
 export getlocale
 export setlocale!
 export resetlocale!
+export locale_exists
+export provider_exists
+export content_exists
 
 export identity
 export birthdate

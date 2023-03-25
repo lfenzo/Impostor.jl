@@ -13,7 +13,7 @@
 
     @testset "$OPTION_LOADING" begin
         fields = ["business", "humanities", "formal-sciences"]
-        loaded = Impostor.load!(content, provider, options = fields)
+        loaded = Impostor.load!(content, provider; options = fields)
         @test loaded isa Vector{String}
         @test all([any(broadcast((v) -> val in v, [available_values[f] for f in fields])) for val in loaded])
     end
@@ -26,3 +26,14 @@
     end
 end
 
+
+@testset "Auxiliary Functions" begin
+    @test locale_exists("en_US")
+    @test !locale_exists("zz_ZZ")
+
+    @test provider_exists("en_US", "identity")
+    @test !provider_exists("en_US", "indentity") #typo in 'identity' on purpose
+
+    @test content_exists("en_US", "identity", "firstname")
+    @test !content_exists("en_US", "identity", "fisrtname") # typo in 'firstnames' on purpose
+end
