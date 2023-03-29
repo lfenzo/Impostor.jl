@@ -5,7 +5,7 @@
 prefix
 firstname
 surname
-Impostor.fullname
+complete_name
 bloodtype
 birthdate
 highschool

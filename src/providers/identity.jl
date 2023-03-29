@@ -202,7 +202,7 @@ end
 
 
 """
-    fullname(n::Int = 1; locale = getlocale())
+    complete_name(n::Int = 1; locale = getlocale())
 
 Generate `n` full names from a given locale.
 If no `locale` is provided, the locale from the session is used.
@@ -211,18 +211,18 @@ If no `locale` is provided, the locale from the session is used.
 - `n::Int = 1`: number of full names to be generated.
 - `locale::Vector{String}`: locale(s) from which the first names are sampled.
 """
-function fullname(n::Int = 1; locale = getlocale()) :: Union{String, Vector{String}}
-    fullnames = Vector{String}()
+function complete_name(n::Int = 1; locale = getlocale()) :: Union{String, Vector{String}}
+    complete_names = Vector{String}()
     for _ in 1:n
         fname = Impostor.firstname(; locale = locale)
         surnames = sample(load!("surname", "identity", locale), rand(1:3); replace = False)
-        push!(fullnames, fname * " " * join(surnames, " "))
+        push!(complete_names, fname * " " * join(surnames, " "))
     end
-    return fullnames |> return_unpacker
+    return complete_names |> return_unpacker
 end
 
 """
-    fullname(sex::Vector{String}, n::Int; locale = getlocale())
+    complete_name(sex::Vector{String}, n::Int; locale = getlocale())
 
 Generate `n` first names from a given locale restricting the `sex` of the generated names.
 For example, if `sex = ["female"]`, only female first names are generated.
@@ -237,7 +237,7 @@ If no `locale` is provided, the locale from the session is used.
 
 # Example
 ```julia
-julia> Impostor.fullname(["male"], 5)
+julia> Impostor.complete_name(["male"], 5)
 5-element Vector{String}:
 "Paul Cornell Fraser Collins"
 "Paul Jameson"
@@ -246,7 +246,7 @@ julia> Impostor.fullname(["male"], 5)
 "Alfred Collins"
 ```
 ```julia
-julia> Impostor.fullname(["female"], 5)
+julia> Impostor.complete_name(["female"], 5)
 5-element Vector{String}:
 "Melissa Sheffard"
 "Kate Collins"
@@ -255,26 +255,26 @@ julia> Impostor.fullname(["female"], 5)
 "Abgail Fraser Jameson"
 ```
 """
-function fullname(sex::Vector{String}, n::Int; locale = getlocale()) :: Union{String, Vector{String}}
-    fullnames = Vector{String}()
+function complete_name(sex::Vector{String}, n::Int; locale = getlocale()) :: Union{String, Vector{String}}
+    complete_names = Vector{String}()
     for _ in 1:n
         fname = Impostor.firstname(sex, 1; locale = locale)
         surnames = sample(load!("surname", "identity", locale), rand(1:3); replace = false)
-        push!(fullnames, fname * " " * join(surnames, " "))
+        push!(complete_names, fname * " " * join(surnames, " "))
     end
-    return fullnames |> return_unpacker
+    return complete_names |> return_unpacker
 end
 
 """
-    fullname(sex_mask::Vector{String}; locale = getlocale())
+    complete_name(sex_mask::Vector{String}; locale = getlocale())
 
-Generate full names from a `sex_mask`. For example, if `sex_mask = ["female", "female",
-"male", "female"]` four full names will be generated corresponding to the sexes
+Generate full names (complete names) from a `sex_mask`. For example, if `sex_mask = ["female",
+"female", "male", "female"]` four complete names will be generated corresponding to the sexes
 female, female, male and female, respectively.
 If no `locale` is provided, the locale from the session is used.
 
 # Parameters
-- `sex_mask::Vector{String}`: sexes to be used when generating the full names. Available options:
+- `sex_mask::Vector{String}`: sexes to be used when generating the complete names. Available options:
     - `"male"`
     - `"female"`
 - `locale::Vector{String}`: locale(s) from which the full names are sampled.
@@ -282,39 +282,83 @@ If no `locale` is provided, the locale from the session is used.
 # Example
 Note that the length of the generated `Vector` is equal to the length of the mask.
 ```julia
-julia> firstname(["female", "male", "female", "female", "male"])
+julia> complete_name(["female", "male", "female", "female", "male"])
 5-element Vector{String}:
-"Sophie"
-"Carl"
-"Milly"
-"Amanda"
-"John"
+"Melissa Sheffard Jameson Cornell"
+"Alfred Collins"
+"Mary Sheffard Fraser"
+"Milly Jameson Fraser"
+"Alfred Fraser Collins"
 ```
 """
-function fullname(sex_mask::Vector{String}; locale = getlocale()) :: Union{String, Vector{String}}
-    fullnames = Vector{String}()
+function complete_name(sex_mask::Vector{String}; locale = getlocale()) :: Union{String, Vector{String}}
+    complete_names = Vector{String}()
     for sex in sex_mask
         fname = Impostor.firstname([sex]; locale = locale)
         surnames = sample(load!("surname", "identity", locale), rand(1:3); replace = false)
-        push!(fullnames, fname * " " * join(surnames, " "))
+        push!(complete_names, fname * " " * join(surnames, " "))
     end
-    return fullnames |> return_unpacker
+    return complete_names |> return_unpacker
 end
 
 
-
-
 """
+    occupation(n::Int = 1; locale = getlocale())
 
+Generate `n` occupation entries from a given locale.
+If no `locale` is provided, the locale from the session is used.
+
+# Parameters
+- `n::Int = 1`: number of occupations to be generated.
+- `locale::Vector{String}`: locale(s) from which the occupations are sampled.
 """
 function occupation(n::Int = 1; locale = getlocale()) :: Union{String, Vector{String}}
     return rand(load!("occupation", "identity", locale; options = KNOWLEDGE_FIELDS[:options]), n) |> return_unpacker
 end
 
+"""
+    occupation(field::Vector{String}, n::Int; locale = getlocale())
+
+Generate `n` occupation entries from a given locale restricting the `field` of thegenerated
+generated occupations. For example, if `fields = ["business", "humanities"]`, only occupations
+belonging the "business" and "humanities" categories from `locale` are generated.
+If no `locale` is provided, the locale from the session is used.
+
+# Parameters
+- `field::Vector{String}`: fields to be used when generating the occupations. Available options:
+    - `"business"`
+    - `"humanities"`
+    - `"social-sciences"`
+    - `"natural-sciences"`
+    - `"formal-sciences"`
+    - `"public-administration"`
+    - `"military"`
+- `n::Int = 1`: number of occupations to be generated.
+- `locale::Vector{String}`: locale(s) from which the occupations are sampled.
+"""
 function occupation(field::Vector{String}, n::Int; locale = getlocale()) :: Union{String, Vector{String}}
     return rand(load!("occupation", "identity", locale; options = field), n) |> return_unpacker
 end
 
+"""
+    occupation(field_mask::Vector{String}; locale = getlocale())
+
+Generate occupations from a `field_mask`. For example, if `fields_mask = ["business", "humanities",
+"humanities", "business"]` four occupations will be generated corresponding to the fields
+business, humanities, humanities and business, respectively.
+If no `locale` is provided, the locale from the session is used.
+
+# Parameters
+- `field_mask::Vector{String}`: fields to be used when generating the occupations. Available options:
+    - `"business"`
+    - `"humanities"`
+    - `"social-sciences"`
+    - `"natural-sciences"`
+    - `"formal-sciences"`
+    - `"public-administration"`
+    - `"military"`
+- `locale::Vector{String}`: locale(s) from which the occupations are sampled.
+"""
 function occupation(field_mask::Vector{String}; locale = getlocale()) :: Union{String, Vector{String}}
     return load!(field_mask, "occupation", "identity", locale) |> return_unpacker
 end
@@ -322,16 +366,62 @@ end
 
 
 """
+    university(n::Int = 1; locale = getlocale())
 
+Generate `n` university entries from a given locale.
+If no `locale` is provided, the locale from the session is used.
+
+# Parameters
+- `n::Int = 1`: number of universities to be sampled.
+- `locale::Vector{String}`: locale(s) from which the universities are sampled.
 """
 function university(n::Int = 1; locale = getlocale()) :: Union{String, Vector{String}}
     return rand(load!("university", "identity", locale; options = KNOWLEDGE_FIELDS[:options]), n) |> return_unpacker
 end
 
+"""
+    university(field::Vector{String}, n::Int; locale = getlocale())
+
+Generate `n` universites entries from a given locale restricting the `field` of the generated
+generated universities. For example, if `fields = ["business", "humanities"]`, only universities
+belonging the "business" and "humanities" categories from `locale` are sampled.
+If no `locale` is provided, the locale from the session is used.
+
+# Parameters
+- `field::Vector{String}`: fields to be used when generating the occupations. Available options:
+    - `"business"`
+    - `"humanities"`
+    - `"social-sciences"`
+    - `"natural-sciences"`
+    - `"formal-sciences"`
+    - `"public-administration"`
+    - `"military"`
+- `n::Int = 1`: number of universities to be generated.
+- `locale::Vector{String}`: locale(s) from which the universities are sampled.
+"""
 function university(field::Vector{String}, n::Int; locale = getlocale()) :: Union{String, Vector{String}}
     return rand(load!("university", "identity", locale; options = field), n) |> return_unpacker
 end
 
+"""
+    university(field_mask::Vector{String}; locale = getlocale())
+
+Generate universities from a `field_mask`. For example, if `fields_mask = ["business", "humanities",
+"humanities", "business"]` four university entries  will be smpled corresponding to the fields
+business, humanities, humanities and business, respectively.
+If no `locale` is provided, the locale from the session is used.
+
+# Parameters
+- `field_mask::Vector{String}`: fields to be used when generating the universities. Available options:
+    - `"business"`
+    - `"humanities"`
+    - `"social-sciences"`
+    - `"natural-sciences"`
+    - `"formal-sciences"`
+    - `"public-administration"`
+    - `"military"`
+- `locale::Vector{String}`: locale(s) from which the universities are sampled.
+"""
 function university(field_mask::Vector{String}; locale = getlocale()) :: Union{String, Vector{String}}
     return load!(field_mask, "university", "identity", locale) |> return_unpacker
 end
