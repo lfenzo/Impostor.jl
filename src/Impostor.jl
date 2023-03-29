@@ -19,7 +19,7 @@ export identity
 export birthdate
 export bloodtype
 export firstname
-export fullname
+export complete_name
 export highschool
 export occupation
 export prefix
