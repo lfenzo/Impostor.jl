@@ -6,3 +6,7 @@ function _test_load(content::String, provider::String, locale::String)
         return JSON3.read(file, Dict{String, Union{Dict, Vector{String}}})[content]
     end
 end
+
+function _test_load(content::String, provider::String, locale::Vector{String})
+    return Dict(loc => _test_load(content, provider, loc) for loc in locale)
+end

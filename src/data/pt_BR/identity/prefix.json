@@ -1,0 +1,11 @@
+{
+    "prefix": {
+        "male": [
+            "Sr."
+        ],
+        "female": [
+            "Sra.",
+            "Srta."
+        ]
+    }
+}
