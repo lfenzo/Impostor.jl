@@ -1,0 +1,15 @@
+{
+    "firstname": {
+        "male": [
+            "Alberto",
+            "Bernardo",
+            "Carlos",
+            "João"
+        ],
+        "female": [
+            "Maria",
+            "Lucia",
+            "Joana"
+        ]
+    }
+}

@@ -96,17 +96,21 @@ end
 
 """
 function load!(content::T, provider::T, locale::Vector{T} = getlocale();
-    options::Union{Vector{T}, NTuple{N, T}, Nothing} = nothing) where {N, T <: AbstractString}
+    options::Union{Vector{T}, Nothing} = nothing) where {T <: AbstractString}
 
     values = Vector{String}()
     for loc in locale
-        if isnothing(options)
-            values = vcat(values, load!(content, provider, loc))
-        else
-            for option in options
-                converted_values = convert(Vector{String}, load!(content, provider, loc)[option])
-                values = vcat(values, converted_values)
+        loaded = load!(content, provider, loc)
+
+        # if the loaded content is a dictionary (e.g. 'firstname' or 'occupation') which keys specify
+        # options to be chosen, then we must 'flatten' these dicts pushing their values to a Vector.
+        if loaded isa Dict 
+            selected_keys = isnothing(options) ? keys(loaded) : options
+            for key in selected_keys
+                values = vcat(values, convert(Vector{String}, loaded[key]))  # 'convert' ensures type-stabilty
             end
+        else
+            values = vcat(values, loaded)
         end
     end
     return values

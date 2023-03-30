@@ -70,28 +70,28 @@ for (func, content) in knowledge_fields_dependent_functions
 end
 
 
-@testset "fullname" begin 
+@testset "complete_name" begin 
     N = 10
     option_mask = ["male", "female", "female", "male", "female"]
     available_values = _test_load("firstname", "identity", only(getlocale()))
 
     @testset "$OPTIONLESS" begin
-        generated = Impostor.fullname(N)
+        generated = complete_name(N)
         @test generated isa Vector{String}
         @test length(generated) == N
-        @test Impostor.fullname() isa String
+        @test complete_name() isa String
     end
 
     @testset "$OPTION_LOADING" begin
         sex = "female"
-        generated = Impostor.fullname([sex], N)
+        generated = complete_name([sex], N)
         @test generated isa Vector{String}
         @test length(generated) == N
         @test all([first(split(value, " ")) in available_values[sex] for value in generated])
     end
 
     @testset "$MASK_LOADING" begin
-        generated = Impostor.fullname(option_mask)
+        generated = complete_name(option_mask)
         @test generated isa Vector{String}
         @test length(generated) == length(option_mask)
         @test all([first(split(g, " ")) in available_values[sex] for (g, sex) in zip(generated, option_mask)])

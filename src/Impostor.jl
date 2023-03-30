@@ -15,7 +15,6 @@ export locale_exists
 export provider_exists
 export content_exists
 
-export identity
 export birthdate
 export bloodtype
 export firstname
@@ -26,12 +25,15 @@ export prefix
 export surname
 export university
 
+export city
+
 
 include("core/utils.jl")
 include("core/data_interface.jl")
 include("core/impostor_template.jl")
 
 include("providers/identity.jl")
+include("providers/localization.jl")
 include("providers/relation_restrictions.jl")
 
 

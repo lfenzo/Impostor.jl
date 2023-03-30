@@ -215,7 +215,7 @@ function complete_name(n::Int = 1; locale = getlocale()) :: Union{String, Vector
     complete_names = Vector{String}()
     for _ in 1:n
         fname = Impostor.firstname(; locale = locale)
-        surnames = sample(load!("surname", "identity", locale), rand(1:3); replace = False)
+        surnames = sample(load!("surname", "identity", locale), rand(1:3); replace = false)
         push!(complete_names, fname * " " * join(surnames, " "))
     end
     return complete_names |> return_unpacker
