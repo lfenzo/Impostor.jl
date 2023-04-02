@@ -17,8 +17,8 @@ export content_exists
 
 export birthdate
 export bloodtype
-export firstname
 export complete_name
+export firstname
 export highschool
 export occupation
 export prefix
@@ -26,6 +26,10 @@ export surname
 export university
 
 export city
+export country
+export district
+export state
+export state_code
 
 
 include("core/utils.jl")

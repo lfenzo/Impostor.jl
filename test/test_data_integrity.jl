@@ -25,3 +25,13 @@
         end
     end
 end
+
+
+@testset "Localization" begin
+    for locale in ALL_LOCALES
+        content_exists(locale, "localization", "city") && @testset "city" begin
+            @test allunique(_test_load("city", "localization", locale))
+        end
+    end
+end
+

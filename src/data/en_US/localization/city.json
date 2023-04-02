@@ -1,0 +1,11 @@
+{
+    "city": {
+        "IL" : [
+            "Chicago"
+        ],
+        "CA" : [
+            "Los Angeles",
+            "San Francisco"
+        ]
+    }
+}

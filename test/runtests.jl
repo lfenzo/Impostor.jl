@@ -17,9 +17,10 @@ const ALL_LOCALES::Vector{String} = [d for d in readdir(pkgdir(Impostor, "src", 
 
 
 testsets = Dict{String, String}(
-   "Identity" => "test_identity.jl",
    "Data Interface" => "test_data_interface.jl",
    "Data Integrity" => "test_data_integrity.jl",
+   "Localization" => "test_localization.jl",
+   "Identity" => "test_identity.jl",
 )
 
 @testset "Impostor" begin

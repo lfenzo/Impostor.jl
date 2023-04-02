@@ -58,6 +58,16 @@ end
             @test name in available_values["en_US"][sex] || name in available_values["pt_BR"][sex]
         end
     end
+
+    # some of the keys are present in only one of the contents of the locales
+    @testset "$OPTION_LOADING with Partial Key Match across the Locales" begin
+        # this key exists in one of the locales
+        @test Impostor.load!("city", "localization", ["pt_BR", "en_US"]; options = ["IL"]) isa Vector{String}
+        # this key, "IL", is not present in the pt_BR locale
+        @test_throws KeyError Impostor.load!("city", "localization", ["pt_BR"]; options = ["IL"])
+        # this key does not exist in neither of the locales
+        @test_throws KeyError Impostor.load!("city", "localization", ["en_US", "pt_BR"]; options = ["inexisting_state"])
+    end
 end
 
 @testset "Auxiliary Functions" begin
