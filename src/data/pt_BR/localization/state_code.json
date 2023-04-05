@@ -1,7 +1,9 @@
 {
-    "state_code": [
-        "PR",
-        "SP",
-        "RJ"
-    ]
+    "state_code": {
+        "pt_BR": [
+            "PR",
+            "SP",
+            "RJ"
+        ]
+    }
 }

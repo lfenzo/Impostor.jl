@@ -96,8 +96,17 @@ only alternative.
 function load!(option_mask::Vector{T}, content::T, provider::T, locale::Vector{T} = getlocale()) where {T <: AbstractString}
 
     value_pools = Dict()
-    for mask_value in unique(option_mask)
-        value_pools[mask_value] = vcat([load!(content, provider, loc)[mask_value] for loc in locale]...)
+
+    for loc in locale
+        loaded_content = load!(content, provider, loc)
+        for mask_value in unique(option_mask)
+            if mask_value in keys(loaded_content)
+                if !(mask_value in keys(value_pools))
+                    value_pools[mask_value] = []
+                end
+                value_pools[mask_value] = vcat(value_pools[mask_value], loaded_content[mask_value])
+            end
+        end
     end
 
     selected_values = Vector{String}()
