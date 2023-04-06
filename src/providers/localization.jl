@@ -1,7 +1,7 @@
 """
 
 """
-function country(n::Int = 1; locale = getlocale(), ignore_locale::Bool = false)
+function country(n::Int = 1; locale = getlocale(), ignore_locale::Bool = false) :: Union{String, Vector{String}}
     # available countries in each of the directoreis in `data/*/localization/country.json`
     if ignore_locale
         countries = Vector{String}()
@@ -23,7 +23,7 @@ end
 """
 # the following two 'state' methods are equivalent. In practice, they mimic the same functionality
 # with two different behaviors: 'state(n; locale = ["foo", "bar"])' and 'state(["foo", "bar"], n)'
-function state(n::Int = 1; locale = getlocale())
+function state(n::Int = 1; locale = getlocale()) :: Union{String, Vector{String}}
     return rand(load!("state", "localization", locale), n) |> return_unpacker
 end
 
@@ -37,7 +37,7 @@ state(locales::Vector{String}, n::Int) = state(n; locale = locales)
 """
 # notice that since state takes locales as mask values, we don't need to specify
 # the locale in the function header
-function state(locale_mask::Vector{String})
+function state(locale_mask::Vector{String}) :: Union{String, Vector{String}}
     return load!(locale_mask, "state", "localization", unique(locale_mask))
 end
 
@@ -46,7 +46,7 @@ end
 """
 
 """
-function state_code(n::Int = 1; locale = getlocale())
+function state_code(n::Int = 1; locale = getlocale()) :: Union{String, Vector{String}}
     return rand(load!("state_code", "localization", locale), n) |> return_unpacker
 end
 
@@ -58,7 +58,7 @@ state_code(locales::Vector{String}, n::Int) = state_code(n; locale = locales)
 """
 
 """
-function state_code(locale_mask::Vector{String})
+function state_code(locale_mask::Vector{String}) :: Union{String, Vector{String}}
     return load!(locale_mask, "state_code", "localization", unique(locale_mask))
 end
 
@@ -67,21 +67,21 @@ end
 """
 
 """
-function city(n::Int = 1; locale = getlocale())
+function city(n::Int = 1; locale = getlocale()) :: Union{String, Vector{String}}
     return rand(load!("city", "localization", locale), n) |> return_unpacker
 end
 
 """
 
 """
-function city(states::Vector{String}, n::Int; locale = getlocale())
+function city(states::Vector{String}, n::Int; locale = getlocale()) :: Union{String, Vector{String}}
     return rand(load!("city", "localization", locale; options = states), n) |> return_unpacker
 end
 
 """
 
 """
-function city(mask::Vector{String}; masklevel::Symbol = :state, locale = getlocale())
+function city(mask::Vector{String}; masklevel::Symbol = :state, locale = getlocale()) :: Union{String, Vector{String}}
 
     @assert masklevel in [:state, :locale] "provided mask level '$masklevel' not recognized."
 
@@ -98,32 +98,26 @@ end
 """
 
 """
-function district(n::Int = 1; locale = getlocale())
+function district(n::Int = 1; locale = getlocale()) :: Union{String, Vector{String}}
     return rand(load!("district", "localization", locale), n) |> return_unpacker
 end
 
 """
 
 """
-function district(options::Vector{String}, n::Int; option_level::Symbol = :city, locale = getlocale())
+function district(options::Vector{String}, n::Int; option_level::Symbol = :city, locale = getlocale()) :: Union{String, Vector{String}}
 
     @assert option_level in [:city, :state] "provided mask level '$option_level' not recognized."
-    districts = Vector{String}()
 
-    if option_level == :city
-        districts = load!("district", "localization", locale; options = options)
-    elseif option_level == :state
-        cities = city(options, n; locale = locale) |> return_unpacker
-        districts = load!("district", "localization", locale; options = cities)
-    end
+    _options = option_level == :city ? options : city(options, n; locale = locale)
 
-    return rand(districts, n) |> return_unpacker
+    return rand(load!("district", "localization", locale; options = _options), n) |> return_unpacker
 end
 
 """
 
 """
-function district(mask::Vector{String}; masklevel::Symbol = :city, locale = getlocale())
+function district(mask::Vector{String}; masklevel::Symbol = :city, locale = getlocale()) :: Union{String, Vector{String}}
 
     @assert masklevel in [:city, :state] "provided mask level '$masklevel' not recognized."
 
