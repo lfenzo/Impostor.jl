@@ -1,0 +1,13 @@
+{
+    "city": {
+        "SP" : [
+            "São Paulo"
+        ],
+        "RJ" : [
+            "Rio de Janeiro"
+        ],
+        "PR" : [
+            "Curitiba"
+        ]
+    }
+}

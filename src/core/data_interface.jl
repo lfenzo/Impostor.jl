@@ -74,13 +74,39 @@ end
 
 
 """
+    load!(option_mask::Vector{T}, content::T, provider::T, locale::Vector{T} = getlocale())
 
+Corresponds to a special case in the option-based loading in which *the options provided in the 
+`option_mask` are garanteed to have the same set of possible values across the `content` and
+`provider`. See the functions which fit in this case in the file `src/core/data_restrictions.jl`.
+
+When the possible set of options is not the same for the provided `content` and `provider`, as in
+`state` the method `load!(content, provider, locale = getlocale(); options = String[])` is the 
+only alternative.
+
+# Parameters
+- `option_mask::Vector{AbstractString}`: 
+- `content::AbstractString`: 
+- `provider::AbstractString`: 
+- `locale::AbstractString`: 
 """
-function load!(option_mask::AbstractVector, content::T, provider::T, locale::Vector{T} = getlocale()) where {T <: AbstractString}
+# TODO: benchmark this against load!(content, provider, locale::Vector; options) when we have
+# reasonable amount of data. Theoretically, this should be an optimized version for the case in
+# which the keys are garanteed to be the same.
+function load!(option_mask::Vector{T}, content::T, provider::T, locale::Vector{T} = getlocale()) where {T <: AbstractString}
 
     value_pools = Dict()
-    for mask_value in unique(option_mask)
-        value_pools[mask_value] = vcat([load!(content, provider, loc)[mask_value] for loc in locale]...)
+
+    for loc in locale
+        loaded_content = load!(content, provider, loc)
+        for mask_value in unique(option_mask)
+            if mask_value in keys(loaded_content)
+                if !(mask_value in keys(value_pools))
+                    value_pools[mask_value] = []
+                end
+                value_pools[mask_value] = vcat(value_pools[mask_value], loaded_content[mask_value])
+            end
+        end
     end
 
     selected_values = Vector{String}()
@@ -93,26 +119,71 @@ end
 
 
 """
+    load!(content, provider, locale = getlocale(); options = String[])
 
+Provide "option-based" loading implementation. This function is responsible for loading data from
+multiple locales with the optional filter specified in `options`, i.e. select only the entries
+associated with the provided options.
+
+When `options` are provided for a single locale, the content associated to that locale and provider
+is loaded into a Dict object and the provided `options` are searched inside the returned dict.
+If no such `options` are found in the dictionary an exception will be thrown.
+
+When multiple locales are provided, it is possible that the set of `options` provided during this
+function call fits in the following situations:
+    - The keys in `options` are only valid for one of the locales. For example, when calling the 
+    function passing `options = ["CA"]` as state code and `locale = ["en_US", "pt_BR"]` indicating
+    the selected locales for the `city` function, this `load!` method will only return the
+    entries associated to the `"CA"` option in `"en_US"` (for the "`pt_BR`" locale there are no 
+    "CA" options). Despite being unable to find entries for this option in the `"pt_BR` locale 
+    the method returns without throwing any exception, because *some* entries were found in
+    another locale.
+    - The keys in `options` are not valid for neither of the provided locales. In this case an
+    exception is thrown, for that no entries were retrieved from the data corresponding to the
+    provided `options`.
+In other words, this `load!` method will try its best to find matches for whatever values of
+`options` and `locales` provided, when it fails to find *any* match it throws an exception.
+
+When no `options` are provided, all keys associated to each of the contents in each of the locales
+are 'flattened' returned in single `Vector{String}` object.
+
+# Parameters 
+- `content::AbstractString`:
+- `provider::AbstractString`:
+- `locale::Vector{<:AbstractString}`:
+- `options::Vector{<:AbstractString}`:
 """
-function load!(content::T, provider::T, locale::Vector{T} = getlocale();
-    options::Union{Vector{T}, Nothing} = nothing) where {T <: AbstractString}
+function load!(content::T, provider::T, locale::Vector{T} = getlocale(); options::Vector{T} = String[]) where {T <: AbstractString}
 
     values = Vector{String}()
+
     for loc in locale
         loaded = load!(content, provider, loc)
-
         # if the loaded content is a dictionary (e.g. 'firstname' or 'occupation') which keys specify
         # options to be chosen, then we must 'flatten' these dicts pushing their values to a Vector.
         if loaded isa Dict 
-            selected_keys = isnothing(options) ? keys(loaded) : options
+            selected_keys = isempty(options) ? keys(loaded) : options
             for key in selected_keys
-                values = vcat(values, convert(Vector{String}, loaded[key]))  # 'convert' ensures type-stabilty
+                # consider the situation in which we are passing the "IL" (Illinois) state for 
+                # the locales ["en_US", "pt_BR"]. We have this state in the keys of "en_US", but
+                # not in the keys of "pt_BR". So here we only return the values of the entries
+                # for existing keys in the respective JSON files
+                if key in keys(loaded)
+                    values = vcat(values, convert(Vector{String}, loaded[key]))  # 'convert' ensures type-stabilty
+                end
             end
         else
             values = vcat(values, loaded)
         end
     end
+
+    isempty(values) && throw(
+        KeyError(
+            "No entries found for content '$content', provider '$provider', locale\
+            $locale with options '$options'"
+        )
+    )
+
     return values
 end
 
@@ -120,25 +191,32 @@ end
 """
     load!(content::T, provider::T, locale::T) where {T <: AbstractString}
 
-Load the requested `content` from a given `provider` in the specified `locale`. This is the
-common fallback for the `load!` method which will ultimatelly load 
+Load the smallest retrieveble data from the `src/data/` directory associated to `content`,
+a `provider` and a `locale`, which is either a:
+    - `Dict{String, Vector{String}}`: a dictionary with the only key as the name of the content 
+    to be retrieved or;
+    - `Dict{String, Dict{String, Vector{String}}}`: a dictionary with other "sub-dictionaries" each
+    of them mapping an `option` value to a `Vector{String}` containing the entries.
 
+All checks on `content`, `provider` and `locale` validity are centered in this method it is 
+used as the common fallback for the other `load!` methods.
 """
 function load!(content::T, provider::T, locale::T) where {T <: AbstractString}
 
     _verify_load_parameters(locale, provider, content)
 
-    # adding the locale to the data container in case it doesn't have it
+    # when not present, add the locale to the session data container
     if !haslocale(SESSION_CONTAINER, locale)
         merge!(SESSION_CONTAINER.data, Dict(locale => Dict()))
     end
 
-    # adding the provider to the data container in case it doesn't have it
+    # when not present, add the provider to the provided locale in the sessions data container
     if !hasprovider(SESSION_CONTAINER, locale, provider)
         merge!(SESSION_CONTAINER.data[locale], Dict(provider => Dict()))
     end
 
-    # adding the content to the data container in case it doesn't have it
+    # adding the content to the data container in the respective locale and 
+    # provider in case it doesn't have it
     if !hascontent(SESSION_CONTAINER, locale, provider, content)
         open(joinpath(ASSETS_ROOT, locale, provider, content) * ".json", "r") do file
             merge!(
