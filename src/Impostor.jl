@@ -1,7 +1,8 @@
 module Impostor
 
 
-using JSON3
+using CSV
+using DataFrames
 using Dates
 using StatsBase
 
@@ -11,9 +12,9 @@ export ImpostorTemplate
 export getlocale
 export setlocale!
 export resetlocale!
-export locale_exists
 export provider_exists
 export content_exists
+export locale_exists
 
 export birthdate
 export bloodtype
@@ -27,6 +28,7 @@ export university
 
 export city
 export country
+export country_code
 export district
 export state
 export state_code
