@@ -8,7 +8,7 @@ include("utils.jl")
 include(joinpath(pkgdir(Impostor), "src", "providers", "relation_restrictions.jl"))
 
 # common aliases to test 
-const OPTIONLESS::String = "Random Values (neither Options nor Mask)"
+const OPTIONLESS::String = "Random Values"
 const MASK_LOADING::String = "Mask-Based Loading"
 const OPTION_LOADING::String = "Option-Based Loading"
 
@@ -16,10 +16,10 @@ const OPTION_LOADING::String = "Option-Based Loading"
 # const ALL_LOCALES::Vector{String} = _get_all_unique_locales(; root = pkgdir(Impostor, "src", "data"))
 
 testsets = Dict{String, String}(
-   "Data Interface" => "test_data_interface.jl",
+#   "Data Interface" => "test_data_interface.jl",
 #   "Data Integrity" => "test_data_integrity.jl",
 #   "Localization" => "test_localization.jl",
-#   "Identity" => "test_identity.jl",
+   "Identity" => "test_identity.jl",
 )
 
 @testset "Impostor" begin

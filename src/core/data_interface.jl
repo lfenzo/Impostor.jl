@@ -77,17 +77,9 @@ end
 end
 
 
-# function hiarchical_join(dfs, mergekeys)
-#     df_final = popfirst!(dfs)  # this highest df in terms of hiarchy
-#     for (df, mergekey) in zip(dfs, mergekeys)
-#         #df_final = rightjoin(df_final, df; on = mergekey isa Vector ? mergekey : [mergekey])
-#         df_final = rightjoin(df_final, df; on = mergekey isa Vector ? mergekey : [mergekey])
-#     end
-#     return df_final
-# end
+"""
 
-
-
+"""
 function load!(provider::T, content::T, locale::Vector{T}) where {T <: AbstractString}
     df = DataFrame()
     for loc in locale
@@ -97,6 +89,9 @@ function load!(provider::T, content::T, locale::Vector{T}) where {T <: AbstractS
 end
 
 
+"""
+
+"""
 function load!(provider::T, content::T, locale::T = "noloc") :: DataFrame where {T <: AbstractString}
 
     @assert(provider_exists(provider), "Provider '$provider' is not available.")

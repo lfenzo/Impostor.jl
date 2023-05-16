@@ -1,16 +1,9 @@
 """
 
 """
-function random_date(n::Int; start::Date = Date(1900, 1, 1), stop::Date = today()) :: Vector{Date}
-    return rand(start:Day(1):stop, n)
-end
-
-
-"""
-
-"""
-@inline function return_unpacker(v::Vector{T}) :: Union{T, Vector{T}} where {T}
-    return length(v) == 1 ? only(v) : v
+@inline function coerse_string_type(v::Vector{<:AbstractString}) :: Union{String, Vector{String}}
+    strings = v isa Vector{String} ? v : convert.(String, v)
+    return length(strings) == 1 ? only(strings) : strings
 end
 
 
