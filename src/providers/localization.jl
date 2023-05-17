@@ -1,19 +1,31 @@
-"""
+function _hierarchical_localization_fallback(target_level, option_level, locale) 
 
-"""
-function country(n::Int = 1; locale = getlocale(), ignore_locale::Bool = false) :: Union{String, Vector{String}}
-    # available countries in each of the directoreis in `data/*/localization/country.json`
-    if ignore_locale
-        countries = Vector{String}()
-        for locale in readdir(ASSETS_ROOT)
-            locale == "template" && continue
-            # assuming for now that each locale is associated to only one country
-            push!(countries, only(load!("country", "localization", locale)))
+    target_found = false  # helps identify the correct element in 'hiarchical_order'
+    hiarchical_order = [
+        ["district", nothing],
+        ["city", :city_name],
+        ["state", :state_code],
+        ["country", :country_code],
+    ]
+
+    df = load!("localization", target_level, locale)
+
+    for hiarchy_member in hiarchical_order
+
+        level = hiarchy_member[begin]
+        mergekey = hiarchy_member[end]
+
+        if target_found
+            level_df = load!("localization", level, locale) 
+            df = innerjoin(level_df, df; on = mergekey)
+            mergekey == option_level && break  # upper limit for the iteractive "merge process"
         end
-        return rand(countries, n) |> return_unpacker
-    else
-        return rand(load!("country", "localization", locale), n) |> return_unpacker
+
+        if level == target_level
+            target_found = true
+        end
     end
+    return df
 end
 
 
@@ -21,128 +33,253 @@ end
 """
 
 """
-# the following two 'state' methods are equivalent. In practice, they mimic the same functionality
-# with two different behaviors: 'state(n; locale = ["foo", "bar"])' and 'state(["foo", "bar"], n)'
-function state(n::Int = 1; locale = getlocale()) :: Union{String, Vector{String}}
-    return rand(load!("state", "localization", locale), n) |> return_unpacker
+function country(n::Integer = 1; locale = getlocale())
+    return rand(load!("localization", "country", locale)[:, :country_name], n) |> coerse_string_type
 end
 
 """
 
 """
-state(locales::Vector{String}, n::Int) = state(n; locale = locales)
+function country(options::Vector{<:AbstractString}, n::Integer; optionlevel::Symbol = :country_code, locale = getlocale())
 
-"""
+    # for the 'country' functions the only possible mask/option level is the country
+    # because there is nothing higher in the hiarchy, so the only option
+    # when selecting values from the country provider is the country_code
+    @assert optionlevel == :country_code "invalid 'masklevel' provided: \"$optionlevel\""
 
-"""
-# notice that since state takes locales as mask values, we don't need to specify
-# the locale in the function header
-function state(locale_mask::Vector{String}) :: Union{String, Vector{String}}
-    return load!(locale_mask, "state", "localization", unique(locale_mask))
-end
-
-
-
-"""
-
-"""
-function state_code(n::Int = 1; locale = getlocale()) :: Union{String, Vector{String}}
-    return rand(load!("state_code", "localization", locale), n) |> return_unpacker
+    countries = load!("localization", "country", locale)
+    filter!(r -> r[:country_code] in options, countries)
+    return rand(countries[:, :country_name], n) |> coerse_string_type
 end
 
 """
 
 """
-state_code(locales::Vector{String}, n::Int) = state_code(n; locale = locales)
+function country(mask::Vector{<:AbstractString}; masklevel::Symbol = :country_code, locale = getlocale())
 
-"""
+    # for the 'country' functions the only possible mask/option level is the country
+    # because there is nothing higher in the hiarchy, so the only option
+    # when selecting values from the country provider is the country_code
+    @assert masklevel == :country_code "invalid 'masklevel' provided: \"$masklevel\""
 
-"""
-function state_code(locale_mask::Vector{String}) :: Union{String, Vector{String}}
-    return load!(locale_mask, "state_code", "localization", unique(locale_mask))
-end
+    multi_locale_countries = load!("localization", "country", locale)
+    gb = groupby(multi_locale_countries, masklevel)
 
+    selected_values = Vector{String}()
 
-
-"""
-
-"""
-function city(n::Int = 1; locale = getlocale()) :: Union{String, Vector{String}}
-    return rand(load!("city", "localization", locale), n) |> return_unpacker
-end
-
-"""
-
-"""
-function city(states::Vector{String}, n::Int; locale = getlocale()) :: Union{String, Vector{String}}
-    return rand(load!("city", "localization", locale; options = states), n) |> return_unpacker
-end
-
-"""
-
-"""
-function city(mask::Vector{String}; masklevel::Symbol = :state, locale = getlocale()) :: Union{String, Vector{String}}
-
-    @assert masklevel in [:state, :locale] "provided mask level '$masklevel' not recognized."
-
-    # if masklevel == :locale we must generate a state_mask so that we can forward this
-    # mask to the load! method. In the end this 'city' methods accepts both 'state' and 'locale'
-    # valued masks, but the data loading is performed providing only the state mask.
-    _mask = masklevel == :state ? mask : state_code(mask)
-
-    return load!(_mask, "city", "localization", locale)
-end
-
-
-
-"""
-
-"""
-function district(n::Int = 1; locale = getlocale()) :: Union{String, Vector{String}}
-    return rand(load!("district", "localization", locale), n) |> return_unpacker
-end
-
-"""
-
-"""
-function district(options::Vector{String}, n::Int; option_level::Symbol = :city, locale = getlocale()) :: Union{String, Vector{String}}
-
-    @assert option_level in [:city, :state] "provided mask level '$option_level' not recognized."
-
-    _options = option_level == :city ? options : city(options, n; locale = locale)
-
-    return rand(load!("district", "localization", locale; options = _options), n) |> return_unpacker
-end
-
-"""
-
-"""
-function district(mask::Vector{String}; masklevel::Symbol = :city, locale = getlocale()) :: Union{String, Vector{String}}
-
-    @assert masklevel in [:city, :state] "provided mask level '$masklevel' not recognized."
-
-    # if masklevel == :city then we can forward this mask to the respective load! method in
-    # order to load the districts restricted by the cities, but if masklevel == :state we need
-    # first to generate a city mask from this state mask in order to load the districts. This
-    # happens because the mask-based load!-ing for the district content uses only the city name
-    # as a selector for the entries
-    _mask = masklevel == :city ? mask : city(mask, masklevel = masklevel, locale = locale)
-
-    return load!(_mask, "district", "localization", locale)
-end
-
-
-"""
-    _country_name2locale()
-
-Return a dictionary mapping the Country name to the respective Locale
-"""
-function _country_name2locale() :: Dict{String, String}
-    dict = Dict{String, String}()
-    for locale in readdir(ASSETS_ROOT)
-        locale == "template" && continue
-        country_name = only(load!("country", "localization", locale))
-        dict[country_name] = locale
+    for value in mask
+        associated_mask_rows = get(gb, (value,), nothing)
+        push!(selected_values, rand(associated_mask_rows[:, :country_name]))
     end
-    return dict
+    return selected_values |> coerse_string_type
+end
+
+
+
+"""
+
+"""
+function country_code(n::Integer = 1; locale = getlocale())
+    return rand(load!("localization", "country", locale)[:, :country_code], n) |> coerse_string_type
+end
+
+"""
+
+"""
+function country_code(options::Vector{<:AbstractString}, n::Integer; optionlevel::Symbol = :country_code, locale = getlocale())
+
+    # for the 'country' functions the only possible mask/option level is the country
+    # because there is nothing higher in the hiarchy, so the only option
+    # when selecting values from the country provider is the country_code
+    @assert optionlevel == :country_code "invalid 'masklevel' provided: \"$optionlevel\""
+
+    countries = load!("localization", "country", locale)
+    filter!(r -> r[:country_code] in options, countries)
+    return rand(countries[:, :country_code], n) |> coerse_string_type
+end
+
+"""
+
+"""
+function country_code(mask::Vector{<:AbstractString}; masklevel::Symbol = :country_code, locale = getlocale())
+
+    # for the 'country' functions the only possible mask/option level is the country
+    # because there is nothing higher in the hiarchy, so the only option
+    # when selecting values from the country provider is the country_code
+    @assert masklevel == :country_code "invalid 'masklevel' provided: \"$masklevel\""
+
+    multi_locale_countries = load!("localization", "country", locale)
+    gb = groupby(multi_locale_countries, masklevel)
+
+    selected_values = Vector{String}()
+
+    for value in mask
+        associated_mask_rows = get(gb, (value,), nothing)
+        push!(selected_values, rand(associated_mask_rows[:, :country_code]))
+    end
+    return selected_values |> coerse_string_type
+end
+
+
+
+"""
+
+"""
+function state(n::Integer = 1; locale = getlocale())
+    return rand(load!("localization", "state", locale)[:, :state_name], n) |> coerse_string_type
+end
+
+"""
+
+"""
+function state(options::Vector{<:AbstractString}, n::Integer; optionlevel::Symbol = :state_code, locale = getlocale())
+
+    @assert optionlevel in (:state_code, :country_code) "invalid 'optionlevel' provided: \"$optionlevel\""
+
+    df = _hierarchical_localization_fallback("state", optionlevel, locale)
+    filter!(r -> r[optionlevel] in options, df)
+
+    return rand(df[:, :state_name], n) |> coerse_string_type
+end
+
+"""
+
+"""
+function state(mask::Vector{<:AbstractString}; masklevel::Symbol = :state_code, locale = getlocale())
+
+    @assert masklevel in (:state_code, :country_code) "invalid 'masklevel' provided: \"$masklevel\""
+
+    df = _hierarchical_localization_fallback("state", masklevel, locale)
+    gb = groupby(df, masklevel)
+
+    selected_values = Vector{String}()
+
+    for value in mask
+        associated_mask_rows = get(gb, (value,), nothing)
+        push!(selected_values, rand(associated_mask_rows[:, :state_name]))
+    end
+    return selected_values |> coerse_string_type
+end
+
+
+
+"""
+
+"""
+function state_code(n::Integer = 1; locale = getlocale())
+    return rand(load!("localization", "state", locale)[:, :state_code], n) |> coerse_string_type
+end
+
+function state_code(options::Vector{<:AbstractString}, n::Integer; optionlevel::Symbol = :state_code, locale = getlocale())
+
+    @assert optionlevel in (:state_code, :country_code) "invalid 'optionlevel' provided: \"$optionlevel\""
+
+    df = _hierarchical_localization_fallback("state", optionlevel, locale)
+    filter!(r -> r[optionlevel] in options, df)
+
+    return rand(df[:, :state_code], n) |> coerse_string_type
+end
+
+"""
+
+"""
+function state_code(mask::Vector{<:AbstractString}; masklevel::Symbol = :state_code, locale = getlocale())
+
+    @assert masklevel in (:state_code, :country_code) "invalid 'masklevel' provided: \"$masklevel\""
+
+    df = _hierarchical_localization_fallback("state", masklevel, locale)
+    gb = groupby(df, masklevel)
+
+    selected_values = Vector{String}()
+
+    for value in mask
+        associated_mask_rows = get(gb, (value,), nothing)
+        push!(selected_values, rand(associated_mask_rows[:, :state_code]))
+    end
+    return selected_values |> coerse_string_type
+end
+
+
+
+"""
+
+"""
+function city(n::Integer = 1; locale = getlocale())
+    return rand(load!("localization", "city", locale)[:, :city_name], n) |> coerse_string_type
+end
+
+"""
+
+"""
+function city(options::Vector{<:AbstractString}, n::Integer; optionlevel = :city_name, locale = getlocale())
+
+    @assert optionlevel in (:city_name, :state_code, :country_code) "invalid 'optionlevel' provided: \"$optionlevel\""
+
+    df = _hierarchical_localization_fallback("city", optionlevel, locale)
+    filter!(r -> r[optionlevel] in options, df)
+
+    return rand(df[:, :city_name], n) |> coerse_string_type
+end
+
+"""
+
+"""
+function city(mask::Vector{<:AbstractString}; masklevel::Symbol = :city_name, locale = getlocale())
+
+    @assert masklevel in (:city_name, :state_code, :country_code) "invalid 'masklevel' provided: \"$masklevel\""
+
+    df = _hierarchical_localization_fallback("city", masklevel, locale)
+    gb = groupby(df, masklevel)
+
+    selected_values = Vector{String}()
+
+    for value in mask
+        associated_mask_rows = get(gb, (value,), nothing)
+        push!(selected_values, rand(associated_mask_rows[:, :city_name]))
+    end
+    return selected_values |> coerse_string_type
+end
+
+
+
+"""
+
+"""
+function district(n::Integer = 1; locale = getlocale())
+    return rand(load!("localization", "district", locale)[:, :district_name], n) |> coerse_string_type
+end
+
+function district(options::Vector{<:AbstractString}, n::Integer; optionlevel::Symbol = :district_name, locale = getlocale())
+
+    @assert(
+        optionlevel in (:district_name, :city_name, :state_code, :country_code),
+        "invalid 'optionlevel' provided: \"$optionlevel\""
+    )
+
+    df = _hierarchical_localization_fallback("district", optionlevel, locale)
+    filter!(r -> r[optionlevel] in options, df)
+
+    return rand(df[:, :district_name], n) |> coerse_string_type
+end
+
+"""
+
+"""
+function district(mask::Vector{<:AbstractString}; masklevel::Symbol = :district_name, locale = getlocale())
+
+    @assert(
+        masklevel in (:district_name, :city_name, :state_code, :country_code),
+        "invalid 'masklevel' provided: \"$masklevel\""
+    )
+
+    df = _hierarchical_localization_fallback("district", masklevel, locale)
+    gb = groupby(df, masklevel)
+
+    selected_values = Vector{String}()
+
+    for value in mask
+        associated_mask_rows = get(gb, (value,), nothing)
+        push!(selected_values, rand(associated_mask_rows[:, :district_name]))
+    end
+    return selected_values |> coerse_string_type
 end

@@ -18,8 +18,8 @@ const OPTION_LOADING::String = "Option-Based Loading"
 testsets = Dict{String, String}(
 #   "Data Interface" => "test_data_interface.jl",
 #   "Data Integrity" => "test_data_integrity.jl",
-#   "Localization" => "test_localization.jl",
-   "Identity" => "test_identity.jl",
+   "Localization" => "test_localization.jl",
+#   "Identity" => "test_identity.jl",
 )
 
 @testset "Impostor" begin
