@@ -27,7 +27,7 @@ const SEXES::Dict{Symbol, Vector{String}} = Dict(
         "prefix",
     ],
     :options => [
-        "male",
-        "female",
+        "M", # male
+        "F", # female
     ]
 )
