@@ -8,8 +8,9 @@ from the session is used.
 - `n::Int = 1`: number high-school names to be generated
 - `locale::Vector{String}`: locale(s) from which the high-school names are sampled.
 """
-function highschool(n::Int = 1; locale = getlocale()) :: Union{String, Vector{String}}
-    return rand(load!("highschool", "identity", locale), n) |> return_unpacker
+function highschool(n::Integer = 1; locale = getlocale())
+    df = load!("identity", "highschool", locale)
+    return rand(df[:, :highschool], n) |> coerse_string_type
 end
 
 
@@ -21,8 +22,8 @@ Generate `n` blood type entries *e.g.* `"AB-"`, `"O+"` and `"A+"`.
 # Parameters
 - `n::Int = 1`: number blood type entries to be generated
 """
-function bloodtype(n::Int = 1) :: Union{String, Vector{String}}
-    return [rand(["A", "B", "AB", "O"]) * rand(["+", "-"]) for _ in 1:n] |> return_unpacker
+function bloodtype(n::Integer = 1)
+    return [rand(["A", "B", "AB", "O"]) * rand(["+", "-"]) for _ in 1:n] |> coerse_string_type
 end
 
 
@@ -37,8 +38,8 @@ Generate `n` birth date entries between the `start` and `stop` dates.
 - `start::Date = Date(1900, 1, 1)`: start of the sampling period.
 - `stop::Date = Dates.today()`: end of the sampling period.
 """
-function birthdate(n::Int = 1; start::Date = Date(1900, 1, 1), stop::Date = today()) :: Union{Date, Vector{Date}}
-    return random_date(n, start = start, stop = stop) |> return_unpacker
+function birthdate(n::Integer = 1; start::Date = Date(1900, 1, 1), stop::Date = today())
+    return Dates.format.(rand(start:Day(1):stop, n), "yyyy-mm-dd") |> coerse_string_type
 end
 
 
@@ -52,8 +53,9 @@ provided, the locale from the session is used.
 - `n::Int = 1`: number of prefixes to be generated.
 - `locale::Vector{String}`: locale(s) from which the prefixes are sampled.
 """
-function prefix(n::Int = 1; locale = getlocale()) :: Union{String, Vector{String}}
-    return rand(load!("prefix", "identity", locale; options = SEXES[:options]), n) |> return_unpacker
+function prefix(n::Integer = 1; locale = getlocale())
+    df = load!("identity", "prefix", locale)
+    return rand(df[:, :prefix], n) |> coerse_string_type
 end
 
 """
@@ -70,8 +72,10 @@ If no `locale` is provided, the locale from the session is used.
 - `n::Int = 1`: number of prefixes to be generated.
 - `locale::Vector{String}`: locale(s) from which the prefixes are sampled.
 """
-function prefix(sex::Vector{String}, n::Int; locale = getlocale()) :: Union{String, Vector{String}}
-    return rand(load!("prefix", "identity", locale; options = sex), n) |> return_unpacker
+function prefix(sex::Vector{<:AbstractString}, n::Integer; locale = getlocale())
+    df = load!("identity", "prefix", locale)
+    filter!(r -> r[:sex] in sex, df)
+    return rand(df[:, :prefix], n) |> coerse_string_type
 end
 
 """
@@ -97,8 +101,20 @@ julia> prefix(["female", "male", "female"])
 "Ms."
 ```
 """
-function prefix(sex_mask::Vector{String}; locale = getlocale()) :: Union{String, Vector{String}}
-    return load!(sex_mask, "prefix", "identity", locale) |> return_unpacker
+function prefix(mask::Vector{<:AbstractString}; locale = getlocale())
+    
+    multi_locale_prefixes = load!("identity", "prefix", locale)
+    @assert [m in multi_locale_prefixes[:, :sex] for m in mask] |> all
+
+    gb = groupby(multi_locale_prefixes, [:sex])
+
+    selected_values = Vector{String}()
+
+    for value in mask
+        associated_mask_rows = get(gb, (value,), nothing)
+        push!(selected_values, rand(associated_mask_rows[:, :prefix]))
+    end
+    return selected_values |> coerse_string_type
 end
 
 
@@ -112,9 +128,11 @@ If no `locale` is provided, the locale from the session is used.
 - `n::Int = 1`: number of first names to be generated.
 - `locale::Vector{String}`: locale(s) from which the first names are sampled.
 """
-function firstname(n::Int = 1; locale = getlocale()) :: Union{String, Vector{String}}
-    return rand(load!("firstname", "identity", locale; options = SEXES[:options]), n) |> return_unpacker
+function firstname(n::Int = 1; locale = getlocale())
+    df = load!("identity", "firstname", locale)
+    return rand(df[:, :firstname], n) |> coerse_string_type
 end
+
 
 """
     firstname(sex::Vector{String}, n::Int; locale = getlocale())
@@ -149,8 +167,10 @@ julia> firstname(["male", "female"], 5)
 "Paul"
 ```
 """
-function firstname(sex::Vector{String}, n::Int; locale = getlocale()) :: Union{String, Vector{String}}
-    return rand(load!("firstname", "identity", locale; options = sex), n) |> return_unpacker
+function firstname(sex::Vector{String}, n::Int; locale = getlocale())
+    df = load!("identity", "firstname", locale)
+    filter!(r -> r[:sex] in sex, df)
+    return rand(df[:, :firstname], n) |> coerse_string_type
 end
 
 """
@@ -179,8 +199,20 @@ julia> firstname(["female", "male", "female", "female", "male"])
 "John"
 ```
 """
-function firstname(sex_mask::Vector{String}; locale = getlocale()) :: Union{String, Vector{String}}
-    return load!(sex_mask, "firstname", "identity", locale) |> return_unpacker
+function firstname(mask::Vector{String}; locale = getlocale()) :: Union{String, Vector{String}}
+
+    df = load!("identity", "firstname", locale)
+    @assert [m in df[:, :sex] for m in mask] |> all
+
+    gb = groupby(df, [:sex])
+
+    selected_values = Vector{String}()
+
+    for value in mask
+        associated_mask_rows = get(gb, (value,), nothing)
+        push!(selected_values, rand(associated_mask_rows[:, :firstname]))
+    end
+    return selected_values |> coerse_string_type
 end
 
 
@@ -195,8 +227,9 @@ the locale from the session will be used.
 - `n::Int = 1`: number of surnames to be generated
 - `locale::Vector{String}`: locale(s) to be used when generating the surnames
 """
-function surname(n::Int = 1; locale = getlocale()) :: Union{String, Vector{String}}
-    return rand(load!("surname", "identity", locale), n) |> return_unpacker
+function surname(n::Int = 1; locale = getlocale())
+    df = load!("identity", "surname", locale)
+    return rand(df[:, :surname], n) |> coerse_string_type
 end
 
 
@@ -215,10 +248,10 @@ function complete_name(n::Int = 1; locale = getlocale()) :: Union{String, Vector
     complete_names = Vector{String}()
     for _ in 1:n
         fname = Impostor.firstname(; locale = locale)
-        surnames = sample(load!("surname", "identity", locale), rand(1:3); replace = false)
+        surnames = sample(load!("identity", "surname", locale)[:, :surname], rand(1:3); replace = false)
         push!(complete_names, fname * " " * join(surnames, " "))
     end
-    return complete_names |> return_unpacker
+    return complete_names |> coerse_string_type
 end
 
 """
@@ -255,14 +288,14 @@ julia> Impostor.complete_name(["female"], 5)
 "Abgail Fraser Jameson"
 ```
 """
-function complete_name(sex::Vector{String}, n::Int; locale = getlocale()) :: Union{String, Vector{String}}
+function complete_name(sex::Vector{String}, n::Int; locale = getlocale())
     complete_names = Vector{String}()
     for _ in 1:n
         fname = Impostor.firstname(sex, 1; locale = locale)
-        surnames = sample(load!("surname", "identity", locale), rand(1:3); replace = false)
+        surnames = sample(load!("identity", "surname", locale)[:, :surname], rand(1:3); replace = false)
         push!(complete_names, fname * " " * join(surnames, " "))
     end
-    return complete_names |> return_unpacker
+    return complete_names |> coerse_string_type
 end
 
 """
@@ -291,14 +324,14 @@ julia> complete_name(["female", "male", "female", "female", "male"])
 "Alfred Fraser Collins"
 ```
 """
-function complete_name(sex_mask::Vector{String}; locale = getlocale()) :: Union{String, Vector{String}}
+function complete_name(mask::Vector{<:AbstractString}; locale = getlocale())
     complete_names = Vector{String}()
-    for sex in sex_mask
-        fname = Impostor.firstname([sex]; locale = locale)
-        surnames = sample(load!("surname", "identity", locale), rand(1:3); replace = false)
+    for value in mask
+        fname = Impostor.firstname([value]; locale = locale)
+        surnames = sample(load!("identity", "surname", locale)[:, :surname], rand(1:3); replace = false)
         push!(complete_names, fname * " " * join(surnames, " "))
     end
-    return complete_names |> return_unpacker
+    return complete_names |> coerse_string_type
 end
 
 
@@ -312,9 +345,11 @@ If no `locale` is provided, the locale from the session is used.
 - `n::Int = 1`: number of occupations to be generated.
 - `locale::Vector{String}`: locale(s) from which the occupations are sampled.
 """
-function occupation(n::Int = 1; locale = getlocale()) :: Union{String, Vector{String}}
-    return rand(load!("occupation", "identity", locale; options = KNOWLEDGE_FIELDS[:options]), n) |> return_unpacker
+function occupation(n::Integer = 1; locale = getlocale())
+    df = load!("identity", "occupation", locale)
+    return rand(df[:, :occupation], n) |> coerse_string_type
 end
+
 
 """
     occupation(field::Vector{String}, n::Int; locale = getlocale())
@@ -336,8 +371,10 @@ If no `locale` is provided, the locale from the session is used.
 - `n::Int = 1`: number of occupations to be generated.
 - `locale::Vector{String}`: locale(s) from which the occupations are sampled.
 """
-function occupation(field::Vector{String}, n::Int; locale = getlocale()) :: Union{String, Vector{String}}
-    return rand(load!("occupation", "identity", locale; options = field), n) |> return_unpacker
+function occupation(options::Vector{String}, n::Int; locale = getlocale())
+    df = load!("identity", "occupation", locale)
+    filter!(r -> r[:knowledge_field] in options, df)
+    return rand(df[:, :occupation], n) |> coerse_string_type
 end
 
 """
@@ -359,8 +396,19 @@ If no `locale` is provided, the locale from the session is used.
     - `"military"`
 - `locale::Vector{String}`: locale(s) from which the occupations are sampled.
 """
-function occupation(field_mask::Vector{String}; locale = getlocale()) :: Union{String, Vector{String}}
-    return load!(field_mask, "occupation", "identity", locale) |> return_unpacker
+function occupation(mask::Vector{String}; locale = getlocale()) :: Union{String, Vector{String}}
+    df = load!("identity", "occupation", locale)
+    @assert [m in df[:, :knowledge_field] for m in mask] |> all
+
+    gb = groupby(df, [:knowledge_field])
+
+    selected_values = Vector{String}()
+
+    for value in mask
+        associated_mask_rows = get(gb, (value,), nothing)
+        push!(selected_values, rand(associated_mask_rows[:, :occupation]))
+    end
+    return selected_values |> coerse_string_type
 end
 
 
@@ -376,7 +424,8 @@ If no `locale` is provided, the locale from the session is used.
 - `locale::Vector{String}`: locale(s) from which the universities are sampled.
 """
 function university(n::Int = 1; locale = getlocale()) :: Union{String, Vector{String}}
-    return rand(load!("university", "identity", locale; options = KNOWLEDGE_FIELDS[:options]), n) |> return_unpacker
+    df = load!("identity", "university", locale)
+    return rand(df[:, :university], n) |> coerse_string_type
 end
 
 """
@@ -399,8 +448,10 @@ If no `locale` is provided, the locale from the session is used.
 - `n::Int = 1`: number of universities to be generated.
 - `locale::Vector{String}`: locale(s) from which the universities are sampled.
 """
-function university(field::Vector{String}, n::Int; locale = getlocale()) :: Union{String, Vector{String}}
-    return rand(load!("university", "identity", locale; options = field), n) |> return_unpacker
+function university(options::Vector{<:AbstractString}, n::Integer; locale = getlocale())
+    df = load!("identity", "university", locale)
+    filter!(r -> r[:knowledge_field] in options, df)
+    return rand(df[:, :university], n) |> coerse_string_type
 end
 
 """
@@ -422,6 +473,17 @@ If no `locale` is provided, the locale from the session is used.
     - `"military"`
 - `locale::Vector{String}`: locale(s) from which the universities are sampled.
 """
-function university(field_mask::Vector{String}; locale = getlocale()) :: Union{String, Vector{String}}
-    return load!(field_mask, "university", "identity", locale) |> return_unpacker
+function university(mask::Vector{<:AbstractString}; locale = getlocale())
+    df = load!("identity", "university", locale)
+    @assert [m in df[:, :knowledge_field] for m in mask] |> all
+
+    gb = groupby(df, [:knowledge_field])
+
+    selected_values = Vector{String}()
+
+    for value in mask
+        associated_mask_rows = get(gb, (value,), nothing)
+        push!(selected_values, rand(associated_mask_rows[:, :university]))
+    end
+    return selected_values |> coerse_string_type
 end

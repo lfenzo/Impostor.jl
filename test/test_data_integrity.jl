@@ -1,27 +1,31 @@
 @testset "Identity" begin
-
     for locale in ALL_LOCALES
-        for func in SEXES[:provider_functions]
-            content_exists(locale, "identity", string(func)) && @testset "$func" begin
-                loaded = _test_load(string(func), "identity", locale)
-                @test [allunique(loaded[sex]) for sex in SEXES[:options]] |> all
-                @test vcat([loaded[opt] for opt in SEXES[:options]]...) |> allunique
+        locale_exists("identity", "highschool", locale) && @testset "highschool" begin
+            df = Impostor.load!("identity", "highschool", locale)
+            @test allunique(df, :highschool)
+        end
+
+        locale_exists("identity", "surname", locale) && @testset "surname" begin
+            df = Impostor.load!("identity", "surname", locale)
+            @test allunique(df, :surname)
+        end
+
+        # functions using SEX as data restriction
+        for func in [prefix, firstname]
+            locale_exists("identity", string(func), locale) && @testset "$func" begin
+                df = Impostor.load!("identity", string(func), locale)
+                @test allunique(df, Symbol(func))
+                @test sort(unique(df[:, :sex])) == sort(SEXES[:options])
             end
         end
 
-        for func in KNOWLEDGE_FIELDS[:provider_functions]
-            content_exists(locale, "identity", string(func)) && @testset "$func" begin
-                loaded = _test_load(string(func), "identity", locale)
-                @test [allunique(loaded[sex]) for sex in KNOWLEDGE_FIELDS[:options]] |> all
+        # functions using KNOWLEDGE_FIELD as data restriction
+        for func in [university, occupation]
+            locale_exists("identity", string(func), locale) && @testset "$func" begin
+                df = Impostor.load!("identity", string(func), locale)
+                @test allunique(df, Symbol(func))
+                @test sort(unique(df[:, :knowledge_field])) == sort(KNOWLEDGE_FIELDS[:options])
             end
-        end
-
-        content_exists(locale, "identity", "surname") && @testset "surname" begin
-            @test allunique(_test_load("surname", "identity", locale))
-        end
-
-        content_exists(locale, "identity", "highschool") && @testset "highschool" begin
-            @test allunique(_test_load("highschool", "identity", locale))
         end
     end
 end
@@ -29,8 +33,33 @@ end
 
 @testset "Localization" begin
     for locale in ALL_LOCALES
-        content_exists(locale, "localization", "city") && @testset "city" begin
-            @test allunique(_test_load("city", "localization", locale))
+        locale_exists("localization", "locale", locale) && @testset "locale" begin
+            df = Impostor.load!("localization", "locale", locale)
+            @test allunique(df, :locale)
+            @test allunique(df, :country_code)
+        end
+
+        locale_exists("localization", "country", locale) && @testset "country" begin
+            df = Impostor.load!("localization", "country", locale)
+            @test allunique(df, :country_name)
+            @test allunique(df, :official_country_name)
+            @test (df[:, :locale] .== locale) |> all
+        end
+
+        locale_exists("localization", "state", locale) && @testset "state" begin
+            df = Impostor.load!("localization", "state", locale)
+            @test allunique(df, :state_code)
+            @test allunique(df, :state_name)
+        end
+
+        locale_exists("localization", "city", locale) && @testset "city" begin
+            df = Impostor.load!("localization", "city", locale)
+            @test allunique(df, :city_name)
+        end
+
+        locale_exists("localization", "district", locale) && @testset "district" begin
+            df = Impostor.load!("localization", "district", locale)
+            @test allunique(df, :district_name)
         end
     end
 end

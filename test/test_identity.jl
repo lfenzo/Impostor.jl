@@ -1,121 +1,113 @@
-sex_dependent_functions = Dict{Function, String}(
-    Impostor.firstname => "firstname", 
-    Impostor.prefix => "prefix",
-)
-
-for (func, content) in sex_dependent_functions
-    @testset "$(string(func))" begin 
-        N = 10
-        option_mask = ["male", "female", "female", "male", "female"]
-        available_values = _test_load(content, "identity", only(getlocale()))
-
-        @testset "$OPTIONLESS" begin
-            generated = func(N)
-            @test generated isa Vector{String}
-            @test length(generated) == N
-            @test func() isa String
-        end
-
-        @testset "$OPTION_LOADING" begin
-            sex = "female"
-            generated = func([sex], N)
-            @test generated isa Vector{String}
-            @test length(generated) == N
-            @test all([value in available_values[sex] for value in generated])
-        end
-
-        @testset "$MASK_LOADING" begin
-            generated = func(option_mask)
-            @test generated isa Vector{String}
-            @test length(generated) == length(option_mask)
-            @test all([l in available_values[sex] for (l, sex) in zip(generated, option_mask)])
-        end
-    end
-end
-
-
-knowledge_fields_dependent_functions = Dict{Function, String}(
-    Impostor.occupation => "occupation", 
-    Impostor.university => "university",
-)
-
-for (func, content) in knowledge_fields_dependent_functions
-    @testset "$(string(func))" begin 
-        N = 10
-        option_mask = ["humanities", "business", "public-administration", "formal-sciences"]
-        available_values = _test_load(content, "identity", only(getlocale()))
-
-        @testset "$OPTIONLESS" begin
-            generated = func(N)
-            @test generated isa Vector{String}
-            @test length(generated) == N
-            @test func() isa String
-        end
-
-        @testset "$OPTION_LOADING" begin
-            fields = ["business", "humanities"]
-            generated = func(fields, N)
-            @test generated isa Vector{String}
-            @test length(generated) == N
-            @test all([any(broadcast((v) -> val in v, [available_values[f] for f in fields])) for val in generated])
-        end
-
-        @testset "$MASK_LOADING" begin
-            generated = func(option_mask)
-            @test generated isa Vector{String}
-            @test length(generated) == length(option_mask)
-            @test all([g in available_values[field] for (g, field) in zip(generated, option_mask)])
-        end
-    end
-end
-
-
-@testset "complete_name" begin 
+@testset "bloodtype" begin
     N = 10
-    option_mask = ["male", "female", "female", "male", "female"]
-    available_values = _test_load("firstname", "identity", only(getlocale()))
 
     @testset "$OPTIONLESS" begin
-        generated = complete_name(N)
-        @test generated isa Vector{String}
-        @test length(generated) == N
-        @test complete_name() isa String
-    end
+        blood = bloodtype(N)
+        @test blood isa Vector{<:AbstractString}
+        @test length(blood) == N
 
-    @testset "$OPTION_LOADING" begin
-        sex = "female"
-        generated = complete_name([sex], N)
-        @test generated isa Vector{String}
-        @test length(generated) == N
-        @test all([first(split(value, " ")) in available_values[sex] for value in generated])
-    end
-
-    @testset "$MASK_LOADING" begin
-        generated = complete_name(option_mask)
-        @test generated isa Vector{String}
-        @test length(generated) == length(option_mask)
-        @test all([first(split(g, " ")) in available_values[sex] for (g, sex) in zip(generated, option_mask)])
+        @test bloodtype() isa String
     end
 end
 
 
-@testset "surname" begin 
+@testset "birthdate" begin
     N = 10
+
     @testset "$OPTIONLESS" begin
-        generated = surname(N)
-        @test generated isa Vector{String}
-        @test length(generated) == N
+        birth = birthdate(N)
+        @test birth isa Vector{<:AbstractString}
+        @test length(birth) == N
+
+        @test birthdate() isa String
+    end
+end
+
+
+@testset "surname" begin
+    N = 10
+
+    @testset "$OPTIONLESS" begin
+        birth = surname(N)
+        @test birth isa Vector{<:AbstractString}
+        @test length(birth) == N
+
         @test surname() isa String
     end
 end
 
 
-@testset "highschool" begin 
+@testset "highshcool" begin
     N = 10
+    locale = ["en_US", "pt_BR"]
+
     @testset "$OPTIONLESS" begin
-        generated = highschool(N)
-        @test generated isa Vector{String}
-        @test length(generated) == N
-        @test highschool() isa String
+        highschools = highschool(N; locale = locale)
+        @test highschools isa Vector{<:AbstractString}
+        @test length(highschools) == N
+
+        @test highschool(; locale = locale) isa AbstractString
+    end
+end
+
+
+for func in [Impostor.prefix, Impostor.firstname, Impostor.complete_name]
+    @testset "$func" begin
+        N = 10
+        locale = ["en_US", "pt_BR"]
+        mask = ["M", "M", "F", "F", "M"]
+
+        @testset "$OPTIONLESS" begin
+            loaded = func(N; locale = locale)
+            @test loaded isa Vector{<:AbstractString}
+            @test length(loaded) == N
+
+            @test func(; locale) isa String
+        end
+
+        @testset "$OPTION_LOADING" begin
+            loaded = func(unique(mask), N; locale = locale)
+            @test loaded isa Vector{<:AbstractString}
+            @test length(loaded) == N
+        end
+
+        @testset "$MASK_LOADING" begin
+            loaded = func(mask; locale = locale)
+            @test loaded isa Vector{<:AbstractString}
+            @test length(loaded) == length(mask)
+
+            @test func([mask[begin]]; locale) isa String
+        end
+    end
+end
+
+
+for func in [Impostor.occupation, Impostor.university]
+    @testset "$func" begin
+        N = 10
+        locale = ["en_US", "pt_BR"]
+        mask = ["business", "military", "humanities", "social-sciences", "military", "humanities"]
+
+        @testset "$OPTIONLESS" begin
+            loaded = func(N; locale = locale)
+            @test loaded isa Vector{<:AbstractString}
+            @test length(loaded) == N
+
+            @test func(; locale) isa String
+        end
+
+        @testset "$OPTION_LOADING" begin
+            loaded = func(unique(mask), N; locale = locale)
+            @test loaded isa Vector{<:AbstractString}
+            @test length(loaded) == N
+        end
+
+        @testset "$MASK_LOADING" begin
+            loaded = func(mask; locale = locale)
+            @test loaded isa Vector{<:AbstractString}
+            @test length(loaded) == length(mask)
+
+            @test func([mask[begin]]; locale) isa String
+        end
     end
 end

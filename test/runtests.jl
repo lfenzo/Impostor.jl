@@ -1,20 +1,19 @@
 using Impostor
 using Test
-using JSON3
+using CSV
+using DataFrames
 
 
 include("utils.jl")
 include(joinpath(pkgdir(Impostor), "src", "providers", "relation_restrictions.jl"))
 
-
 # common aliases to test 
-const OPTIONLESS::String = "Random Values (neither Options nor Mask)"
+const OPTIONLESS::String = "Random Values"
 const MASK_LOADING::String = "Mask-Based Loading"
 const OPTION_LOADING::String = "Option-Based Loading"
 
 # list of all available locales to be checked for intetritty
-const ALL_LOCALES::Vector{String} = [d for d in readdir(pkgdir(Impostor, "src", "data")) if d != "template"]
-
+const ALL_LOCALES::Vector{String} = _get_all_locales(; root = pkgdir(Impostor, "src", "data"))
 
 testsets = Dict{String, String}(
    "Data Interface" => "test_data_interface.jl",
@@ -24,9 +23,9 @@ testsets = Dict{String, String}(
 )
 
 @testset "Impostor" begin
-    for (testset, test_file) in testsets
+    for (testset, file) in testsets
         @testset "$testset" begin
-            include(test_file)
+            include(file)
         end
     end
 end
