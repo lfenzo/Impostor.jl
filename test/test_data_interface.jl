@@ -11,8 +11,8 @@
     end
 
     @testset "Single Locale" begin
-        available_values = _test_load("identity", "occupation", only(getlocale()))
-        loaded = Impostor.load!("identity", "occupation", only(getlocale()))
+        available_values = _test_load("identity", "occupation", only(session_locale()))
+        loaded = Impostor.load!("identity", "occupation", only(session_locale()))
 
         @test loaded isa DataFrame
         @test available_values == loaded
@@ -21,13 +21,14 @@
     @testset "Multiple Locales" begin
         locales = ["pt_BR", "en_US"]  # TOOO add more locales later on
 
-        available_values = _test_load("identity", "firstname", locales)
-        loaded = Impostor.load!("identity", "firstname", locales)
-
         df = DataFrame()
+        available_values = _test_load("identity", "firstname", locales)
+
         for key in keys(available_values)
             append!(df, available_values[key]) 
         end
+
+        loaded = Impostor.load!("identity", "firstname", locales)
 
         @test loaded isa DataFrame
         @test sort(df, ["sex", "firstname"]) == sort(loaded, ["sex", "firstname"])

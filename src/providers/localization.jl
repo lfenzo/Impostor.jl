@@ -33,14 +33,14 @@ end
 """
 
 """
-function country(n::Integer = 1; locale = getlocale())
+function country(n::Integer = 1; locale = session_locale())
     return rand(load!("localization", "country", locale)[:, :country_name], n) |> coerse_string_type
 end
 
 """
 
 """
-function country(options::Vector{<:AbstractString}, n::Integer; optionlevel::Symbol = :country_code, locale = getlocale())
+function country(options::Vector{<:AbstractString}, n::Integer; optionlevel::Symbol = :country_code, locale = session_locale())
 
     # for the 'country' functions the only possible mask/option level is the country
     # because there is nothing higher in the hiarchy, so the only option
@@ -55,7 +55,7 @@ end
 """
 
 """
-function country(mask::Vector{<:AbstractString}; masklevel::Symbol = :country_code, locale = getlocale())
+function country(mask::Vector{<:AbstractString}; masklevel::Symbol = :country_code, locale = session_locale())
 
     # for the 'country' functions the only possible mask/option level is the country
     # because there is nothing higher in the hiarchy, so the only option
@@ -79,14 +79,14 @@ end
 """
 
 """
-function country_code(n::Integer = 1; locale = getlocale())
+function country_code(n::Integer = 1; locale = session_locale())
     return rand(load!("localization", "country", locale)[:, :country_code], n) |> coerse_string_type
 end
 
 """
 
 """
-function country_code(options::Vector{<:AbstractString}, n::Integer; optionlevel::Symbol = :country_code, locale = getlocale())
+function country_code(options::Vector{<:AbstractString}, n::Integer; optionlevel::Symbol = :country_code, locale = session_locale())
 
     # for the 'country' functions the only possible mask/option level is the country
     # because there is nothing higher in the hiarchy, so the only option
@@ -101,7 +101,7 @@ end
 """
 
 """
-function country_code(mask::Vector{<:AbstractString}; masklevel::Symbol = :country_code, locale = getlocale())
+function country_code(mask::Vector{<:AbstractString}; masklevel::Symbol = :country_code, locale = session_locale())
 
     # for the 'country' functions the only possible mask/option level is the country
     # because there is nothing higher in the hiarchy, so the only option
@@ -125,14 +125,14 @@ end
 """
 
 """
-function state(n::Integer = 1; locale = getlocale())
+function state(n::Integer = 1; locale = session_locale())
     return rand(load!("localization", "state", locale)[:, :state_name], n) |> coerse_string_type
 end
 
 """
 
 """
-function state(options::Vector{<:AbstractString}, n::Integer; optionlevel::Symbol = :state_code, locale = getlocale())
+function state(options::Vector{<:AbstractString}, n::Integer; optionlevel::Symbol = :state_code, locale = session_locale())
 
     @assert optionlevel in (:state_code, :country_code) "invalid 'optionlevel' provided: \"$optionlevel\""
 
@@ -145,7 +145,7 @@ end
 """
 
 """
-function state(mask::Vector{<:AbstractString}; masklevel::Symbol = :state_code, locale = getlocale())
+function state(mask::Vector{<:AbstractString}; masklevel::Symbol = :state_code, locale = session_locale())
 
     @assert masklevel in (:state_code, :country_code) "invalid 'masklevel' provided: \"$masklevel\""
 
@@ -166,11 +166,11 @@ end
 """
 
 """
-function state_code(n::Integer = 1; locale = getlocale())
+function state_code(n::Integer = 1; locale = session_locale())
     return rand(load!("localization", "state", locale)[:, :state_code], n) |> coerse_string_type
 end
 
-function state_code(options::Vector{<:AbstractString}, n::Integer; optionlevel::Symbol = :state_code, locale = getlocale())
+function state_code(options::Vector{<:AbstractString}, n::Integer; optionlevel::Symbol = :state_code, locale = session_locale())
 
     @assert optionlevel in (:state_code, :country_code) "invalid 'optionlevel' provided: \"$optionlevel\""
 
@@ -183,7 +183,7 @@ end
 """
 
 """
-function state_code(mask::Vector{<:AbstractString}; masklevel::Symbol = :state_code, locale = getlocale())
+function state_code(mask::Vector{<:AbstractString}; masklevel::Symbol = :state_code, locale = session_locale())
 
     @assert masklevel in (:state_code, :country_code) "invalid 'masklevel' provided: \"$masklevel\""
 
@@ -204,14 +204,14 @@ end
 """
 
 """
-function city(n::Integer = 1; locale = getlocale())
+function city(n::Integer = 1; locale = session_locale())
     return rand(load!("localization", "city", locale)[:, :city_name], n) |> coerse_string_type
 end
 
 """
 
 """
-function city(options::Vector{<:AbstractString}, n::Integer; optionlevel = :city_name, locale = getlocale())
+function city(options::Vector{<:AbstractString}, n::Integer; optionlevel = :city_name, locale = session_locale())
 
     @assert optionlevel in (:city_name, :state_code, :country_code) "invalid 'optionlevel' provided: \"$optionlevel\""
 
@@ -224,7 +224,7 @@ end
 """
 
 """
-function city(mask::Vector{<:AbstractString}; masklevel::Symbol = :city_name, locale = getlocale())
+function city(mask::Vector{<:AbstractString}; masklevel::Symbol = :city_name, locale = session_locale())
 
     @assert masklevel in (:city_name, :state_code, :country_code) "invalid 'masklevel' provided: \"$masklevel\""
 
@@ -245,11 +245,11 @@ end
 """
 
 """
-function district(n::Integer = 1; locale = getlocale())
+function district(n::Integer = 1; locale = session_locale())
     return rand(load!("localization", "district", locale)[:, :district_name], n) |> coerse_string_type
 end
 
-function district(options::Vector{<:AbstractString}, n::Integer; optionlevel::Symbol = :district_name, locale = getlocale())
+function district(options::Vector{<:AbstractString}, n::Integer; optionlevel::Symbol = :district_name, locale = session_locale())
 
     @assert(
         optionlevel in (:district_name, :city_name, :state_code, :country_code),
@@ -265,7 +265,7 @@ end
 """
 
 """
-function district(mask::Vector{<:AbstractString}; masklevel::Symbol = :district_name, locale = getlocale())
+function district(mask::Vector{<:AbstractString}; masklevel::Symbol = :district_name, locale = session_locale())
 
     @assert(
         masklevel in (:district_name, :city_name, :state_code, :country_code),

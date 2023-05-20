@@ -9,7 +9,7 @@ using StatsBase
 
 export ImpostorTemplate
 
-export getlocale
+export session_locale
 export setlocale!
 export resetlocale!
 export provider_exists
