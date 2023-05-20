@@ -4,21 +4,21 @@ const DEFAULT_SESSION_LOCALE::Vector{String} = ["en_US"]
 
 Base.@kwdef mutable struct DataContainer
     data::Dict = Dict()
-    locale::Vector{String} = DEFAULT_SESSION_LOCALE
+    locale::Vector{<:AbstractString} = DEFAULT_SESSION_LOCALE
 end
 
 DataContainer(s::String) = DataContainer(Dict(), [s])
 
-DataContainer(s::Vector{String}) = DataContainer(Dict(), s)
+DataContainer(s::Vector{<:AbstractString}) = DataContainer(Dict(), s)
 
 
 Base.empty!(d::DataContainer) = empty!(d.data)
 
-getlocale() = SESSION_CONTAINER.locale
+session_locale() = SESSION_CONTAINER.locale
 
 setlocale!(loc::String) = setproperty!(SESSION_CONTAINER, :locale, [loc])
 
-setlocale!(loc::Vector{String}) = setproperty!(SESSION_CONTAINER, :locale, loc)
+setlocale!(loc::Vector{<:AbstractString}) = setproperty!(SESSION_CONTAINER, :locale, loc)
 
 function resetlocale!() :: Nothing
     empty!(SESSION_CONTAINER)
@@ -37,14 +37,14 @@ end
 """
 
 """
-@inline function content_exists(provider::T, content::T) where {T <: AbstractString}
+@inline function content_exists(provider::T, content::T) :: Bool where {T <: AbstractString}
     return provider_exists(provider) && content in readdir(joinpath(ASSETS_ROOT, provider))
 end
 
 """
 
 """
-@inline function locale_exists(provider::T, content::T, locale::T) where {T <: AbstractString}
+@inline function locale_exists(provider::T, content::T, locale::T) :: Bool where {T <: AbstractString}
     return (
         content_exists(provider, content)
         && locale * ".csv" in readdir(joinpath(ASSETS_ROOT, provider, content))
@@ -65,14 +65,14 @@ end
 """
 
 """
-@inline function content_loaded(d::DataContainer, provider::T, content::T) where {T <: AbstractString}
+@inline function content_loaded(d::DataContainer, provider::T, content::T) :: Bool where {T <: AbstractString}
     return provider_loaded(d, provider) && haskey(d.data[provider], content)
 end
 
 """
 
 """
-@inline function locale_loaded(d::DataContainer, provider::T, content::T, locale::T) where {T <: AbstractString}
+@inline function locale_loaded(d::DataContainer, provider::T, content::T, locale::T) :: Bool where {T <: AbstractString}
     return content_loaded(d, provider, content) && haskey(d.data[provider][content], locale)
 end
 
@@ -80,7 +80,7 @@ end
 """
 
 """
-function load!(provider::T, content::T, locale::Vector{T}) where {T <: AbstractString}
+function load!(provider::T, content::T, locale::Vector{T}) :: DataFrame where {T <: AbstractString}
     df = DataFrame()
     for loc in locale
         append!(df, load!(provider, content, loc); promote = true)

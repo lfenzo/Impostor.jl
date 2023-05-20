@@ -1,5 +1,5 @@
 """
-    highschool(n::Integer = 1; locale = getlocale())
+    highschool(n::Integer = 1; locale = session_locale())
 
 Generate `n` high-school names from a given `locale`. If no `locale` is provided, the locale
 from the session is used.
@@ -8,7 +8,7 @@ from the session is used.
 - `n::Int = 1`: number high-school names to be generated
 - `locale::Vector{String}`: locale(s) from which the high-school names are sampled.
 """
-function highschool(n::Integer = 1; locale = getlocale())
+function highschool(n::Integer = 1; locale = session_locale())
     df = load!("identity", "highschool", locale)
     return rand(df[:, :highschool], n) |> coerse_string_type
 end
@@ -44,7 +44,7 @@ end
 
 
 """
-    prefix(n::Integer = 1; locale = getlocale())
+    prefix(n::Integer = 1; locale = session_locale())
 
 Generate `n` name prefixes, *e.g.* `"Mr."` and `"Ms."`, from a given locale. If no `locale` is
 provided, the locale from the session is used.
@@ -53,13 +53,13 @@ provided, the locale from the session is used.
 - `n::Int = 1`: number of prefixes to be generated.
 - `locale::Vector{String}`: locale(s) from which the prefixes are sampled.
 """
-function prefix(n::Integer = 1; locale = getlocale())
+function prefix(n::Integer = 1; locale = session_locale())
     df = load!("identity", "prefix", locale)
     return rand(df[:, :prefix], n) |> coerse_string_type
 end
 
 """
-    prefix(sex::Vector{String}, n::Integer; locale = getlocale())
+    prefix(sex::Vector{String}, n::Integer; locale = session_locale())
 
 Generate `n` name prefixes, *e.g.* `"Mr."` and `"Ms."`, from a given locale restricting the `sex` of
 the generated prefixes. For example, if `sex = ["female"]`, only female prefixes are generated.
@@ -72,14 +72,14 @@ If no `locale` is provided, the locale from the session is used.
 - `n::Int = 1`: number of prefixes to be generated.
 - `locale::Vector{String}`: locale(s) from which the prefixes are sampled.
 """
-function prefix(sex::Vector{<:AbstractString}, n::Integer; locale = getlocale())
+function prefix(sex::Vector{<:AbstractString}, n::Integer; locale = session_locale())
     df = load!("identity", "prefix", locale)
     filter!(r -> r[:sex] in sex, df)
     return rand(df[:, :prefix], n) |> coerse_string_type
 end
 
 """
-    prefix(sex_mask::Vector{<:AbstractString}; locale = getlocale())
+    prefix(sex_mask::Vector{<:AbstractString}; locale = session_locale())
 
 Generate name prefixes, *e.g.* `"Mr."` and `"Ms."`, from a `sex_mask`. For example, if
 `sex_mask = ["female", "female", "male", "female"]` four name prefixes will be generated
@@ -101,7 +101,7 @@ julia> prefix(["female", "male", "female"])
 "Ms."
 ```
 """
-function prefix(mask::Vector{<:AbstractString}; locale = getlocale())
+function prefix(mask::Vector{<:AbstractString}; locale = session_locale())
     
     multi_locale_prefixes = load!("identity", "prefix", locale)
     @assert [m in multi_locale_prefixes[:, :sex] for m in mask] |> all
@@ -119,7 +119,7 @@ end
 
 
 """
-    firstname(n::Integer = 1; locale = getlocale())
+    firstname(n::Integer = 1; locale = session_locale())
 
 Generate `n` first names from a given locale.
 If no `locale` is provided, the locale from the session is used.
@@ -128,14 +128,14 @@ If no `locale` is provided, the locale from the session is used.
 - `n::Int = 1`: number of first names to be generated.
 - `locale::Vector{String}`: locale(s) from which the first names are sampled.
 """
-function firstname(n::Integer = 1; locale = getlocale())
+function firstname(n::Integer = 1; locale = session_locale())
     df = load!("identity", "firstname", locale)
     return rand(df[:, :firstname], n) |> coerse_string_type
 end
 
 
 """
-    firstname(sex::Vector{<:AbstractString}, n::Integer; locale = getlocale())
+    firstname(sex::Vector{<:AbstractString}, n::Integer; locale = session_locale())
 
 Generate `n` first names from a given locale restricting the `sex` of the generated names.
 For example, if `sex = ["female"]`, only female first names are generated.
@@ -167,14 +167,14 @@ julia> firstname(["male", "female"], 5)
 "Paul"
 ```
 """
-function firstname(sex::Vector{<:AbstractString}, n::Integer; locale = getlocale())
+function firstname(sex::Vector{<:AbstractString}, n::Integer; locale = session_locale())
     df = load!("identity", "firstname", locale)
     filter!(r -> r[:sex] in sex, df)
     return rand(df[:, :firstname], n) |> coerse_string_type
 end
 
 """
-    firstname(sex_mask::Vector{<:AbstractString}; locale = getlocale())
+    firstname(sex_mask::Vector{<:AbstractString}; locale = session_locale())
 
 Generate first names from a `sex_mask`. For example, if `sex_mask = ["female", "female",
 "male", "female"]` four first names will be generated corresponding to the sexes
@@ -199,7 +199,7 @@ julia> firstname(["female", "male", "female", "female", "male"])
 "John"
 ```
 """
-function firstname(mask::Vector{<:AbstractString}; locale = getlocale())
+function firstname(mask::Vector{<:AbstractString}; locale = session_locale())
 
     df = load!("identity", "firstname", locale)
     @assert [m in df[:, :sex] for m in mask] |> all
@@ -217,7 +217,7 @@ end
 
 
 """
-    surname(n::Integer = 1; locale = getlocale())
+    surname(n::Integer = 1; locale = session_locale())
 
 Generate a `surname` using the provided `locale` as source. If no `locale` is provided,
 the locale from the session will be used.
@@ -227,7 +227,7 @@ the locale from the session will be used.
 - `n::Int = 1`: number of surnames to be generated
 - `locale::Vector{String}`: locale(s) to be used when generating the surnames
 """
-function surname(n::Integer = 1; locale = getlocale())
+function surname(n::Integer = 1; locale = session_locale())
     df = load!("identity", "surname", locale)
     return rand(df[:, :surname], n) |> coerse_string_type
 end
@@ -235,7 +235,7 @@ end
 
 
 """
-    complete_name(n::Integer = 1; locale = getlocale())
+    complete_name(n::Integer = 1; locale = session_locale())
 
 Generate `n` full names from a given locale.
 If no `locale` is provided, the locale from the session is used.
@@ -244,7 +244,7 @@ If no `locale` is provided, the locale from the session is used.
 - `n::Int = 1`: number of full names to be generated.
 - `locale::Vector{String}`: locale(s) from which the first names are sampled.
 """
-function complete_name(n::Integer = 1; locale = getlocale())
+function complete_name(n::Integer = 1; locale = session_locale())
     complete_names = Vector{String}()
     for _ in 1:n
         fname = Impostor.firstname(; locale = locale)
@@ -255,7 +255,7 @@ function complete_name(n::Integer = 1; locale = getlocale())
 end
 
 """
-    complete_name(sex::Vector{<:AbstractString}, n::Integer; locale = getlocale())
+    complete_name(sex::Vector{<:AbstractString}, n::Integer; locale = session_locale())
 
 Generate `n` first names from a given locale restricting the `sex` of the generated names.
 For example, if `sex = ["female"]`, only female first names are generated.
@@ -288,7 +288,7 @@ julia> Impostor.complete_name(["female"], 5)
 "Abgail Fraser Jameson"
 ```
 """
-function complete_name(sex::Vector{<:AbstractString}, n::Integer; locale = getlocale())
+function complete_name(sex::Vector{<:AbstractString}, n::Integer; locale = session_locale())
     complete_names = Vector{String}()
     for _ in 1:n
         fname = Impostor.firstname(sex, 1; locale = locale)
@@ -299,7 +299,7 @@ function complete_name(sex::Vector{<:AbstractString}, n::Integer; locale = getlo
 end
 
 """
-    complete_name(sex_mask::Vector{<:AbstractString}; locale = getlocale())
+    complete_name(sex_mask::Vector{<:AbstractString}; locale = session_locale())
 
 Generate full names (complete names) from a `sex_mask`. For example, if `sex_mask = ["female",
 "female", "male", "female"]` four complete names will be generated corresponding to the sexes
@@ -324,7 +324,7 @@ julia> complete_name(["female", "male", "female", "female", "male"])
 "Alfred Fraser Collins"
 ```
 """
-function complete_name(mask::Vector{<:AbstractString}; locale = getlocale())
+function complete_name(mask::Vector{<:AbstractString}; locale = session_locale())
     complete_names = Vector{String}()
     for value in mask
         fname = Impostor.firstname([value]; locale = locale)
@@ -336,7 +336,7 @@ end
 
 
 """
-    occupation(n::Integer = 1; locale = getlocale())
+    occupation(n::Integer = 1; locale = session_locale())
 
 Generate `n` occupation entries from a given locale.
 If no `locale` is provided, the locale from the session is used.
@@ -345,14 +345,14 @@ If no `locale` is provided, the locale from the session is used.
 - `n::Int = 1`: number of occupations to be generated.
 - `locale::Vector{String}`: locale(s) from which the occupations are sampled.
 """
-function occupation(n::Integer = 1; locale = getlocale())
+function occupation(n::Integer = 1; locale = session_locale())
     df = load!("identity", "occupation", locale)
     return rand(df[:, :occupation], n) |> coerse_string_type
 end
 
 
 """
-    occupation(field::Vector{<:AbstractString}, n::Integer; locale = getlocale())
+    occupation(field::Vector{<:AbstractString}, n::Integer; locale = session_locale())
 
 Generate `n` occupation entries from a given locale restricting the `field` of thegenerated
 generated occupations. For example, if `fields = ["business", "humanities"]`, only occupations
@@ -371,14 +371,14 @@ If no `locale` is provided, the locale from the session is used.
 - `n::Int = 1`: number of occupations to be generated.
 - `locale::Vector{String}`: locale(s) from which the occupations are sampled.
 """
-function occupation(options::Vector{<:AbstractString}, n::Integer; locale = getlocale())
+function occupation(options::Vector{<:AbstractString}, n::Integer; locale = session_locale())
     df = load!("identity", "occupation", locale)
     filter!(r -> r[:knowledge_field] in options, df)
     return rand(df[:, :occupation], n) |> coerse_string_type
 end
 
 """
-    occupation(field_mask::Vector{<:AbstractString}; locale = getlocale())
+    occupation(field_mask::Vector{<:AbstractString}; locale = session_locale())
 
 Generate occupations from a `field_mask`. For example, if `fields_mask = ["business", "humanities",
 "humanities", "business"]` four occupations will be generated corresponding to the fields
@@ -396,7 +396,7 @@ If no `locale` is provided, the locale from the session is used.
     - `"military"`
 - `locale::Vector{String}`: locale(s) from which the occupations are sampled.
 """
-function occupation(mask::Vector{<:AbstractString}; locale = getlocale())
+function occupation(mask::Vector{<:AbstractString}; locale = session_locale())
     df = load!("identity", "occupation", locale)
     @assert [m in df[:, :knowledge_field] for m in mask] |> all
 
@@ -414,7 +414,7 @@ end
 
 
 """
-    university(n::Integer = 1; locale = getlocale())
+    university(n::Integer = 1; locale = session_locale())
 
 Generate `n` university entries from a given locale.
 If no `locale` is provided, the locale from the session is used.
@@ -423,13 +423,13 @@ If no `locale` is provided, the locale from the session is used.
 - `n::Int = 1`: number of universities to be sampled.
 - `locale::Vector{String}`: locale(s) from which the universities are sampled.
 """
-function university(n::Integer = 1; locale = getlocale())
+function university(n::Integer = 1; locale = session_locale())
     df = load!("identity", "university", locale)
     return rand(df[:, :university], n) |> coerse_string_type
 end
 
 """
-    university(field::Vector{<:AbstractString}, n::Integer; locale = getlocale())
+    university(field::Vector{<:AbstractString}, n::Integer; locale = session_locale())
 
 Generate `n` universites entries from a given locale restricting the `field` of the generated
 generated universities. For example, if `fields = ["business", "humanities"]`, only universities
@@ -448,14 +448,14 @@ If no `locale` is provided, the locale from the session is used.
 - `n::Int = 1`: number of universities to be generated.
 - `locale::Vector{String}`: locale(s) from which the universities are sampled.
 """
-function university(options::Vector{<:AbstractString}, n::Integer; locale = getlocale())
+function university(options::Vector{<:AbstractString}, n::Integer; locale = session_locale())
     df = load!("identity", "university", locale)
     filter!(r -> r[:knowledge_field] in options, df)
     return rand(df[:, :university], n) |> coerse_string_type
 end
 
 """
-    university(field_mask::Vector{<:AbstractString}; locale = getlocale())
+    university(field_mask::Vector{<:AbstractString}; locale = session_locale())
 
 Generate universities from a `field_mask`. For example, if `fields_mask = ["business", "humanities",
 "humanities", "business"]` four university entries  will be smpled corresponding to the fields
@@ -473,7 +473,7 @@ If no `locale` is provided, the locale from the session is used.
     - `"military"`
 - `locale::Vector{String}`: locale(s) from which the universities are sampled.
 """
-function university(mask::Vector{<:AbstractString}; locale = getlocale())
+function university(mask::Vector{<:AbstractString}; locale = session_locale())
     df = load!("identity", "university", locale)
     @assert [m in df[:, :knowledge_field] for m in mask] |> all
 
