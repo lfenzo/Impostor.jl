@@ -283,3 +283,39 @@ function district(mask::Vector{<:AbstractString}; masklevel::Symbol = :district_
     end
     return selected_values |> coerse_string_type
 end
+
+
+
+"""
+
+"""
+function street(n::Integer = 1; locale = session_locale())
+    streets = String[]
+
+    # this operation is necessary because not all street formats are identical across
+    # all the different locales. So the strategy here is to segregate the formats by
+    # locale and then randomly pull them in order to materialize the strings
+    street_formats = Dict(
+        loc => load!("localization", "street_format", loc)[:, :street_format]
+        for loc in locale
+    )
+
+    for _ in 1:n
+        loc = rand(locale)
+        street_format = rand(street_formats[loc])
+        push!(streets, _materialize_template(street_format; locale = loc))
+    end
+    return streets |> coerse_string_type
+end
+
+
+function street_prefix(n::Integer = 1; locale = session_locale())
+    df = load!("localization", "street_prefix", locale)
+    return rand(df[:, :street_prefix], n) |> coerse_string_type
+end
+
+
+function street_suffix(n::Integer = 1; locale = session_locale())
+    df = load!("localization", "street_suffix", locale)
+    return rand(df[:, :street_suffix], n) |> coerse_string_type
+end

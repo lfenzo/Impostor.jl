@@ -7,4 +7,37 @@
 end
 
 
-function regex2string() end
+
+
+"""
+    _materialize_numeric_template(template::String) :: String
+
+Receive a numeric template string (e.g. "###-#") and generate a string replacing the '#' chars
+by random integers between [0, 9]. Optionally, pass fixed numbers in the numeric template
+(e.g. "(15) 9####-####") to pre-select the numbers in the returned string.
+"""
+function _materialize_numeric_template(template::String) :: String
+    materialized = ""
+    for char in template
+        materialized *= char == '#' ? string(rand(0:9)) : char
+    end
+    return materialized
+end
+
+
+"""
+
+"""
+function _materialize_template(template::AbstractString; locale::String) :: String
+
+    materialized = ""  # initialized the variable used inside the for loop
+
+    for token in tokenize(convert(String, template))
+        if Symbol(token) in names(Impostor)
+            materialized *= getproperty(Impostor, Symbol(token))(locale = locale)
+        elseif token != '\n'
+            materialized *= string(token)
+        end
+    end
+    return materialized
+end

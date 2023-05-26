@@ -2,6 +2,7 @@ using Impostor
 using Test
 using CSV
 using DataFrames
+using Tokenize
 
 
 include("utils.jl")
@@ -20,6 +21,7 @@ testsets = Dict{String, String}(
    "Data Integrity" => "test_data_integrity.jl",
    "Localization" => "test_localization.jl",
    "Identity" => "test_identity.jl",
+   "Utils" => "test_utils.jl",
 )
 
 @testset "Impostor" begin
