@@ -27,6 +27,8 @@ export prefix
 export surname
 export university
 
+export address
+export address_complement
 export city
 export country
 export country_code

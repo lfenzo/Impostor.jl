@@ -34,7 +34,9 @@ function _materialize_template(template::AbstractString; locale::String) :: Stri
 
     for token in tokenize(convert(String, template))
         if Symbol(token) in names(Impostor)
-            materialized *= getproperty(Impostor, Symbol(token))(locale = locale)
+            # the locale must be passed to the function  as a list of strings,
+            # even when there is excactly one locale to be fetched
+            materialized *= getproperty(Impostor, Symbol(token))(1; locale = [locale])
         elseif token != '\n'
             materialized *= string(token)
         end
