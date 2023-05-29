@@ -1,7 +1,6 @@
 # TODO replace target-level with target_provider
 # TODO replace options_level with optionlevel
 function _hierarchical_localization_fallback(target_level, option_level, locale)
-
     target_found = false  # helps identify the correct element in 'hiarchical_order'
     hiarchical_order = [
         ["district", nothing],
@@ -323,26 +322,19 @@ function street_suffix(n::Integer = 1; locale = session_locale())
 end
 
 
-"""
 
-"""
-function address(n::Integer = 1; optionlevel = :district_name, locale = session_locale())
-
-    @assert(
-        optionlevel in (:district_name, :city_name, :state_code, :country_code),
-        "invalid 'optionlevel' provided: \"$optionlevel\""
-    )
-
+function address(n::Integer = 1; locale = session_locale())
     addresses = String[]
 
-    # TODO add filter here for the different optionlevel's
     locale_address_formats = Dict(
         loc => load!("localization", "address_format", loc)[:, :address_format]
         for loc in locale
     )
 
     locale_hiarchical_dfs = Dict{String, DataFrame}(
-        loc => _hierarchical_localization_fallback("district", optionlevel, loc)
+        # here we must obtain this dataframe in the finest granularity possible, so we are
+        # passing "district" and "district".
+        loc => _hierarchical_localization_fallback("district", "district", loc)
         for loc in locale
     )
 
@@ -372,10 +364,84 @@ function address(n::Integer = 1; optionlevel = :district_name, locale = session_
     return addresses |> coerse_string_type
 end
 
+
+"""
+
+"""
+function address(options::Vector{<:AbstractString}, n::Integer = 1; optionlevel = :district_name, locale = session_locale())
+
+    # valid options here are the anmes of the columns in the hierarchical dataframes produced by the
+    # _hierarchical_localization_fallback function.
+    @assert(
+        optionlevel in (:district_name, :city_name, :state_code, :country_code),
+        "invalid 'optionlevel' provided: \"$optionlevel\""
+    )
+
+    addresses = String[]
+
+    locale_address_formats = Dict(
+        loc => load!("localization", "address_format", loc)[:, :address_format]
+        for loc in locale
+    )
+
+    # TODO add filter here for the different optionlevel's
+    locale_hiarchical_dfs = Dict{String, DataFrame}(
+        loc => filter(r -> r[optionlevel] in options, _hierarchical_localization_fallback("district", "district", loc))
+        for loc in locale
+    )
+
+    for _ in 1:n
+        loc = rand(locale)
+        address_format = rand(locale_address_formats[loc])
+        reference_localization_dfrow = rand(eachrow(locale_hiarchical_dfs[loc]))
+        generated_address = ""
+
+        for token in tokenize(address_format) 
+            str_token = string(token)
+
+            # references to dataframe columns (not necessarily the names exported by the packages)
+            if str_token in names(locale_hiarchical_dfs[loc])
+                generated_address *= reference_localization_dfrow[str_token]
+            # references to names exported by the package
+            elseif Symbol(token) in names(Impostor)
+                generated_address *= getproperty(Impostor, Symbol(token))(1; locale = [loc])
+            # other tokens should be repeated in materialized string
+            else
+                generated_address *= str_token
+            end
+        end
+        push!(addresses, generated_address)
+    end
+
+    return addresses |> coerse_string_type
+end
+
+
+
 """
 
 """
 function address_complement(n::Integer = 1; locale = session_locale())
     df = load!("localization", "address_complement", locale)
     return rand(df[:, :address_complement], n) |> coerse_string_type
+end
+
+
+"""
+
+"""
+function postcode(n::Integer = 1; locale = session_locale())
+    postcodes = String[]
+
+    postcode_formats = Dict(
+        loc => load!("localization", "postcode", loc)[:, :postcode]
+        for loc in locale
+    )
+
+    for _ in 1:n
+        loc = rand(locale)
+        format = rand(postcode_formats[loc])
+        push!(postcodes, _materialize_numeric_template(format))
+    end
+    return postcodes |> coerse_string_type
 end

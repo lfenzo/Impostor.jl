@@ -38,6 +38,7 @@ export state_code
 export street
 export street_prefix
 export street_suffix
+export postcode
 
 
 include("providers/relation_restrictions.jl")

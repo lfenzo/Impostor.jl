@@ -8,6 +8,15 @@ end
 
 
 
+"""
+
+"""
+function subset_by_option(df::DataFrame, options::Vector{<:AbstractString}, optionlevel::AbstractString)
+    
+
+end
+
+
 
 """
     _materialize_numeric_template(template::String) :: String
@@ -16,7 +25,7 @@ Receive a numeric template string (e.g. "###-#") and generate a string replacing
 by random integers between [0, 9]. Optionally, pass fixed numbers in the numeric template
 (e.g. "(15) 9####-####") to pre-select the numbers in the returned string.
 """
-function _materialize_numeric_template(template::String) :: String
+function _materialize_numeric_template(template::AbstractString) :: String
     materialized = ""
     for char in template
         materialized *= char == '#' ? string(rand(0:9)) : char

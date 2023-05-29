@@ -1,2 +1,2 @@
 address_format
-"street, district_name, state_name, country_name"
+"street, district_name, city_name, postcode, state_name, country_name"
