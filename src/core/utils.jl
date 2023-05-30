@@ -9,16 +9,6 @@ end
 
 
 """
-
-"""
-function subset_by_option(df::DataFrame, options::Vector{<:AbstractString}, optionlevel::AbstractString)
-    
-
-end
-
-
-
-"""
     _materialize_numeric_template(template::String) :: String
 
 Receive a numeric template string (e.g. "###-#") and generate a string replacing the '#' chars
@@ -29,6 +19,28 @@ function _materialize_numeric_template(template::AbstractString) :: String
     materialized = ""
     for char in template
         materialized *= char == '#' ? string(rand(0:9)) : char
+    end
+    return materialized
+end
+
+
+
+function _materialize_template(format::String, reference_dfrow::DataFrames.DataFrameRow; locale::String) :: String
+    materialized = ""
+
+    for t in tokenize(format) 
+        token = string(t)
+
+        # references to dataframe columns (not necessarily the names exported by the packages)
+        if token in names(reference_dfrow)
+            materialized *= reference_dfrow[token]
+        # references to names exported by the package
+        elseif Symbol(token) in names(Impostor)
+            materialized *= getproperty(Impostor, Symbol(token))(1; locale = [locale])
+        # other tokens should be repeated in materialized string
+        else
+            materialized *= token
+        end
     end
     return materialized
 end

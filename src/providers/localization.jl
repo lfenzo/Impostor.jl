@@ -342,23 +342,8 @@ function address(n::Integer = 1; locale = session_locale())
         loc = rand(locale)
         address_format = rand(locale_address_formats[loc])
         reference_localization_dfrow = rand(eachrow(locale_hiarchical_dfs[loc]))
-        generated_address = ""
 
-        for token in tokenize(address_format) 
-            str_token = string(token)
-
-            # references to dataframe columns (not necessarily the names exported by the packages)
-            if str_token in names(locale_hiarchical_dfs[loc])
-                generated_address *= reference_localization_dfrow[str_token]
-            # references to names exported by the package
-            elseif Symbol(token) in names(Impostor)
-                generated_address *= getproperty(Impostor, Symbol(token))(1; locale = [loc])
-            # other tokens should be repeated in materialized string
-            else
-                generated_address *= str_token
-            end
-        end
-        push!(addresses, generated_address)
+        push!(addresses, _materialize_template(address_format, reference_localization_dfrow; locale = loc))
     end
 
     return addresses |> coerse_string_type
@@ -386,7 +371,9 @@ function address(options::Vector{<:AbstractString}, n::Integer = 1; optionlevel 
 
     # TODO add filter here for the different optionlevel's
     locale_hiarchical_dfs = Dict{String, DataFrame}(
-        loc => filter(r -> r[optionlevel] in options, _hierarchical_localization_fallback("district", "district", loc))
+        loc => filter(_hierarchical_localization_fallback("district", "district", loc)) do row
+            row[optionlevel] in options
+        end
         for loc in locale
     )
 
@@ -394,23 +381,8 @@ function address(options::Vector{<:AbstractString}, n::Integer = 1; optionlevel 
         loc = rand(locale)
         address_format = rand(locale_address_formats[loc])
         reference_localization_dfrow = rand(eachrow(locale_hiarchical_dfs[loc]))
-        generated_address = ""
 
-        for token in tokenize(address_format) 
-            str_token = string(token)
-
-            # references to dataframe columns (not necessarily the names exported by the packages)
-            if str_token in names(locale_hiarchical_dfs[loc])
-                generated_address *= reference_localization_dfrow[str_token]
-            # references to names exported by the package
-            elseif Symbol(token) in names(Impostor)
-                generated_address *= getproperty(Impostor, Symbol(token))(1; locale = [loc])
-            # other tokens should be repeated in materialized string
-            else
-                generated_address *= str_token
-            end
-        end
-        push!(addresses, generated_address)
+        push!(addresses, _materialize_template(address_format, reference_localization_dfrow; locale = loc))
     end
 
     return addresses |> coerse_string_type
