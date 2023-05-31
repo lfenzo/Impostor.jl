@@ -6,7 +6,7 @@
         @testset "$func" begin
             @testset "$OPTIONLESS" begin
                 loaded = func(N; locale = locale)
-                @test loaded isa Vector{<:AbstractString}
+                @test loaded isa Vector{String}
                 @test length(loaded) == N
 
                 @test func(; locale) isa String
@@ -16,13 +16,13 @@
 
             @testset "$OPTION_LOADING" begin
                 loaded = func(unique(country_code_mask), N; locale = locale)
-                @test loaded isa Vector{<:AbstractString}
+                @test loaded isa Vector{String}
                 @test length(loaded) == N
             end
 
             @testset "$MASK_LOADING" begin
                 loaded = func(country_code_mask; locale = locale)
-                @test loaded isa Vector{<:AbstractString}
+                @test loaded isa Vector{String}
                 @test length(loaded) == length(country_code_mask)
 
                 @test func([country_code_mask[begin]]; locale) isa String
@@ -40,7 +40,7 @@ end
         @testset "$func" begin
             @testset "$OPTIONLESS" begin
                 loaded = func(N; locale = locale)
-                @test loaded isa Vector{<:AbstractString}
+                @test loaded isa Vector{String}
                 @test length(loaded) == N
 
                 @test func(; locale) isa String
@@ -52,13 +52,13 @@ end
             for (mask, level) in [(country_code_mask, :country_code), (state_code_mask, :state_code)]
                 @testset "$OPTION_LOADING ($level)" begin
                     loaded = func(unique(mask), N; optionlevel = level, locale = locale)
-                    @test loaded isa Vector{<:AbstractString}
+                    @test loaded isa Vector{String}
                     @test length(loaded) == N
                 end
 
                 @testset "$MASK_LOADING ($level)" begin
                     loaded = func(mask; masklevel = level, locale = locale)
-                    @test loaded isa Vector{<:AbstractString}
+                    @test loaded isa Vector{String}
                     @test length(loaded) == length(mask)
 
                     @test func([mask[begin]]; masklevel = level, locale) isa String
@@ -75,7 +75,7 @@ end
 
     @testset "$OPTIONLESS" begin
         loaded = city(N; locale = locale)
-        @test loaded isa Vector{<:AbstractString}
+        @test loaded isa Vector{String}
         @test length(loaded) == N
 
         @test city(; locale) isa String
@@ -94,13 +94,13 @@ end
     for (mask, level) in test_iterator
         @testset "$OPTION_LOADING ($level)" begin
             loaded = city(unique(mask), N; optionlevel = level, locale = locale)
-            @test loaded isa Vector{<:AbstractString}
+            @test loaded isa Vector{String}
             @test length(loaded) == N
         end
 
         @testset "$MASK_LOADING ($level)" begin
             loaded = city(mask; masklevel = level, locale = locale)
-            @test loaded isa Vector{<:AbstractString}
+            @test loaded isa Vector{String}
             @test length(loaded) == length(mask)
 
             @test city([mask[begin]]; masklevel = level, locale) isa String
@@ -115,7 +115,7 @@ end
 
     @testset "$OPTIONLESS" begin
         loaded = district(N; locale = locale)
-        @test loaded isa Vector{<:AbstractString}
+        @test loaded isa Vector{String}
         @test length(loaded) == N
 
         @test district(; locale) isa String
@@ -136,16 +136,60 @@ end
     for (mask, level) in test_iterator
         @testset "$OPTION_LOADING ($level)" begin
             loaded = district(unique(mask), N; optionlevel = level, locale = locale)
-            @test loaded isa Vector{<:AbstractString}
+            @test loaded isa Vector{String}
             @test length(loaded) == N
         end
 
         @testset "$MASK_LOADING ($level)" begin
             loaded = district(mask; masklevel = level, locale = locale)
-            @test loaded isa Vector{<:AbstractString}
+            @test loaded isa Vector{String}
             @test length(loaded) == length(mask)
 
             @test district([mask[begin]]; masklevel = level, locale) isa String
         end
+    end
+end
+
+
+@testset "address" begin
+    N = 10
+    locale = ["en_US", "pt_BR"]
+
+    @testset "$OPTIONLESS" begin
+        loaded = address(N; locale = locale)
+        @test loaded isa Vector{String}
+        @test length(loaded) == N
+
+        @test address(; locale) isa String
+    end
+
+    @testset "$OPTION_LOADING" begin
+        options_mapper = Dict(
+            :city_name => ["São Paulo", "Chicago"],
+            :state_code => ["SP", "IL"],
+            :country_code => ["BRA", "USA"],
+        )
+
+        for (optionlevel, options) in pairs(options_mapper)
+            loaded = address(options, N; optionlevel = optionlevel, locale = locale)
+            @test loaded isa Vector{String}
+            @test length(loaded) == N
+
+            @test address(; locale) isa String
+        end
+    end
+end
+
+
+@testset "street" begin
+    N = 10
+    locale = ["en_US", "pt_BR"]
+
+    @testset "$OPTIONLESS" begin
+        loaded = street(N; locale = locale)
+        @test loaded isa Vector{String}
+        @test length(loaded) == N
+
+        @test street(; locale) isa String
     end
 end

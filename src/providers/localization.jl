@@ -369,7 +369,6 @@ function address(options::Vector{<:AbstractString}, n::Integer = 1; optionlevel 
         for loc in locale
     )
 
-    # TODO add filter here for the different optionlevel's
     locale_hiarchical_dfs = Dict{String, DataFrame}(
         loc => filter(_hierarchical_localization_fallback("district", "district", loc)) do row
             row[optionlevel] in options
