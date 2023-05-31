@@ -36,6 +36,7 @@ export district
 export state
 export state_code
 export street
+export street_number
 export street_prefix
 export street_suffix
 export postcode

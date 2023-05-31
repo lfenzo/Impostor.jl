@@ -401,6 +401,18 @@ end
 """
 
 """
+function street_number(n::Integer = 1; locale = session_locale())
+    # locale is kept here for API consistency
+    LOWER_LIMIT = 30
+    UPPER_LIMIT = 9999
+    generated = rand(LOWER_LIMIT:UPPER_LIMIT, n)
+    return n == 1 ? only(generated) : generated
+end
+
+
+"""
+
+"""
 function postcode(n::Integer = 1; locale = session_locale())
     postcodes = String[]
 

@@ -25,6 +25,9 @@ end
 
 
 
+"""
+
+"""
 function _materialize_template(format::String, reference_dfrow::DataFrames.DataFrameRow; locale::String) :: String
     materialized = ""
 
@@ -36,7 +39,9 @@ function _materialize_template(format::String, reference_dfrow::DataFrames.DataF
             materialized *= reference_dfrow[token]
         # references to names exported by the package
         elseif Symbol(token) in names(Impostor)
-            materialized *= getproperty(Impostor, Symbol(token))(1; locale = [locale])
+            # 'string' is necessary here because some functions return numbers, which cannot be
+            # concatenated to strings without an explicit conversion
+            materialized *= getproperty(Impostor, Symbol(token))(1; locale = [locale]) |> string
         # other tokens should be repeated in materialized string
         else
             materialized *= token
@@ -45,13 +50,12 @@ function _materialize_template(format::String, reference_dfrow::DataFrames.DataF
     return materialized
 end
 
-
 """
 
 """
 function _materialize_template(template::AbstractString; locale::String) :: String
 
-    materialized = ""  # initialized the variable used inside the for loop
+    materialized = ""
 
     for token in tokenize(convert(String, template))
         if Symbol(token) in names(Impostor)
