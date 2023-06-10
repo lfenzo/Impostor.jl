@@ -310,12 +310,18 @@ function street(n::Integer = 1; locale = session_locale())
 end
 
 
+"""
+
+"""
 function street_prefix(n::Integer = 1; locale = session_locale())
     df = load!("localization", "street_prefix", locale)
     return rand(df[:, :street_prefix], n) |> coerse_string_type
 end
 
 
+"""
+
+"""
 function street_suffix(n::Integer = 1; locale = session_locale())
     df = load!("localization", "street_suffix", locale)
     return rand(df[:, :street_suffix], n) |> coerse_string_type
@@ -323,6 +329,9 @@ end
 
 
 
+"""
+
+"""
 function address(n::Integer = 1; locale = session_locale())
     addresses = String[]
 

@@ -1,14 +1,18 @@
-# Identity Providers
+# Identity
 
+```@index
+Pages = ["identity.md"]
+Depth = 1
+```
 
 ```@docs
 prefix
-firstname
-surname
-complete_name
-bloodtype
 birthdate
+bloodtype
+complete_name
 highschool
 university
 occupation
+firstname
+surname
 ```
