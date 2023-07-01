@@ -24,6 +24,46 @@ function _materialize_numeric_template(template::AbstractString) :: String
 end
 
 
+"""
+    _materialize_numeric_range_template(template::AbstractString) :: String
+
+Gen*rate a string containing a number from a *numeric range* template. Such numeric templates may
+contain options separated by a ';' caracter. Additionally, options can assume a single template
+format (e.g. "4##") or specify a range using the ':' character inside the option (e.g. "2##:3##"
+specifies numbers between 200 and 399).
+
+# Example
+```repl
+julia> Impostor._materialize_numeric_range_template("4#####")
+"412345"
+
+julia> Impostor._materialize_numeric_range_template("34####;37####")  # will select 34#### or 37####
+"349790"
+
+julia> Impostor._materialize_numeric_range_template("51####:55####")
+"532489"
+
+julia> Impostor._materialize_numeric_range_template("2221##:2720##;51####:55####")  # will select 2221##:2720## or 51####:55####
+"250000"
+```
+"""
+function _materialize_numeric_range_template(template::AbstractString) :: String
+    possible_formats = split(template, ';')
+    selected_format = rand(possible_formats)
+
+    # selected format has a range specifier e.g. 34####:39####
+    if ':' in selected_format
+        first, last = split(selected_format, ':')
+        lower_limit = parse(Int, replace(first, '#' => '0'))
+        upper_limit = parse(Int, replace(last, '#' => '9'))
+        selected_format = rand(lower_limit:upper_limit) |> string
+    else
+        selected_format = _materialize_numeric_template(selected_format)
+    end
+
+    return selected_format
+end
+
 
 """
 
@@ -54,7 +94,6 @@ end
 
 """
 function _materialize_template(template::AbstractString; locale::String) :: String
-
     materialized = ""
 
     for token in tokenize(convert(String, template))
