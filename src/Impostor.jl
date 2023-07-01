@@ -3,8 +3,8 @@ module Impostor
 
 using CSV
 using DataFrames
-using Dates
 using StatsBase
+using Dates
 using Tokenize
 
 
@@ -43,8 +43,10 @@ export postcode
 
 export bank_name
 export bank_official_name
+export credit_card_cvv
+export credit_card_expiry
 export credit_card_number
-
+export credit_card_vendor
 
 include("providers/relation_restrictions.jl")
 

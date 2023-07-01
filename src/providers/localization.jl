@@ -351,7 +351,6 @@ function address(n::Integer = 1; locale = session_locale())
         loc = rand(locale)
         address_format = rand(locale_address_formats[loc])
         reference_localization_dfrow = rand(eachrow(locale_hiarchical_dfs[loc]))
-
         push!(addresses, _materialize_template(address_format, reference_localization_dfrow; locale = loc))
     end
 
@@ -389,7 +388,6 @@ function address(options::Vector{<:AbstractString}, n::Integer = 1; optionlevel 
         loc = rand(locale)
         address_format = rand(locale_address_formats[loc])
         reference_localization_dfrow = rand(eachrow(locale_hiarchical_dfs[loc]))
-
         push!(addresses, _materialize_template(address_format, reference_localization_dfrow; locale = loc))
     end
 
@@ -410,11 +408,9 @@ end
 """
 
 """
-function street_number(n::Integer = 1; locale = session_locale())
+function street_number(n::Integer = 1; locale = nothing)
     # locale is kept here for API consistency
-    LOWER_LIMIT = 30
-    UPPER_LIMIT = 9999
-    generated = rand(LOWER_LIMIT:UPPER_LIMIT, n)
+    generated = rand(30:9999, n)
     return n == 1 ? only(generated) : generated
 end
 

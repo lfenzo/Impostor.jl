@@ -83,13 +83,11 @@ function _generate_credit_card_number(prefix::String, n_digits::Integer)
     return join(generated_card)
 end
 
-
 function _generate_credit_card_number(reference_dfrow::DataFrames.DataFrameRow)
     card_prefix = _materialize_numeric_range_template(reference_dfrow[:iin_format])
     card_length = parse(Int, _materialize_numeric_range_template(string(reference_dfrow[:length])))
     return _generate_credit_card_number(card_prefix, card_length)
 end
-
 
 function credit_card_number(n::Integer = 1; locale = nothing)
     credit_card_references = load!("finance", "credit_card", "noloc")
@@ -106,7 +104,6 @@ end
 function credit_card_number(options::Vector{<:AbstractString}, n::Integer; locale = nothing)
     credit_card_references = load!("finance", "credit_card", "noloc")
     filter!(r -> r[:credit_card_vendor] in options, credit_card_references)
-
     generated_cards = Vector{String}()
 
     for _ in 1:n
@@ -130,4 +127,35 @@ function credit_card_number(mask::Vector{<:AbstractString}; locale = nothing)
     end
 
     return generated_cards |> coerse_string_type
+end
+
+
+
+function credit_card_vendor(n::Integer = 1; locale = nothing)
+    credit_cards = load!("finance", "credit_card", "noloc")
+    return rand(credit_cards[:, :credit_card_vendor], n) |> coerse_string_type
+end
+
+function credit_card_vendor(options::Vector{<:AbstractString}, n::Integer; locale = nothing)
+    credit_cards = load!("finance", "credit_card", "noloc")
+    filter!(r -> r[:credit_card_vendor] in options, credit_cards)
+    return rand(credit_cards[:, :credit_card_vendor], n) |> coerse_string_type
+end
+
+
+
+function credit_card_cvv(n::Integer = 1; locale = nothing)
+    generated = rand(0:999, n)
+    return n == 1 ? only(generated) : generated
+end
+
+
+function credit_card_expiry(n::Integer = 1; locale = nothing)
+    expiries = String[]
+    for _ in 1:n
+        month = rand(1:12) |> string
+        year = rand(2008:2030) |> string
+        push!(expiries, "$month/$year")
+    end
+    return expiries
 end
