@@ -22,6 +22,7 @@ export bloodtype
 export complete_name
 export firstname
 export highschool
+export nationality
 export occupation
 export prefix
 export surname

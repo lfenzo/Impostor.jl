@@ -487,3 +487,45 @@ function university(mask::Vector{<:AbstractString}; locale = session_locale())
     end
     return selected_values |> coerse_string_type
 end
+
+
+"""
+
+"""
+function nationality(n::Integer = 1; locale = session_locale())
+    nationalities = load!("identity", "nationality", locale) 
+    return rand(nationalities[:, :nationality], n) |> coerse_string_type
+end
+
+
+"""
+
+"""
+function nationality(options::Vector{<:AbstractString}, n::Integer; optionlevel::Symbol = :country_code, locale = session_locale())
+    @assert optionlevel in (:sex, :country_code) "invalid 'optionlevel' provided: \"$optionlevel\""
+
+    df = load!("identity", "nationality", locale)
+    filter!(r -> r[optionlevel] in options, df)
+
+    return rand(df[:, :nationality], n) |> coerse_string_type
+end
+
+"""
+
+"""
+function nationality(mask::Vector{<:AbstractString}; masklevel::Symbol = :country_code, locale = session_locale())
+    
+    @assert masklevel in (:sex, :country_code) "invalid 'masklevel' provided: \"$masklevel\""
+
+    df = load!("identity", "nationality", locale)
+    gb = groupby(df, [masklevel])
+
+    selected_values = Vector{String}()
+
+    for value in mask
+        associated_mask_rows = get(gb, (value,), nothing)
+        push!(selected_values, rand(associated_mask_rows[:, :nationality]))
+    end
+    return selected_values |> coerse_string_type
+end
+
