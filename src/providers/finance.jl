@@ -1,23 +1,40 @@
+"""
+    bank_name(n::Integer = 1; kwargs...)
+    bank_name(options::Vector, n::Integer; optionlevel::Symbol = :bank_code, kwargs...)
+    bank_name(mask::Vector; masklevel::Symbol = :bank_code, kwargs...)
+
+Generate `n` bank names.
+
+
+# Kwargs
+- `locale::Vector{String}`: locale(s) from which entries are sampled. If no `locale` is provided, the current session locale is used.
+"""
 function bank_name(n::Integer = 1; locale = session_locale())
-    return rand(load!("finance", "bank", locale)[:, :bank_name], n) |> coerse_string_type
+    return rand(_load!("finance", "bank", locale)[:, :bank_name], n) |> coerse_string_type
 end
 
 function bank_name(options::Vector, n::Integer; optionlevel::Symbol = :bank_code, locale = session_locale())
-    @assert optionlevel in (:bank_code, :bank_name) "invalid 'optionlevel' provided: \"$optionlevel\""
+    @assert(
+        optionlevel in (:bank_code, :bank_name),
+        "invalid 'optionlevel' provided: \"$optionlevel\""
+    )
 
-    df = load!("finance", "bank", locale)
+    df = _load!("finance", "bank", locale)
     filter!(r -> r[optionlevel] in options, df)
     return rand(df[:, :bank_name], n) |> coerse_string_type
 end
 
 function bank_name(mask::Vector; masklevel::Symbol = :bank_code, locale = session_locale())
-    @assert masklevel in (:bank_code, :bank_name) "invalid 'masklevel' provided: \"$masklevel\""
+    @assert(
+        masklevel in (:bank_code, :bank_name),
+        "invalid 'masklevel' provided: \"$masklevel\""
+    )
 
-    bank_info = load!("finance", "bank", locale)
+    bank_info = _load!("finance", "bank", locale)
     bank_institutions = Vector{String}()
 
     for m in mask
-        # here we are accessing with '[1, :]' because we are sure to have exactly one match for the
+        # accessing with '[1, :]' because we are sure to have exactly one match for the
         # option provided as a mask. 
         selected_bank_dfrow = filter(r -> r[masklevel] == m, bank_info)[1, :]
         push!(bank_institutions, selected_bank_dfrow[:bank_name])
@@ -27,22 +44,35 @@ function bank_name(mask::Vector; masklevel::Symbol = :bank_code, locale = sessio
 end
 
 
+
+"""
+    bank_official_name(n::Integer = 1; kwargs...)
+    bank_official_name(options::Vector, n::Integer; optionlevel::Symbol = :bank_code, kwargs...)
+    bank_official_name(mask::Vector; masklevel::Symbol = :bank_code, kwargs...)
+
+"""
 function bank_official_name(n::Integer = 1; locale = session_locale())
-    return rand(load!("finance", "bank", locale)[:, :bank_official_name], n) |> coerse_string_type
+    return rand(_load!("finance", "bank", locale)[:, :bank_official_name], n) |> coerse_string_type
 end
 
 function bank_official_name(options::Vector, n::Integer; optionlevel::Symbol = :bank_code, locale = session_locale())
-    @assert optionlevel in (:bank_code, :bank_name) "invalid 'optionlevel' provided: \"$optionlevel\""
+    @assert(
+        optionlevel in (:bank_code, :bank_name),
+        "invalid 'optionlevel' provided: \"$optionlevel\""
+    )
 
-    df = load!("finance", "bank", locale)
+    df = _load!("finance", "bank", locale)
     filter!(r -> r[optionlevel] in options, df)
     return rand(df[:, :bank_official_name], n) |> coerse_string_type
 end
 
 function bank_official_name(mask::Vector; masklevel::Symbol = :bank_code, locale = session_locale())
-    @assert masklevel in (:bank_code, :bank_name) "invalid 'masklevel' provided: \"$masklevel\""
+    @assert(
+        masklevel in (:bank_code, :bank_name),
+        "invalid 'masklevel' provided: \"$masklevel\""
+    )
 
-    bank_info = load!("finance", "bank", locale)
+    bank_info = _load!("finance", "bank", locale)
     bank_institutions = Vector{String}()
 
     for m in mask
@@ -56,6 +86,9 @@ function bank_official_name(mask::Vector; masklevel::Symbol = :bank_code, locale
 end
 
 
+"""
+
+"""
 function _generate_credit_card_number(prefix::String, n_digits::Integer)
     card_prefix = parse(Int, prefix) |> digits |> reverse
     card_account = [rand(0:9) for _ in 1:(n_digits - length(prefix) - 1)]
@@ -89,8 +122,11 @@ function _generate_credit_card_number(reference_dfrow::DataFrames.DataFrameRow)
     return _generate_credit_card_number(card_prefix, card_length)
 end
 
-function credit_card_number(n::Integer = 1; locale = nothing)
-    credit_card_references = load!("finance", "credit_card", "noloc")
+"""
+
+"""
+function credit_card_number(n::Integer = 1; kwargs...)
+    credit_card_references = _load!("finance", "credit_card", "noloc")
     generated_cards = String[]
 
     for _ in 1:n
@@ -101,8 +137,11 @@ function credit_card_number(n::Integer = 1; locale = nothing)
     return generated_cards |> coerse_string_type
 end
 
-function credit_card_number(options::Vector{<:AbstractString}, n::Integer; locale = nothing)
-    credit_card_references = load!("finance", "credit_card", "noloc")
+"""
+
+"""
+function credit_card_number(options::Vector{<:AbstractString}, n::Integer; kwargs...)
+    credit_card_references = _load!("finance", "credit_card", "noloc")
     filter!(r -> r[:credit_card_vendor] in options, credit_card_references)
     generated_cards = Vector{String}()
 
@@ -114,8 +153,11 @@ function credit_card_number(options::Vector{<:AbstractString}, n::Integer; local
     return generated_cards |> coerse_string_type
 end
 
-function credit_card_number(mask::Vector{<:AbstractString}; locale = nothing)
-    credit_card_references = load!("finance", "credit_card", "noloc")
+"""
+
+"""
+function credit_card_number(mask::Vector{<:AbstractString}; kwargs...)
+    credit_card_references = _load!("finance", "credit_card", "noloc")
     generated_cards = Vector{String}()
 
     for m in mask
@@ -131,26 +173,39 @@ end
 
 
 
-function credit_card_vendor(n::Integer = 1; locale = nothing)
-    credit_cards = load!("finance", "credit_card", "noloc")
+"""
+    credit_card_vendor(n::Integer = 1; kwargs...)
+    credit_card_vendor(options::Vector{<:AbstractString}, n::Integer; kwargs...)
+
+"""
+function credit_card_vendor(n::Integer = 1; kwargs...)
+    credit_cards = _load!("finance", "credit_card", "noloc")
     return rand(credit_cards[:, :credit_card_vendor], n) |> coerse_string_type
 end
 
-function credit_card_vendor(options::Vector{<:AbstractString}, n::Integer; locale = nothing)
-    credit_cards = load!("finance", "credit_card", "noloc")
+function credit_card_vendor(options::Vector{<:AbstractString}, n::Integer; kwargs...)
+    credit_cards = _load!("finance", "credit_card", "noloc")
     filter!(r -> r[:credit_card_vendor] in options, credit_cards)
     return rand(credit_cards[:, :credit_card_vendor], n) |> coerse_string_type
 end
 
 
 
-function credit_card_cvv(n::Integer = 1; locale = nothing)
+"""
+    credit_card_cvv(n::Integer = 1; kwargs...)
+
+"""
+function credit_card_cvv(n::Integer = 1; kwargs...)
     generated = rand(0:999, n)
     return n == 1 ? only(generated) : generated
 end
 
 
-function credit_card_expiry(n::Integer = 1; locale = nothing)
+"""
+    credit_card_expiry(n::Integer = 1; kwargs...)
+
+"""
+function credit_card_expiry(n::Integer = 1; kwargs...)
     expiries = String[]
     for _ in 1:n
         month = rand(1:12) |> string

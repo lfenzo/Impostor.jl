@@ -1,6 +1,6 @@
 # TODO replace target-level with target_provider
 # TODO replace options_level with optionlevel
-function _hierarchical_localization_fallback(target_level, option_level, locale)
+function _hierarchical_localization_fallback(target_level, level, locale)
     target_found = false  # helps identify the correct element in 'hiarchical_order'
     hiarchical_order = [
         ["district", nothing],
@@ -9,20 +9,20 @@ function _hierarchical_localization_fallback(target_level, option_level, locale)
         ["country", :country_code],
     ]
 
-    df = load!("localization", target_level, locale)
+    df = _load!("localization", target_level, locale)
 
     for hiarchy_member in hiarchical_order
 
-        level = hiarchy_member[begin]
+        current_level = hiarchy_member[begin]
         mergekey = hiarchy_member[end]
 
         if target_found
-            level_df = load!("localization", level, locale) 
+            level_df = _load!("localization", current_level, locale) 
             df = innerjoin(level_df, df; on = mergekey)
-            mergekey == option_level && break  # upper limit for the iteractive "merge process"
+            mergekey == level && break  # upper limit for the iteractive "merge process"
         end
 
-        if level == target_level
+        if current_level == target_level
             target_found = true
         end
     end
@@ -32,39 +32,51 @@ end
 
 
 """
+    country(n::Integer = 1; kwargs...)
+    country(options::Vector{<:AbstractString}, n::Integer; level::Symbol, kwargs...)
+    country(mask::Vector{<:AbstractString}; level::Symbol, kwargs...)
 
+Generate `n` or `length(mask)` country names.
+
+# Parameters
+- `n::Integer = 1`: number of country name entries to generate.
+- `options::Vector{<:AbstractString}`: vector with with options restricting the possible values generated.
+- `mask::Vector{<:AbstractString}`: mask vector with element-wise option restrictions.
+
+# Kwargs
+- `level::Symbol = :country_code`: Level of values in `options` or `mask` when using option-based or mask-based generation. Valid `level` values are:
+    - `:country_code`
+- `locale::Vector{String}`: locale(s) from which entries are sampled. If no `locale` is provided, the current session locale is used.
 """
 function country(n::Integer = 1; locale = session_locale())
-    return rand(load!("localization", "country", locale)[:, :country_name], n) |> coerse_string_type
+    return rand(_load!("localization", "country", locale)[:, :country_name], n) |> coerse_string_type
 end
 
-"""
-
-"""
-function country(options::Vector{<:AbstractString}, n::Integer; optionlevel::Symbol = :country_code, locale = session_locale())
-
+function country(options::Vector{<:AbstractString}, n::Integer;
+    level::Symbol = :country_code,
+    locale = session_locale()
+)
     # for the 'country' functions the only possible mask/option level is the country
     # because there is nothing higher in the hiarchy, so the only option
     # when selecting values from the country provider is the country_code
-    @assert optionlevel == :country_code "invalid 'masklevel' provided: \"$optionlevel\""
+    @assert level == :country_code "invalid 'level' provided: \"$level\""
 
-    countries = load!("localization", "country", locale)
+    countries = _load!("localization", "country", locale)
     filter!(r -> r[:country_code] in options, countries)
     return rand(countries[:, :country_name], n) |> coerse_string_type
 end
 
-"""
-
-"""
-function country(mask::Vector{<:AbstractString}; masklevel::Symbol = :country_code, locale = session_locale())
-
+function country(mask::Vector{<:AbstractString};
+    level::Symbol = :country_code,
+    locale = session_locale()
+)
     # for the 'country' functions the only possible mask/option level is the country
     # because there is nothing higher in the hiarchy, so the only option
     # when selecting values from the country provider is the country_code
-    @assert masklevel == :country_code "invalid 'masklevel' provided: \"$masklevel\""
+    @assert level == :country_code "invalid 'level' provided: \"$level\""
 
-    multi_locale_countries = load!("localization", "country", locale)
-    gb = groupby(multi_locale_countries, masklevel)
+    multi_locale_countries = _load!("localization", "country", locale)
+    gb = groupby(multi_locale_countries, level)
 
     selected_values = Vector{String}()
 
@@ -78,39 +90,51 @@ end
 
 
 """
+    country_code(n::Integer = 1; kwargs...)
+    country_code(options::Vector{<:AbstractString}, n::Integer; level::Symbol, kwargs...)
+    country_code(mask::Vector{<:AbstractString}; level::Symbol, keargs...)
 
+Generate `n` or `length(mask)` country codes.
+
+# Parameters
+- `n::Integer = 1`: number of country codes to generate.
+- `options::Vector{<:AbstractString}`: vector with options restricting the possible values generated.
+- `mask::Vector{<:AbstractString}`: mask vector with element-wise option restrictions.
+
+# Kwargs
+- `level::Symbol = :country_code`: Level of values in `options` or `mask` when using option-based or mask-based eneration. Valid `level` values are:
+    - `:country_code`
+- `locale::Vector{String}`: locale(s) from which entries are sampled. If no `locale` is provided, the current session locale is used.
 """
 function country_code(n::Integer = 1; locale = session_locale())
-    return rand(load!("localization", "country", locale)[:, :country_code], n) |> coerse_string_type
+    return rand(_load!("localization", "country", locale)[:, :country_code], n) |> coerse_string_type
 end
 
-"""
-
-"""
-function country_code(options::Vector{<:AbstractString}, n::Integer; optionlevel::Symbol = :country_code, locale = session_locale())
-
+function country_code(options::Vector{<:AbstractString}, n::Integer;
+    level::Symbol = :country_code,
+    locale = session_locale()
+)
     # for the 'country' functions the only possible mask/option level is the country
     # because there is nothing higher in the hiarchy, so the only option
     # when selecting values from the country provider is the country_code
-    @assert optionlevel == :country_code "invalid 'masklevel' provided: \"$optionlevel\""
+    @assert level == :country_code "invalid 'level' provided: \"$level\""
 
-    countries = load!("localization", "country", locale)
+    countries = _load!("localization", "country", locale)
     filter!(r -> r[:country_code] in options, countries)
     return rand(countries[:, :country_code], n) |> coerse_string_type
 end
 
-"""
-
-"""
-function country_code(mask::Vector{<:AbstractString}; masklevel::Symbol = :country_code, locale = session_locale())
-
+function country_code(mask::Vector{<:AbstractString};
+    level::Symbol = :country_code,
+    locale = session_locale()
+)
     # for the 'country' functions the only possible mask/option level is the country
     # because there is nothing higher in the hiarchy, so the only option
     # when selecting values from the country provider is the country_code
-    @assert masklevel == :country_code "invalid 'masklevel' provided: \"$masklevel\""
+    @assert level == :country_code "invalid 'level' provided: \"$level\""
 
-    multi_locale_countries = load!("localization", "country", locale)
-    gb = groupby(multi_locale_countries, masklevel)
+    multi_locale_countries = _load!("localization", "country", locale)
+    gb = groupby(multi_locale_countries, level)
 
     selected_values = Vector{String}()
 
@@ -124,34 +148,51 @@ end
 
 
 """
+    state(n::Integer = 1; kwargs...)
+    state(options::Vector{<:AbstractString}, n::Integer; level::Symbol, kwargs...)
+    state(mask::Vector{<:AbstractString}; level::Symbol, kwargs...)
 
+# Parameters
+- `n::Integer = 1`: number of country codes to generate.
+- `options::Vector{<:AbstractString}`: vector with options restricting the possible values generated.
+- `mask::Vector{<:AbstractString}`: mask vector with element-wise option restrictions.
+
+# Kwargs
+- `level::Symbol = :state_code`: Level of values in `options` or `mask` when using option-based or mask-based eneration. Valid `level` values are:
+    - `:country_code`
+    - `:state_code`
+- `locale::Vector{String}`: locale(s) from which entries are sampled. If no `locale` is provided, the current session locale is used.
 """
 function state(n::Integer = 1; locale = session_locale())
-    return rand(load!("localization", "state", locale)[:, :state_name], n) |> coerse_string_type
+    return rand(_load!("localization", "state", locale)[:, :state_name], n) |> coerse_string_type
 end
 
-"""
+function state(options::Vector{<:AbstractString}, n::Integer;
+    level::Symbol = :state_code,
+    locale = session_locale()
+)
+    @assert(
+        level in (:state_code, :country_code),
+        "invalid 'level' provided: \"$level\""
+    )
 
-"""
-function state(options::Vector{<:AbstractString}, n::Integer; optionlevel::Symbol = :state_code, locale = session_locale())
-
-    @assert optionlevel in (:state_code, :country_code) "invalid 'optionlevel' provided: \"$optionlevel\""
-
-    df = _hierarchical_localization_fallback("state", optionlevel, locale)
-    filter!(r -> r[optionlevel] in options, df)
+    df = _hierarchical_localization_fallback("state", level, locale)
+    filter!(r -> r[level] in options, df)
 
     return rand(df[:, :state_name], n) |> coerse_string_type
 end
 
-"""
+function state(mask::Vector{<:AbstractString};
+    level::Symbol = :state_code,
+    locale = session_locale()
+)
+    @assert(
+        level in (:state_code, :country_code),
+        "invalid 'level' provided: \"$level\""
+    )
 
-"""
-function state(mask::Vector{<:AbstractString}; masklevel::Symbol = :state_code, locale = session_locale())
-
-    @assert masklevel in (:state_code, :country_code) "invalid 'masklevel' provided: \"$masklevel\""
-
-    df = _hierarchical_localization_fallback("state", masklevel, locale)
-    gb = groupby(df, masklevel)
+    df = _hierarchical_localization_fallback("state", level, locale)
+    gb = groupby(df, level)
 
     selected_values = Vector{String}()
 
@@ -165,31 +206,51 @@ end
 
 
 """
+    state_code(n::Integer = 1; kwargs...)
+    state_code(options::Vector{<:AbstractString}, n::Integer; level::Symbol, kwargs...)
+    state_code(mask::Vector{<:AbstractString}; level::Symbol, kwargs...)
 
+# Parameters
+- `n::Integer = 1`: number of state codes to generate.
+- `options::Vector{<:AbstractString}`: vector with options restricting the possible values generated.
+- `mask::Vector{<:AbstractString}`: mask vector with element-wise option restrictions.
+
+# Kwargs
+- `level::Symbol = :state_code`: Level of values in `options` or `mask` when using option-based or mask-based eneration. Valid `level` values are:
+    - `:country_code`
+    - `:state_code`
+- `locale::Vector{String}`: locale(s) from which entries are sampled. If no `locale` is provided, the current session locale is used.
 """
 function state_code(n::Integer = 1; locale = session_locale())
-    return rand(load!("localization", "state", locale)[:, :state_code], n) |> coerse_string_type
+    return rand(_load!("localization", "state", locale)[:, :state_code], n) |> coerse_string_type
 end
 
-function state_code(options::Vector{<:AbstractString}, n::Integer; optionlevel::Symbol = :state_code, locale = session_locale())
+function state_code(options::Vector{<:AbstractString}, n::Integer;
+    level::Symbol = :state_code,
+    locale = session_locale()
+)
+    @assert(
+        level in (:state_code, :country_code),
+        "invalid 'level' provided: \"$level\""
+    )
 
-    @assert optionlevel in (:state_code, :country_code) "invalid 'optionlevel' provided: \"$optionlevel\""
-
-    df = _hierarchical_localization_fallback("state", optionlevel, locale)
-    filter!(r -> r[optionlevel] in options, df)
+    df = _hierarchical_localization_fallback("state", level, locale)
+    filter!(r -> r[level] in options, df)
 
     return rand(df[:, :state_code], n) |> coerse_string_type
 end
 
-"""
+function state_code(mask::Vector{<:AbstractString};
+    level::Symbol = :state_code,
+    locale = session_locale()
+)
+    @assert(
+        level in (:state_code, :country_code),
+        "invalid 'level' provided: \"$level\""
+    )
 
-"""
-function state_code(mask::Vector{<:AbstractString}; masklevel::Symbol = :state_code, locale = session_locale())
-
-    @assert masklevel in (:state_code, :country_code) "invalid 'masklevel' provided: \"$masklevel\""
-
-    df = _hierarchical_localization_fallback("state", masklevel, locale)
-    gb = groupby(df, masklevel)
+    df = _hierarchical_localization_fallback("state", level, locale)
+    gb = groupby(df, level)
 
     selected_values = Vector{String}()
 
@@ -203,34 +264,52 @@ end
 
 
 """
+    city(n::Integer = 1; kwargs...)
+    city(options::Vector{<:AbstractString}, n::Integer; level, kwargs...)
+    city(mask::Vector{<:AbstractString}; level::Symbol, kwargs...)
 
+# Parameters
+- `n::Integer = 1`: number of country codes to generate.
+- `options::Vector{<:AbstractString}`: vector with options restricting the possible values generated.
+- `mask::Vector{<:AbstractString}`: mask vector with element-wise option restrictions.
+
+# Kwargs
+- `level::Symbol = :city_name`: Level of values in `options` or `mask` when using option-based or mask-based eneration. Valid `level` values are:
+    - `:country_code`
+    - `:state_code`
+    - `:city_name`
+- `locale::Vector{String}`: locale(s) from which entries are sampled. If no `locale` is provided, the current session locale is used.
 """
 function city(n::Integer = 1; locale = session_locale())
-    return rand(load!("localization", "city", locale)[:, :city_name], n) |> coerse_string_type
+    return rand(_load!("localization", "city", locale)[:, :city_name], n) |> coerse_string_type
 end
 
-"""
+function city(options::Vector{<:AbstractString}, n::Integer;
+    level::Symbol = :city_name,
+    locale = session_locale()
+)
+    @assert(
+        level in (:city_name, :state_code, :country_code),
+        "invalid 'level' provided: \"$level\""
+    )
 
-"""
-function city(options::Vector{<:AbstractString}, n::Integer; optionlevel = :city_name, locale = session_locale())
-
-    @assert optionlevel in (:city_name, :state_code, :country_code) "invalid 'optionlevel' provided: \"$optionlevel\""
-
-    df = _hierarchical_localization_fallback("city", optionlevel, locale)
-    filter!(r -> r[optionlevel] in options, df)
+    df = _hierarchical_localization_fallback("city", level, locale)
+    filter!(r -> r[level] in options, df)
 
     return rand(df[:, :city_name], n) |> coerse_string_type
 end
 
-"""
+function city(mask::Vector{<:AbstractString};
+    level::Symbol = :city_name,
+    locale = session_locale()
+)
+    @assert(
+        level in (:city_name, :state_code, :country_code),
+        "invalid 'level' provided: \"$level\""
+    )
 
-"""
-function city(mask::Vector{<:AbstractString}; masklevel::Symbol = :city_name, locale = session_locale())
-
-    @assert masklevel in (:city_name, :state_code, :country_code) "invalid 'masklevel' provided: \"$masklevel\""
-
-    df = _hierarchical_localization_fallback("city", masklevel, locale)
-    gb = groupby(df, masklevel)
+    df = _hierarchical_localization_fallback("city", level, locale)
+    gb = groupby(df, level)
 
     selected_values = Vector{String}()
 
@@ -244,37 +323,53 @@ end
 
 
 """
+    district(n::Integer = 1; kwargs...)
+    district(options::Vector{<:AbstractString}, n::Integer; level::Symbol, kwargs...)
+    district(mask::Vector{<:AbstractString}; level::Symbol, kwargs...)
 
+# Parameters
+- `n::Integer = 1`: number of district names to generate.
+- `options::Vector{<:AbstractString}`: vector with options restricting the possible values generated.
+- `mask::Vector{<:AbstractString}`: mask vector with element-wise option restrictions.
+
+# Kwargs
+- `level::Symbol = :district_name`: Level of values in `options` or `mask` when using option-based or mask-based eneration. Valid `level` values are:
+    - `:country_code`
+    - `:state_code`
+    - `:city_name`
+    - `:district_name`
+- `locale::Vector{String}`: locale(s) from which entries are sampled. If no `locale` is provided, the current session locale is used.
 """
 function district(n::Integer = 1; locale = session_locale())
-    return rand(load!("localization", "district", locale)[:, :district_name], n) |> coerse_string_type
+    return rand(_load!("localization", "district", locale)[:, :district_name], n) |> coerse_string_type
 end
 
-function district(options::Vector{<:AbstractString}, n::Integer; optionlevel::Symbol = :district_name, locale = session_locale())
-
+function district(options::Vector{<:AbstractString}, n::Integer;
+    level::Symbol = :district_name,
+    locale = session_locale()
+)
     @assert(
-        optionlevel in (:district_name, :city_name, :state_code, :country_code),
-        "invalid 'optionlevel' provided: \"$optionlevel\""
+        level in (:district_name, :city_name, :state_code, :country_code),
+        "invalid 'level' provided: \"$level\""
     )
 
-    df = _hierarchical_localization_fallback("district", optionlevel, locale)
-    filter!(r -> r[optionlevel] in options, df)
+    df = _hierarchical_localization_fallback("district", level, locale)
+    filter!(r -> r[level] in options, df)
 
     return rand(df[:, :district_name], n) |> coerse_string_type
 end
 
-"""
-
-"""
-function district(mask::Vector{<:AbstractString}; masklevel::Symbol = :district_name, locale = session_locale())
-
+function district(mask::Vector{<:AbstractString};
+    level::Symbol = :district_name,
+    locale = session_locale()
+)
     @assert(
-        masklevel in (:district_name, :city_name, :state_code, :country_code),
-        "invalid 'masklevel' provided: \"$masklevel\""
+        level in (:district_name, :city_name, :state_code, :country_code),
+        "invalid 'level' provided: \"$level\""
     )
 
-    df = _hierarchical_localization_fallback("district", masklevel, locale)
-    gb = groupby(df, masklevel)
+    df = _hierarchical_localization_fallback("district", level, locale)
+    gb = groupby(df, level)
 
     selected_values = Vector{String}()
 
@@ -288,7 +383,11 @@ end
 
 
 """
+    street(n::Integer = 1; kwargs...)
 
+
+# Kwargs
+- `locale::Vector{String}`: locale(s) from which entries are sampled. If no `locale` is provided, the current session locale is used.
 """
 function street(n::Integer = 1; locale = session_locale())
     streets = String[]
@@ -297,7 +396,7 @@ function street(n::Integer = 1; locale = session_locale())
     # all the different locales. So the strategy here is to segregate the formats by
     # locale and then randomly pull them in order to materialize the strings
     street_formats = Dict(
-        loc => load!("localization", "street_format", loc)[:, :street_format]
+        loc => _load!("localization", "street_format", loc)[:, :street_format]
         for loc in locale
     )
 
@@ -310,33 +409,50 @@ function street(n::Integer = 1; locale = session_locale())
 end
 
 
-"""
 
 """
+    street_prefix(n::Integer = 1; kwargs...)
+
+# Kwargs
+- `locale::Vector{String}`: locale(s) from which entries are sampled. If no `locale` is provided, the current session locale is used.
+"""
 function street_prefix(n::Integer = 1; locale = session_locale())
-    df = load!("localization", "street_prefix", locale)
+    df = _load!("localization", "street_prefix", locale)
     return rand(df[:, :street_prefix], n) |> coerse_string_type
 end
 
 
-"""
 
 """
+    street_suffix(n::Integer = 1; kwargs...)
+
+# Kwargs
+- `locale::Vector{String}`: locale(s) from which entries are sampled. If no `locale` is provided, the current session locale is used.
+"""
 function street_suffix(n::Integer = 1; locale = session_locale())
-    df = load!("localization", "street_suffix", locale)
+    df = _load!("localization", "street_suffix", locale)
     return rand(df[:, :street_suffix], n) |> coerse_string_type
 end
 
 
 
 """
+    address(n::Integer = 1; kwargs...)
+    address(options::Vector{<:AbstractString}, n::Integer = 1; level::Symbol, kwargs...)
 
+# Parameters
+- `n::Integer = 1`: number of addresses to generate.
+- `options::Vector{<:AbstractString}`: 
+
+# Kwargs
+- `level::Symbol = :district_name`: option level to be used when using option-based generation.
+- `locale::Vector{String}`: locale(s) from which entries are sampled. If no `locale` is provided, the current session locale is used.
 """
 function address(n::Integer = 1; locale = session_locale())
     addresses = String[]
 
     locale_address_formats = Dict(
-        loc => load!("localization", "address_format", loc)[:, :address_format]
+        loc => _load!("localization", "address_format", loc)[:, :address_format]
         for loc in locale
     )
 
@@ -357,29 +473,27 @@ function address(n::Integer = 1; locale = session_locale())
     return addresses |> coerse_string_type
 end
 
-
-"""
-
-"""
-function address(options::Vector{<:AbstractString}, n::Integer = 1; optionlevel = :district_name, locale = session_locale())
-
+function address(options::Vector{<:AbstractString}, n::Integer = 1;
+    level::Symbol = :district_name,
+    locale = session_locale()
+)
     # valid options here are the anmes of the columns in the hierarchical dataframes produced by the
     # _hierarchical_localization_fallback function.
     @assert(
-        optionlevel in (:district_name, :city_name, :state_code, :country_code),
-        "invalid 'optionlevel' provided: \"$optionlevel\""
+        level in (:district_name, :city_name, :state_code, :country_code),
+        "invalid 'level' provided: \"$level\""
     )
 
     addresses = String[]
 
     locale_address_formats = Dict(
-        loc => load!("localization", "address_format", loc)[:, :address_format]
+        loc => _load!("localization", "address_format", loc)[:, :address_format]
         for loc in locale
     )
 
     locale_hiarchical_dfs = Dict{String, DataFrame}(
         loc => filter(_hierarchical_localization_fallback("district", "district", loc)) do row
-            row[optionlevel] in options
+            row[level] in options
         end
         for loc in locale
     )
@@ -397,32 +511,48 @@ end
 
 
 """
+    address_complement(n::Integer = 1; kwargs...)
+    
+# Parameters
+- `n::Integer = 1`: number of address complements to generate.
 
+# Kwargs
+- `locale::Vector{String}`: locale(s) from which entries are sampled. If no `locale` is provided, the current session locale is used.
 """
 function address_complement(n::Integer = 1; locale = session_locale())
-    df = load!("localization", "address_complement", locale)
+    df = _load!("localization", "address_complement", locale)
     return rand(df[:, :address_complement], n) |> coerse_string_type
 end
 
 
-"""
 
 """
-function street_number(n::Integer = 1; locale = nothing)
-    # locale is kept here for API consistency
+    street_number(n::Integer = 1)
+
+# Parameters
+- `n::Integer = 1`: number of street numbers to generate.
+"""
+function street_number(n::Integer = 1; kwargs...)
     generated = rand(30:9999, n)
     return n == 1 ? only(generated) : generated
 end
 
 
-"""
 
+"""
+    postcode(n::Integer = 1; kwargs...)
+
+# Parameters
+- `n::Integer = 1`: number of postcodes to generate.
+
+# Kwargs
+- `locale::Vector{String}`: locale(s) from which entries are sampled. If no `locale` is provided, the current session locale is used.
 """
 function postcode(n::Integer = 1; locale = session_locale())
     postcodes = String[]
 
     postcode_formats = Dict(
-        loc => load!("localization", "postcode", loc)[:, :postcode]
+        loc => _load!("localization", "postcode", loc)[:, :postcode]
         for loc in locale
     )
 

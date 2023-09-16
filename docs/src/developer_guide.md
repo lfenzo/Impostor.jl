@@ -1,7 +1,14 @@
 # Developer Guide
 
-foo bar
 
-## Structure and Design
 
-foo baz
+## Design and Structure
+
+
+## Lazy Loading
+
+
+## Adding New Data
+
+
+## Adding New Functions
