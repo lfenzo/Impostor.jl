@@ -1,6 +1,7 @@
 const ASSETS_ROOT::String = pkgdir(Impostor, "src", "data")
 const DEFAULT_SESSION_LOCALE::Vector{String} = ["en_US"]
 
+using Dates: Delim
 
 Base.@kwdef mutable struct DataContainer
     data::Dict = Dict()
@@ -144,7 +145,7 @@ function _load!(provider::T, content::T, locale::T = "noloc") :: DataFrame where
 
         merge!(
             SESSION_CONTAINER.data[provider][content],
-            Dict(locale => CSV.read(data_path, DataFrame; header))
+            Dict(locale => CSV.read(data_path, DataFrame; header, delim = ','))
         )
     end
 
