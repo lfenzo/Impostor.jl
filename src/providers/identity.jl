@@ -13,6 +13,7 @@ function highschool(n::Integer = 1; locale = session_locale())
 end
 
 
+
 """
     bloodtype(n::Integer = 1)
 

@@ -4,7 +4,7 @@
 
     @testset "No-Locale (noloc)" begin
         available_values = _test_load("localization", "locale", "noloc")
-        loaded = Impostor.load!("localization", "locale")
+        loaded = Impostor._load!("localization", "locale")
 
         @test loaded isa DataFrame
         @test available_values == loaded
@@ -12,14 +12,14 @@
 
     @testset "Single Locale" begin
         available_values = _test_load("identity", "occupation", only(session_locale()))
-        loaded = Impostor.load!("identity", "occupation", only(session_locale()))
+        loaded = Impostor._load!("identity", "occupation", only(session_locale()))
 
         @test loaded isa DataFrame
         @test available_values == loaded
     end
 
     @testset "Multiple Locales" begin
-        locales = ["pt_BR", "en_US"]  # TOOO add more locales later on
+        locales = ["pt_BR", "en_US"]
 
         df = DataFrame()
         available_values = _test_load("identity", "firstname", locales)
@@ -28,7 +28,7 @@
             append!(df, available_values[key]) 
         end
 
-        loaded = Impostor.load!("identity", "firstname", locales)
+        loaded = Impostor._load!("identity", "firstname", locales)
 
         @test loaded isa DataFrame
         @test sort(df, ["sex", "firstname"]) == sort(loaded, ["sex", "firstname"])
@@ -36,7 +36,7 @@
 end
 
 
-@testset "Auxiliary Functions" begin
+@testset "Data Loading Auxiliary Functions" begin
 
     @test provider_exists("identity")
     @test !provider_exists("indentity")  # typo in 'identity' on purpose

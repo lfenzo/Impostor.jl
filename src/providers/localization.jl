@@ -385,6 +385,7 @@ end
 """
     street(n::Integer = 1; kwargs...)
 
+Generate `n` street names.
 
 # Kwargs
 - `locale::Vector{String}`: locale(s) from which entries are sampled. If no `locale` is provided, the current session locale is used.
@@ -439,13 +440,19 @@ end
 """
     address(n::Integer = 1; kwargs...)
     address(options::Vector{<:AbstractString}, n::Integer = 1; level::Symbol, kwargs...)
+    address(mask::Vector{<:AbstractString}; level::Symbol, kwargs...)
 
 # Parameters
 - `n::Integer = 1`: number of addresses to generate.
-- `options::Vector{<:AbstractString}`: 
+- `options::Vector{<:AbstractString}`: vector with options restricting the possible values generated.
+- `mask::Vector{<:AbstractString}`: mask vector with element-wise option restrictions.
 
 # Kwargs
-- `level::Symbol = :district_name`: option level to be used when using option-based generation.
+- `level::Symbol = :district_name`: option level to be used when using option-based generation. Valid `level` values are:
+    - `:country_code`
+    - `:state_code`
+    - `:city_name`
+    - `:district_name`
 - `locale::Vector{String}`: locale(s) from which entries are sampled. If no `locale` is provided, the current session locale is used.
 """
 function address(n::Integer = 1; locale = session_locale())
@@ -473,7 +480,7 @@ function address(n::Integer = 1; locale = session_locale())
     return addresses |> coerse_string_type
 end
 
-function address(options::Vector{<:AbstractString}, n::Integer = 1;
+function address(options::Vector{<:AbstractString}, n::Integer;
     level::Symbol = :district_name,
     locale = session_locale()
 )
@@ -503,6 +510,44 @@ function address(options::Vector{<:AbstractString}, n::Integer = 1;
         address_format = rand(locale_address_formats[loc])
         reference_localization_dfrow = rand(eachrow(locale_hiarchical_dfs[loc]))
         push!(addresses, _materialize_template(address_format, reference_localization_dfrow; locale = loc))
+    end
+
+    return addresses |> coerse_string_type
+end
+
+function address(mask::Vector{<:AbstractString};
+    level::Symbol = :district_name,
+    locale = session_locale()
+)
+    # valid options here are the anmes of the columns in the hierarchical dataframes produced by the
+    # _hierarchical_localization_fallback function.
+    @assert(
+        level in (:district_name, :city_name, :state_code, :country_code),
+        "invalid 'level' provided: \"$level\""
+    )
+
+    addresses = String[]
+
+    locale_address_formats = Dict(
+        loc => _load!("localization", "address_format", loc)[:, :address_format]
+        for loc in locale
+    )
+
+    dfs = [
+        filter(_hierarchical_localization_fallback("district", "district", loc)) do row
+            row[level] in unique(mask)
+        end
+        for loc in locale
+    ]
+
+    locale_hiarchical_dfs = vcat(dfs...)
+
+    for value in mask
+        value_reference_dfrow = rand(eachrow(filter(r -> r[level] == value, locale_hiarchical_dfs)))
+        value_locale = value_reference_dfrow[:locale] |> String
+        address_format = rand(locale_address_formats[value_locale]) |> String
+
+        push!(addresses, _materialize_template(address_format, value_reference_dfrow; locale = value_locale))
     end
 
     return addresses |> coerse_string_type

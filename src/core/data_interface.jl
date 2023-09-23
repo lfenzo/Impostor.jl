@@ -138,10 +138,13 @@ function _load!(provider::T, content::T, locale::T = "noloc") :: DataFrame where
     end
 
     if !_locale_loaded(SESSION_CONTAINER, provider, content, locale)
-        file = joinpath(ASSETS_ROOT, provider, content, locale * ".csv")
+    
+        data_path = joinpath(ASSETS_ROOT, provider, content, locale * ".csv")
+        header = joinpath(ASSETS_ROOT, provider, content, "HEADER.txt") |> readlines
+
         merge!(
             SESSION_CONTAINER.data[provider][content],
-            Dict(locale => CSV.read(file, DataFrame))
+            Dict(locale => CSV.read(data_path, DataFrame; header))
         )
     end
 

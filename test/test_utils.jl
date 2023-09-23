@@ -1,9 +1,9 @@
 @testset "coerse_string_type" begin
     returned_value = ["foo", "bar"]
-    @test Impostor.coerse_string_type(returned_value) isa Vector{<:AbstractString}
+    @test Impostor.coerse_string_type(returned_value) == ["foo", "bar"]
 
-    returned_value = [ "bar"]
-    @test Impostor.coerse_string_type(returned_value) isa String
+    returned_value = ["bar"]
+    @test Impostor.coerse_string_type(returned_value) == "bar"
 end
 
 

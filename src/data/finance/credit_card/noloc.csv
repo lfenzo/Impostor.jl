@@ -1,4 +1,3 @@
-﻿credit_card_vendor,iin_format,length
-Visa,4#####,16
+﻿Visa,4#####,16
 American Express,34####;37####,16
 MasterCard,2221##:2720##;51####:55####,16:19
