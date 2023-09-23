@@ -1,25 +1,59 @@
+"""
+    bank_name(n::Integer = 1; kwargs...)
+    bank_name(options::Vector, n::Integer; level::Symbol, kwargs...)
+    bank_name(mask::Vector; level::Symbol, kwargs...)
+
+# Parameters
+- `n::Integer = 1`: number of bank name entries to generate
+- `options::Vector{<:AbstractString}`: vector with options restricting the possible values generated.
+- `mask::Vector{<:AbstractString}`: mask vector with element-wise option restrictions.
+
+# Kwargs
+- `level::Symbol = :bank_code`: Level of values in `options` or `mask` when using option-based or mask-based eneration.
+- `locale::Vector{String}`: locale(s) from which entries are sampled. If no `locale` is provided, the current session locale is used.
+
+# Example
+```jldoctest
+julia> bank_name(5; locale = ["pt_BR"])
+5-element Vector{String}:
+ "Broker"
+ "Nubank"
+ "Itaubank"
+ "Renascenca"
+ "Daycoval"
+```
+"""
 function bank_name(n::Integer = 1; locale = session_locale())
-    return rand(load!("finance", "bank", locale)[:, :bank_name], n) |> coerse_string_type
+    return rand(_load!("finance", "bank", locale)[:, :bank_name], n) |> coerse_string_type
 end
 
-function bank_name(options::Vector, n::Integer; optionlevel::Symbol = :bank_code, locale = session_locale())
-    @assert optionlevel in (:bank_code, :bank_name) "invalid 'optionlevel' provided: \"$optionlevel\""
+function bank_name(options::Vector, n::Integer;
+    level::Symbol = :bank_code,
+    locale = session_locale()
+)
+    @assert(
+        level in (:bank_code, :bank_name),
+        "invalid 'level' provided: \"$level\""
+    )
 
-    df = load!("finance", "bank", locale)
-    filter!(r -> r[optionlevel] in options, df)
+    df = _load!("finance", "bank", locale)
+    filter!(r -> r[level] in options, df)
     return rand(df[:, :bank_name], n) |> coerse_string_type
 end
 
-function bank_name(mask::Vector; masklevel::Symbol = :bank_code, locale = session_locale())
-    @assert masklevel in (:bank_code, :bank_name) "invalid 'masklevel' provided: \"$masklevel\""
+function bank_name(mask::Vector; level::Symbol = :bank_code, locale = session_locale())
+    @assert(
+        level in (:bank_code, :bank_name),
+        "invalid 'level' provided: \"$level\""
+    )
 
-    bank_info = load!("finance", "bank", locale)
+    bank_info = _load!("finance", "bank", locale)
     bank_institutions = Vector{String}()
 
     for m in mask
-        # here we are accessing with '[1, :]' because we are sure to have exactly one match for the
+        # accessing with '[1, :]' because we are sure to have exactly one match for the
         # option provided as a mask. 
-        selected_bank_dfrow = filter(r -> r[masklevel] == m, bank_info)[1, :]
+        selected_bank_dfrow = filter(r -> r[level] == m, bank_info)[1, :]
         push!(bank_institutions, selected_bank_dfrow[:bank_name])
     end
 
@@ -27,28 +61,56 @@ function bank_name(mask::Vector; masklevel::Symbol = :bank_code, locale = sessio
 end
 
 
+
+"""
+    bank_official_name(n::Integer = 1; kwargs...)
+    bank_official_name(options::Vector, n::Integer; level::Symbol, kwargs...)
+    bank_official_name(mask::Vector; level::Symbol, kwargs...)
+
+# Parameters
+- `n::Integer = 1`: number of official bank name entries to generate
+- `options::Vector{<:AbstractString}`: vector with options restricting the possible values generated.
+- `mask::Vector{<:AbstractString}`: mask vector with element-wise option restrictions.
+
+# Kwargs
+- `level::Symbol = :bank_code`: Level of values in `options` or `mask` when using option-based or mask-based eneration.
+- `locale::Vector{String}`: locale(s) from which entries are sampled. If no `locale` is provided, the current session locale is used.
+
+# Example
+```jldoctest
+
+"""
 function bank_official_name(n::Integer = 1; locale = session_locale())
-    return rand(load!("finance", "bank", locale)[:, :bank_official_name], n) |> coerse_string_type
+    return rand(_load!("finance", "bank", locale)[:, :bank_official_name], n) |> coerse_string_type
 end
 
-function bank_official_name(options::Vector, n::Integer; optionlevel::Symbol = :bank_code, locale = session_locale())
-    @assert optionlevel in (:bank_code, :bank_name) "invalid 'optionlevel' provided: \"$optionlevel\""
+function bank_official_name(options::Vector, n::Integer;
+    level::Symbol = :bank_code,
+    locale = session_locale()
+)
+    @assert(
+        level in (:bank_code, :bank_name),
+        "invalid 'level' provided: \"$level\""
+    )
 
-    df = load!("finance", "bank", locale)
-    filter!(r -> r[optionlevel] in options, df)
-    return rand(df[:, :bank_official_name], n) |> coerse_string_type
+    df = _load!("finance", "bank", locale)
+    filter!(r -> r[level] in options, df)
+    return rand(df[:, :official_bank_name], n) |> coerse_string_type
 end
 
-function bank_official_name(mask::Vector; masklevel::Symbol = :bank_code, locale = session_locale())
-    @assert masklevel in (:bank_code, :bank_name) "invalid 'masklevel' provided: \"$masklevel\""
+function bank_official_name(mask::Vector; level::Symbol = :bank_code, locale = session_locale())
+    @assert(
+        level in (:bank_code, :bank_name),
+        "invalid 'level' provided: \"$level\""
+    )
 
-    bank_info = load!("finance", "bank", locale)
+    bank_info = _load!("finance", "bank", locale)
     bank_institutions = Vector{String}()
 
     for m in mask
         # here we are accessing with '[1, :]' because we are sure to have exactly one match for the
         # option provided as a mask. 
-        selected_bank_dfrow = filter(r -> r[masklevel] == m, bank_info)[1, :]
+        selected_bank_dfrow = filter(r -> r[level] == m, bank_info)[1, :]
         push!(bank_institutions, selected_bank_dfrow[:bank_official_name])
     end
 
@@ -56,6 +118,10 @@ function bank_official_name(mask::Vector; masklevel::Symbol = :bank_code, locale
 end
 
 
+
+"""
+
+"""
 function _generate_credit_card_number(prefix::String, n_digits::Integer)
     card_prefix = parse(Int, prefix) |> digits |> reverse
     card_account = [rand(0:9) for _ in 1:(n_digits - length(prefix) - 1)]
@@ -89,8 +155,16 @@ function _generate_credit_card_number(reference_dfrow::DataFrames.DataFrameRow)
     return _generate_credit_card_number(card_prefix, card_length)
 end
 
-function credit_card_number(n::Integer = 1; locale = nothing)
-    credit_card_references = load!("finance", "credit_card", "noloc")
+
+
+"""
+    credit_card_number(n::Integer = 1; kwargs...)
+    credit_card_number(options::Vector{<:AbstractString}, n::Integer; kwargs...)
+    credit_card_number(mask::Vector{<:AbstractString}; kwargs...)
+
+"""
+function credit_card_number(n::Integer = 1; kwargs...)
+    credit_card_references = _load!("finance", "credit_card", "noloc")
     generated_cards = String[]
 
     for _ in 1:n
@@ -101,8 +175,8 @@ function credit_card_number(n::Integer = 1; locale = nothing)
     return generated_cards |> coerse_string_type
 end
 
-function credit_card_number(options::Vector{<:AbstractString}, n::Integer; locale = nothing)
-    credit_card_references = load!("finance", "credit_card", "noloc")
+function credit_card_number(options::Vector{<:AbstractString}, n::Integer; kwargs...)
+    credit_card_references = _load!("finance", "credit_card", "noloc")
     filter!(r -> r[:credit_card_vendor] in options, credit_card_references)
     generated_cards = Vector{String}()
 
@@ -114,12 +188,12 @@ function credit_card_number(options::Vector{<:AbstractString}, n::Integer; local
     return generated_cards |> coerse_string_type
 end
 
-function credit_card_number(mask::Vector{<:AbstractString}; locale = nothing)
-    credit_card_references = load!("finance", "credit_card", "noloc")
+function credit_card_number(mask::Vector{<:AbstractString}; kwargs...)
+    credit_card_references = _load!("finance", "credit_card", "noloc")
     generated_cards = Vector{String}()
 
     for m in mask
-        # here we are accessing with '[1, :]' because we are sure to have exactly one match for the
+        # accessing with '[1, :]' because we are sure to have exactly one match for the
         # option provided as a mask. Since the 'filter' function returns a DataFrame rather than a
         # DataFrameRow we must perform this operation before forwarding it to '_generate_credit_card_number'
         selected_vendor_dfrow = filter(r -> r[:credit_card_vendor] == m, credit_card_references)[1, :]
@@ -131,26 +205,42 @@ end
 
 
 
-function credit_card_vendor(n::Integer = 1; locale = nothing)
-    credit_cards = load!("finance", "credit_card", "noloc")
+"""
+    credit_card_vendor(n::Integer = 1; kwargs...)
+    credit_card_vendor(options::Vector{<:AbstractString}, n::Integer; kwargs...)
+
+"""
+function credit_card_vendor(n::Integer = 1; kwargs...)
+    credit_cards = _load!("finance", "credit_card", "noloc")
     return rand(credit_cards[:, :credit_card_vendor], n) |> coerse_string_type
 end
 
-function credit_card_vendor(options::Vector{<:AbstractString}, n::Integer; locale = nothing)
-    credit_cards = load!("finance", "credit_card", "noloc")
+function credit_card_vendor(options::Vector{<:AbstractString}, n::Integer; kwargs...)
+    credit_cards = _load!("finance", "credit_card", "noloc")
     filter!(r -> r[:credit_card_vendor] in options, credit_cards)
     return rand(credit_cards[:, :credit_card_vendor], n) |> coerse_string_type
 end
 
 
 
-function credit_card_cvv(n::Integer = 1; locale = nothing)
+"""
+    credit_card_cvv(n::Integer = 1; kwargs...)
+
+Generate `n` credit card ccvs, e.g. `034`
+"""
+function credit_card_cvv(n::Integer = 1; kwargs...)
     generated = rand(0:999, n)
     return n == 1 ? only(generated) : generated
 end
 
 
-function credit_card_expiry(n::Integer = 1; locale = nothing)
+
+"""
+    credit_card_expiry(n::Integer = 1; kwargs...)
+
+Generate `n` credit card expiry entries, e.g. `05/2029`.
+"""
+function credit_card_expiry(n::Integer = 1; kwargs...)
     expiries = String[]
     for _ in 1:n
         month = rand(1:12) |> string

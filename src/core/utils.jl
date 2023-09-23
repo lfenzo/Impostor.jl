@@ -66,6 +66,7 @@ end
 
 
 """
+    _materialize_template(format::String, reference_dfrow::DataFrames.DataFrameRow; locale::String) :: String
 
 """
 function _materialize_template(format::String, reference_dfrow::DataFrames.DataFrameRow; locale::String) :: String
@@ -91,6 +92,7 @@ function _materialize_template(format::String, reference_dfrow::DataFrames.DataF
 end
 
 """
+    _materialize_template(template::AbstractString; locale::String) :: String
 
 """
 function _materialize_template(template::AbstractString; locale::String) :: String

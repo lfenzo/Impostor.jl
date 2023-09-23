@@ -1,9 +1,6 @@
 # Localization
 
-```@index
-Pages = ["localization.md"]
-Depth = 1
-```
+The following generator functions are available in the *Localization* provider:
 
 ```@docs
 address

@@ -1,6 +1,7 @@
 const ASSETS_ROOT::String = pkgdir(Impostor, "src", "data")
 const DEFAULT_SESSION_LOCALE::Vector{String} = ["en_US"]
 
+using Dates: Delim
 
 Base.@kwdef mutable struct DataContainer
     data::Dict = Dict()
@@ -8,18 +9,33 @@ Base.@kwdef mutable struct DataContainer
 end
 
 DataContainer(s::String) = DataContainer(Dict(), [s])
-
 DataContainer(s::Vector{<:AbstractString}) = DataContainer(Dict(), s)
 
 
 Base.empty!(d::DataContainer) = empty!(d.data)
 
+"""
+    session_locale() :: Vector{String}
+
+Return the current session locale
+"""
 session_locale() = SESSION_CONTAINER.locale
 
+
+"""
+    setlocale!(loc::String)
+    setlocale!(locs::Vector{<:AbstractString})
+
+Set `loc` as the default locale for the current session.
+"""
 setlocale!(loc::String) = setproperty!(SESSION_CONTAINER, :locale, [loc])
+setlocale!(locs::Vector{<:AbstractString}) = setproperty!(SESSION_CONTAINER, :locale, locs)
 
-setlocale!(loc::Vector{<:AbstractString}) = setproperty!(SESSION_CONTAINER, :locale, loc)
+"""
+    resetlocale!()
 
+Reset the current session locale to `"en_US"`.
+"""
 function resetlocale!() :: Nothing
     empty!(SESSION_CONTAINER)
     SESSION_CONTAINER.locale = DEFAULT_SESSION_LOCALE
@@ -28,73 +44,85 @@ end
 
 
 """
+    provider_exists(p::AbstractString) :: Bool
 
+Return whether the provided `p` is available.
+
+# Parameters
+- `p::AbstractString`: provider name
 """
-@inline function provider_exists(provider::AbstractString) :: Bool
-    return provider in readdir(joinpath(ASSETS_ROOT))
+@inline function provider_exists(p::AbstractString) :: Bool
+    return p in readdir(joinpath(ASSETS_ROOT))
 end
 
-"""
 
 """
-@inline function content_exists(provider::T, content::T) :: Bool where {T <: AbstractString}
-    return provider_exists(provider) && content in readdir(joinpath(ASSETS_ROOT, provider))
+    content_exists(p::T, c::T) :: Bool where {T <: AbstractString}
+
+Return whether the content `c` is available for provider `p`.
+
+# Parameters
+- `p::AbstractString`: provider name
+- `c::AbstractString`: content name
+"""
+@inline function content_exists(p::T, c::T) :: Bool where {T <: AbstractString}
+    return provider_exists(p) && c in readdir(joinpath(ASSETS_ROOT, p))
 end
 
-"""
 
 """
-@inline function locale_exists(provider::T, content::T, locale::T) :: Bool where {T <: AbstractString}
+    locale_exists(p::T, c::T, l::T) :: Bool where {T <: AbstractString}
+
+Return whether the provided locale `l` is available for content `c` from provider `p`.
+
+# Parameters
+- `p::AbstractString`: provider name
+- `c::AbstractString`: content name
+- `l::AbstractString`: locale name
+"""
+@inline function locale_exists(p::T, c::T, l::T) :: Bool where {T <: AbstractString}
     return (
-        content_exists(provider, content)
-        && locale * ".csv" in readdir(joinpath(ASSETS_ROOT, provider, content))
+        content_exists(p, c)
+        && l * ".csv" in readdir(joinpath(ASSETS_ROOT, p, c))
     )
 end
 
 
 
-
-
-"""
-
-"""
-@inline function provider_loaded(d::DataContainer, provider::AbstractString) :: Bool
+@inline function _provider_loaded(d::DataContainer, provider::AbstractString) :: Bool
     return haskey(d.data,  provider)
 end
 
-"""
-
-"""
-@inline function content_loaded(d::DataContainer, provider::T, content::T) :: Bool where {T <: AbstractString}
-    return provider_loaded(d, provider) && haskey(d.data[provider], content)
+@inline function _content_loaded(d::DataContainer, provider::T, content::T) :: Bool where {T <: AbstractString}
+    return _provider_loaded(d, provider) && haskey(d.data[provider], content)
 end
 
-"""
-
-"""
-@inline function locale_loaded(d::DataContainer, provider::T, content::T, locale::T) :: Bool where {T <: AbstractString}
-    return content_loaded(d, provider, content) && haskey(d.data[provider][content], locale)
+@inline function _locale_loaded(d::DataContainer, provider::T, content::T, locale::T) :: Bool where {T <: AbstractString}
+    return _content_loaded(d, provider, content) && haskey(d.data[provider][content], locale)
 end
 
 
 """
+    _load!(provider::T, content::T, locale::Vector{T}) :: DataFrame where {T <: AbstractString}
 
 """
-function load!(provider::T, content::T, locale::Vector{T}) :: DataFrame where {T <: AbstractString}
+function _load!(provider::T, content::T, locale::Vector{T}) :: DataFrame where {T <: AbstractString}
     df = DataFrame()
     for loc in locale
-        append!(df, load!(provider, content, loc); promote = true)
+        append!(df, _load!(provider, content, loc); promote = true)
     end
     return df
 end
 
 
 """
+    _load!(provider::T, content::T, locale::T = "noloc") :: DataFrame where {T <: AbstractString}
 
 """
-function load!(provider::T, content::T, locale::T = "noloc") :: DataFrame where {T <: AbstractString}
+function _load!(provider::T, content::T, locale::T = "noloc") :: DataFrame where {T <: AbstractString}
 
-    @assert(provider_exists(provider), "Provider '$provider' is not available.")
+    @assert(provider_exists(provider),
+        "Provider '$provider' is not available.")
 
     @assert(content_exists(provider, content),
         "Content '$content' not available for provider '$provider'")
@@ -102,19 +130,22 @@ function load!(provider::T, content::T, locale::T = "noloc") :: DataFrame where 
     @assert(locale_exists(provider, content, locale),
         "Locale '$locale' not available for content '$content' of provider '$provider'")
 
-    if !provider_loaded(SESSION_CONTAINER, provider)
+    if !_provider_loaded(SESSION_CONTAINER, provider)
         merge!(SESSION_CONTAINER.data, Dict(provider => Dict()))
     end
 
-    if !content_loaded(SESSION_CONTAINER, provider, content)
+    if !_content_loaded(SESSION_CONTAINER, provider, content)
         merge!(SESSION_CONTAINER.data[provider], Dict(content => Dict()))
     end
 
-    if !locale_loaded(SESSION_CONTAINER, provider, content, locale)
-        file = joinpath(ASSETS_ROOT, provider, content, locale * ".csv")
+    if !_locale_loaded(SESSION_CONTAINER, provider, content, locale)
+    
+        data_path = joinpath(ASSETS_ROOT, provider, content, locale * ".csv")
+        header = joinpath(ASSETS_ROOT, provider, content, "HEADER.txt") |> readlines
+
         merge!(
             SESSION_CONTAINER.data[provider][content],
-            Dict(locale => CSV.read(file, DataFrame))
+            Dict(locale => CSV.read(data_path, DataFrame; header, delim = ','))
         )
     end
 

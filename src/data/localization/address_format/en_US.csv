@@ -1,4 +1,3 @@
-address_format
 "street, district_name, city_name, postcode, state_name, country_name"
 "street, district_name, city_name, postcode, state_name - state_code, country_name"
 "street address_complement, district_name, city_name, postcode, state_name - state_code, country_name"
