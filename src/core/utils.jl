@@ -27,6 +27,7 @@ end
 
 """
     _materialize_numeric_template(template::String) :: String
+    _materialize_numeric_template(number::Integer, template::AbstractString) :: String
 
 Receive a numeric template string (e.g. `"###-#"`) and generate a string replacing the '#' chars
 by random integers between [0, 9]. Optionally, pass fixed numbers in the numeric template
@@ -38,6 +39,23 @@ function _materialize_numeric_template(template::AbstractString) :: String
         materialized *= char == '#' ? string(rand(0:9)) : char
     end
     return materialized
+end
+
+function _materialize_numeric_template(template::AbstractString, number::Union{Integer, String}) :: String
+    if number isa Integer
+        number_digits = digits(number) 
+        converted_number = string(number)
+    else
+        number_digits = collect(reverse(number))
+        converted_number = number
+    end
+
+    formatted = ""
+
+    for token in template
+        formatted *= token == '#' ? pop!(number_digits) : token
+    end
+    return formatted
 end
 
 

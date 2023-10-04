@@ -149,10 +149,29 @@ function _generate_credit_card_number(prefix::String, n_digits::Integer)
     return join(generated_card)
 end
 
-function _generate_credit_card_number(reference_dfrow::DataFrames.DataFrameRow)
+function _generate_credit_card_number(reference_dfrow::DataFrames.DataFrameRow, formatted::Bool)
     card_prefix = _materialize_numeric_range_template(reference_dfrow[:iin_format])
     card_length = parse(Int, _materialize_numeric_range_template(string(reference_dfrow[:length])))
-    return _generate_credit_card_number(card_prefix, card_length)
+
+    generated_card = _generate_credit_card_number(card_prefix, card_length)
+
+    if !formatted
+        return generated_card
+    else
+        format = ""
+        n_full_blocks = div(card_length, 4)
+        n_remaining_slots = card_length % 4
+
+        for i in 1:n_full_blocks
+            format *= (i < n_full_blocks) ? "####-" : "####"
+        end
+
+        for i in 1:n_remaining_slots
+            format *= (i == 1) ? "-#" : "#"
+        end
+
+        return _materialize_numeric_template(format, generated_card)
+    end
 end
 
 
@@ -162,33 +181,40 @@ end
     credit_card_number(options::Vector{<:AbstractString}, n::Integer; kwargs...)
     credit_card_number(mask::Vector{<:AbstractString}; kwargs...)
 
+# Parameters
+- `n::Integer = 1`: number of credit card numbers to generate.
+- `options::Vector{<:AbstractString}`: vector with options restricting the possible values generated.
+- `mask::Vector{<:AbstractString}`: mask vector with element-wise option restrictions.
+
+# Kwargs
+- `formatted::Bool`: whether to return the raw credit card numbers *e.g.* `"3756808757861311"` or to format the output *e.g.* `"3756-8087-5786-1311`
 """
-function credit_card_number(n::Integer = 1; kwargs...)
+function credit_card_number(n::Integer = 1; formatted::Bool=false, kwargs...)
     credit_card_references = _load!("finance", "credit_card", "noloc")
     generated_cards = String[]
 
     for _ in 1:n
         selected_vendor_dfrow = rand(eachrow(credit_card_references))
-        push!(generated_cards, _generate_credit_card_number(selected_vendor_dfrow))
+        push!(generated_cards, _generate_credit_card_number(selected_vendor_dfrow, formatted))
     end
 
     return generated_cards |> coerse_string_type
 end
 
-function credit_card_number(options::Vector{<:AbstractString}, n::Integer; kwargs...)
+function credit_card_number(options::Vector{<:AbstractString}, n::Integer; formatted::Bool=false, kwargs...)
     credit_card_references = _load!("finance", "credit_card", "noloc")
     filter!(r -> r[:credit_card_vendor] in options, credit_card_references)
     generated_cards = Vector{String}()
 
     for _ in 1:n
         selected_vendor_dfrow = rand(eachrow(credit_card_references))
-        push!(generated_cards, _generate_credit_card_number(selected_vendor_dfrow))
+        push!(generated_cards, _generate_credit_card_number(selected_vendor_dfrow, formatted))
     end
 
     return generated_cards |> coerse_string_type
 end
 
-function credit_card_number(mask::Vector{<:AbstractString}; kwargs...)
+function credit_card_number(mask::Vector{<:AbstractString}; formatted::Bool=false, kwargs...)
     credit_card_references = _load!("finance", "credit_card", "noloc")
     generated_cards = Vector{String}()
 
@@ -197,7 +223,7 @@ function credit_card_number(mask::Vector{<:AbstractString}; kwargs...)
         # option provided as a mask. Since the 'filter' function returns a DataFrame rather than a
         # DataFrameRow we must perform this operation before forwarding it to '_generate_credit_card_number'
         selected_vendor_dfrow = filter(r -> r[:credit_card_vendor] == m, credit_card_references)[1, :]
-        push!(generated_cards, _generate_credit_card_number(selected_vendor_dfrow))
+        push!(generated_cards, _generate_credit_card_number(selected_vendor_dfrow, formatted))
     end
 
     return generated_cards |> coerse_string_type
