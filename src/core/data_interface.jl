@@ -1,7 +1,6 @@
 const ASSETS_ROOT::String = pkgdir(Impostor, "src", "data")
 const DEFAULT_SESSION_LOCALE::Vector{String} = ["en_US"]
 
-using Dates: Delim
 
 Base.@kwdef mutable struct DataContainer
     data::Dict = Dict()
@@ -104,7 +103,12 @@ end
 
 """
     _load!(provider::T, content::T, locale::Vector{T}) :: DataFrame where {T <: AbstractString}
+    _load!(provider::T, content::T, locale::T = "noloc") :: DataFrame where {T <: AbstractString}
 
+# Parameters
+- `provider::AbstractString`:
+- `content::AbstractString`:
+- `locale::Union{AbstractString, Vector{AbstractString}}`:
 """
 function _load!(provider::T, content::T, locale::Vector{T}) :: DataFrame where {T <: AbstractString}
     df = DataFrame()
@@ -114,11 +118,6 @@ function _load!(provider::T, content::T, locale::Vector{T}) :: DataFrame where {
     return df
 end
 
-
-"""
-    _load!(provider::T, content::T, locale::T = "noloc") :: DataFrame where {T <: AbstractString}
-
-"""
 function _load!(provider::T, content::T, locale::T = "noloc") :: DataFrame where {T <: AbstractString}
 
     @assert(provider_exists(provider),

@@ -2,13 +2,6 @@
 
 The following utility functions are available:
 
-```@index
-Pages = ["utilities.md"]
-Depth = 1
-```
-
----------------
-
 ```@docs
 setlocale!
 resetlocale!

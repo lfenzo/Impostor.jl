@@ -1,4 +1,5 @@
 using Documenter
+using DocumenterMermaid
 using Impostor
 
 
@@ -9,12 +10,15 @@ makedocs(
     pages = [
         "Introduction" => "index.md",
         "Providers" => [
-            "Identity" => "providers/identity.md"
-            "Finance" => "providers/finance.md"
-            "Localization" => "providers/localization.md"
+            "Identity" => "providers/identity.md",
+            "Finance" => "providers/finance.md",
+            "Localization" => "providers/localization.md",
         ],
-        "Utilities" => "core/utilities.md",
-        "Developer Guide" => "developer_guide.md",
+        "Developer Guide" => [
+            "Developer Guider" => "developer_guide.md",
+            "Internals" => "core/internals.md",
+            "Utilities" => "core/utilities.md",
+        ],
         "API Reference" => "api_reference.md",
     ]
 )

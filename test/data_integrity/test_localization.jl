@@ -1,5 +1,15 @@
 @testset "Localization" begin
     for locale in ALL_LOCALES
+        locale_exists("localization", "address_complement", locale) && @testset "[$locale] address_complement" begin
+            df = Impostor._load!("localization", "address_complement", locale)
+            @test uppercase.(df[:, :address_complement]) |> allunique
+        end
+
+        locale_exists("localization", "address_format", locale) && @testset "[$locale] address_format" begin
+            df = Impostor._load!("localization", "address_format", locale)
+            @test uppercase.(df[:, :address_format]) |> allunique
+        end
+
         locale_exists("localization", "locale", locale) && @testset "[$locale] locale" begin
             df = Impostor._load!("localization", "locale", locale)
             @test allunique(df, :locale)

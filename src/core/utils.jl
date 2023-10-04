@@ -1,5 +1,22 @@
 """
+    coerse_string_type(v::Vector{<:AbstractString}) :: Union{String, Vector{String}}
 
+Automatically unpack the return value of a generator function into a single string,
+when appropriate.
+
+# Parameters
+- `v::Vector{<:AbstractString}`: value(s) returned by some generator function.
+
+# Example
+```repl
+julia> Impostor.coerse_string_type(["Mark"])
+"Mark"
+
+julia> Impostor.coerse_string_type(["Mark", "Jane"])
+2-element Vector{String}:
+ "Mark"
+ "Jane"
+```
 """
 @inline function coerse_string_type(v::Vector{<:AbstractString}) :: Union{String, Vector{String}}
     strings = v isa Vector{String} ? v : convert.(String, v)
@@ -11,9 +28,9 @@ end
 """
     _materialize_numeric_template(template::String) :: String
 
-Receive a numeric template string (e.g. "###-#") and generate a string replacing the '#' chars
+Receive a numeric template string (e.g. `"###-#"`) and generate a string replacing the '#' chars
 by random integers between [0, 9]. Optionally, pass fixed numbers in the numeric template
-(e.g. "(15) 9####-####") to pre-select the numbers in the returned string.
+(e.g. `"(15) 9####-####"`) to pre-select the numbers in the returned string.
 """
 function _materialize_numeric_template(template::AbstractString) :: String
     materialized = ""
@@ -24,16 +41,17 @@ function _materialize_numeric_template(template::AbstractString) :: String
 end
 
 
+
 """
     _materialize_numeric_range_template(template::AbstractString) :: String
 
-Gen*rate a string containing a number from a *numeric range* template. Such numeric templates may
-contain options separated by a ';' caracter. Additionally, options can assume a single template
-format (e.g. "4##") or specify a range using the ':' character inside the option (e.g. "2##:3##"
+Generate a string containing a number from a *numeric range* template. Such numeric templates may
+contain options separated by a `';'` caracter. Additionally, options can assume a single template
+format (e.g. `"4##"`) or specify a range using the `':'` character inside the option (e.g. `"2##:3##"`
 specifies numbers between 200 and 399).
 
 # Example
-```repl
+```@repl
 julia> Impostor._materialize_numeric_range_template("4#####")
 "412345"
 
@@ -65,14 +83,16 @@ function _materialize_numeric_range_template(template::AbstractString) :: String
 end
 
 
-"""
-    _materialize_template(format::String, reference_dfrow::DataFrames.DataFrameRow; locale::String) :: String
 
 """
-function _materialize_template(format::String, reference_dfrow::DataFrames.DataFrameRow; locale::String) :: String
+    _materialize_template(template::String; locale::String) :: String
+    _materialize_template(template::String, reference_dfrow::DataFrames.DataFrameRow; locale::String) :: String
+
+"""
+function _materialize_template(template::String, reference_dfrow::DataFrames.DataFrameRow; locale::String) :: String
     materialized = ""
 
-    for t in tokenize(format) 
+    for t in tokenize(template) 
         token = string(t)
 
         # references to dataframe columns (not necessarily the names exported by the packages)
@@ -91,11 +111,7 @@ function _materialize_template(format::String, reference_dfrow::DataFrames.DataF
     return materialized
 end
 
-"""
-    _materialize_template(template::AbstractString; locale::String) :: String
-
-"""
-function _materialize_template(template::AbstractString; locale::String) :: String
+function _materialize_template(template::String; locale::String) :: String
     materialized = ""
 
     for token in tokenize(convert(String, template))
