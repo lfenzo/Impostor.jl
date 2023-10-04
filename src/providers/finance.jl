@@ -187,7 +187,7 @@ end
 - `mask::Vector{<:AbstractString}`: mask vector with element-wise option restrictions.
 
 # Kwargs
-- `formatted::Bool`: whether to return the raw credit card numbers *e.g.* `"3756808757861311"` or to format the output *e.g.* `"3756-8087-5786-1311`
+- `formatted::Bool`: whether to return the raw credit card numbers *e.g.* `"3756808757861311"` or to format the output *e.g.* `"3756-8087-5786-1311"`
 """
 function credit_card_number(n::Integer = 1; formatted::Bool=false, kwargs...)
     credit_card_references = _load!("finance", "credit_card", "noloc")

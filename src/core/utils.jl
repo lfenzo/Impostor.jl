@@ -27,11 +27,33 @@ end
 
 """
     _materialize_numeric_template(template::String) :: String
-    _materialize_numeric_template(number::Integer, template::AbstractString) :: String
+    _materialize_numeric_template(template::AbstractString, number::Integer) :: String
 
 Receive a numeric template string (e.g. `"###-#"`) and generate a string replacing the '#' chars
-by random integers between [0, 9]. Optionally, pass fixed numbers in the numeric template
-(e.g. `"(15) 9####-####"`) to pre-select the numbers in the returned string.
+by random integers between [0, 9]; pass fixed numbers in the numeric template (e.g. `"(15) 9####-####"`)
+to pre-select the numbers in the returned string.
+
+Optionally, provide a `number` to fill the placeholders `'#'` in `template`. **In this usage, the
+number of digits in `number` may be greater of equal to the number of `'#'` in `template`, but
+not smaller.**
+
+# Examples
+```@repl
+julia> Impostor._materialize_numeric_template("####-#")
+"1324-8"
+
+julia> Impostor._materialize_numeric_template("1/####-9")
+"1/5383-9"
+
+julia> Impostor._materialize_numeric_template("####-#", 12345)
+"1234-5"
+
+julia> Impostor._materialize_numeric_template("1/####-9", 4321)
+"1/4321-9"
+
+julia> Impostor._materialize_numeric_template("####", 87654321)
+"8765"
+```
 """
 function _materialize_numeric_template(template::AbstractString) :: String
     materialized = ""
@@ -50,10 +72,18 @@ function _materialize_numeric_template(template::AbstractString, number::Union{I
         converted_number = number
     end
 
+    template_length = filter(c -> c == '#', template) |> length
+
+    @assert(
+        length(converted_number) >= template_length,
+        "Provided template length $(template_length) should be "
+        * ">=  to the number length $(length(converted_number))"
+    )
+
     formatted = ""
 
-    for token in template
-        formatted *= token == '#' ? pop!(number_digits) : token
+    for char in template
+        formatted *= char == '#' ? pop!(number_digits) : char
     end
     return formatted
 end

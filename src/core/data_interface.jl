@@ -105,10 +105,14 @@ end
     _load!(provider::T, content::T, locale::Vector{T}) :: DataFrame where {T <: AbstractString}
     _load!(provider::T, content::T, locale::T = "noloc") :: DataFrame where {T <: AbstractString}
 
+Fetch from the data archive the `content` associated to the provided `locale` and `provider`. Data
+is returned as a DataFrame for further manipulation. Optionally provide `locale = "noloc` for the
+specific contents without any locale assocated to them.
+
 # Parameters
-- `provider::AbstractString`:
-- `content::AbstractString`:
-- `locale::Union{AbstractString, Vector{AbstractString}}`:
+- `provider::AbstractString`: provider name, *e.g.* `"localization"`.
+- `content::AbstractString`: content name, *e.g.* `"street_prefix"`.
+- `locale::Union{AbstractString, Vector{AbstractString}}`: locale(s) associated to the `content` and `provider` provided.
 """
 function _load!(provider::T, content::T, locale::Vector{T}) :: DataFrame where {T <: AbstractString}
     df = DataFrame()
@@ -138,10 +142,8 @@ function _load!(provider::T, content::T, locale::T = "noloc") :: DataFrame where
     end
 
     if !_locale_loaded(SESSION_CONTAINER, provider, content, locale)
-    
         data_path = joinpath(ASSETS_ROOT, provider, content, locale * ".csv")
         header = joinpath(ASSETS_ROOT, provider, content, "HEADER.txt") |> readlines
-
         merge!(
             SESSION_CONTAINER.data[provider][content],
             Dict(locale => CSV.read(data_path, DataFrame; header, delim = ','))
