@@ -403,7 +403,7 @@ function street(n::Integer = 1; locale = session_locale())
 
     for _ in 1:n
         loc = rand(locale)
-        format = rand(street_formats[loc])
+        format = rand(street_formats[loc]) |> String
         push!(streets, _materialize_template(format; locale = loc))
     end
     return streets |> coerse_string_type

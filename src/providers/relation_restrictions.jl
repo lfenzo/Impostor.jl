@@ -1,10 +1,10 @@
-const KNOWLEDGE_FIELDS::Dict{Symbol, Vector{String}} = Dict(
+const KNOWLEDGE_FIELDS::Dict{Symbol, Vector} = Dict(
     :providers => [
         "identity"
     ],
     :provider_functions => [
-        "occupation",
-        "univsersity",
+        :occupation,
+        :university,
     ],
     :options => [
         "business",
@@ -17,14 +17,14 @@ const KNOWLEDGE_FIELDS::Dict{Symbol, Vector{String}} = Dict(
     ]
 )
 
-const SEXES::Dict{Symbol, Vector{String}} = Dict(
+const SEXES::Dict{Symbol, Vector} = Dict(
     :provider => [
         "identity",
     ],
     :provider_functions => [
-        "firstname",
-        "fullname",
-        "prefix",
+        :firstname,
+        :fullname,
+        :prefix,
     ],
     :options => [
         "M", # male
