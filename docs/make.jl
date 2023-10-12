@@ -22,3 +22,7 @@ makedocs(
         "API Reference" => "api_reference.md",
     ]
 )
+
+deplaydocs(
+    repo = "github.com/lfenzo/Impostor.jl.git",
+)
