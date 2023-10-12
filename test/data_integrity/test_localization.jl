@@ -18,25 +18,25 @@
 
         locale_exists("localization", "country", locale) && @testset "[$locale] country" begin
             df = Impostor._load!("localization", "country", locale)
-            @test allunique(df, :country_name)
-            @test allunique(df, :official_country_name)
+            @test allunique(df, :country)
+            @test allunique(df, :country_official_name)
             @test (df[:, :locale] .== locale) |> all
         end
 
         locale_exists("localization", "state", locale) && @testset "[$locale] state" begin
             df = Impostor._load!("localization", "state", locale)
-            @test allunique(df, :state_name)
+            @test allunique(df, :state)
             @test uppercase.(df[:, :state_code]) |> allunique
         end
 
         locale_exists("localization", "city", locale) && @testset "[$locale] city" begin
             df = Impostor._load!("localization", "city", locale)
-            @test allunique(df, :city_name)
+            @test allunique(df, :city)
         end
 
         locale_exists("localization", "district", locale) && @testset "[$locale] district" begin
             df = Impostor._load!("localization", "district", locale)
-            @test allunique(df, :district_name)
+            @test allunique(df, :district)
         end
 
         locale_exists("localization", "street_prefix", locale) && @testset "[$locale] street_prefix" begin
