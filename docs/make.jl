@@ -15,7 +15,7 @@ makedocs(
             "Localization" => "providers/localization.md",
         ],
         "Developer Guide" => [
-            "Developer Guider" => "developer_guide.md",
+            "Developer Guide" => "developer_guide.md",
             "Internals" => "core/internals.md",
             "Utilities" => "core/utilities.md",
         ],

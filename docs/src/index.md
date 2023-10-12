@@ -1,7 +1,9 @@
 ## What is Impostor.jl?
 
 Impostor is a synthetic tabular-data generator based on random samplings over pre-defined
-values. Its structure and design allows for extense customization when generating data.
+values. Its structure and design allows for extense customization when generating data, one of
+the main selling points of Impostor is its ability to generate and manipulate hierarchical data
+producing entries which make sense when considered the relations between columns.
 
 ### Avaliable Providers
 
@@ -21,6 +23,8 @@ First of all, let't make sure that the Impostor package is installed:
 ```@julia
 using Pkg; Pkg.add("Impostor")
 ```
+
+### Generator Functions
 
 To get started with Impostor, select your generator function of choice, the simplest example
 is to generate single and multiple values specifying the number of expected values in the output.
@@ -55,10 +59,26 @@ using Impostor # hide
 firstname(2)
 setlocale!(["pt_BR"]);
 firstname(2)
+resetlocale!(); # hide
 ```
 
+### Impostor Templates
 
-### Concepts
+Besides providing several *generator-functions* which may be used as standalone data series
+generators, Impostor also exports the `ImpostorTemplate` which is a utility struct to encapsulate
+formats and generate a fully fledgned table.
+
+```@repl
+using Impostor # hide
+using DataFrames # hide
+template = ImpostorTemplate([:firstname, :surname, :country_code, :state, :city]);
+
+template(3)
+
+template(3, DataFrame) # optionally, provide a `sink` argument
+```
+
+## Concepts
 
 In order to facilitate naming and referencing later on the major concepts implemented are described below:
 
@@ -80,7 +100,7 @@ In order to facilitate naming and referencing later on the major concepts implem
     | Implementation | Method Signature | Desctiption |
     |:---------------|:-----------------|:------------|
     | *Value-based* | `func(n::Int)` | Simply generate an output with `n` entries produced by `func`. |
-    | *Option-based* | `func(v::Vector, n::In)` | This approach will generate an output with `n` entries produced by the generator function `func` but **restricting the generated entries to the specified options in `v`**, which specific contents will depend on `func`. Generator functions taking on options in different levels accept the `optionlevel` kwarg, when it is the case, docstrings will explain each specific behavior. |
+    | *Option-based* | `func(v::Vector, n::Int)` | This approach will generate an output with `n` entries produced by the generator function `func` but **restricting the generated entries to the specified options in `v`**, which specific contents will depend on `func`. Generator functions taking on options in different levels accept the `optionlevel` kwarg, when it is the case, docstrings will explain each specific behavior. |
     | *Mask-based* | `func(v::Vector)` | This approach will generate an output with `length(v)` entries produced by the generator function `func`. **The contents of `v` specify element-wise options to restrict the output of `func`.** Equivalent *in terms of output* with calling `[func(opt, 1) for opt in v]` (*i.e.* the option-based generation), but sub-optimal in terms of performance. Generator functions taking on masks in different levels accept the `masklevel` kwarg, when it is the case, docstrings will explain each specific behavior.|
 
     ```@repl
@@ -99,7 +119,7 @@ For the specific cases of contributing with code and/or data addition, we strong
 
 ### Roadmap
 
-Future developments in Impostor.jl will target the addition of different providers such as:
+Future developments in Impostor will target the addition of different providers such as:
 
 - **Business**
     - Business name
