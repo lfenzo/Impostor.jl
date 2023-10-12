@@ -23,6 +23,6 @@ makedocs(
     ]
 )
 
-deplaydocs(
+deploydocs(
     repo = "github.com/lfenzo/Impostor.jl.git",
 )
