@@ -247,6 +247,17 @@ function credit_card_vendor(options::Vector{<:AbstractString}, n::Integer; kwarg
     return rand(credit_cards[:, :credit_card_vendor], n) |> coerse_string_type
 end
 
+function credit_card_vendor(mask::Vector{<:AbstractString}; keargs...)
+    credit_cards = _load!("finance", "credit_card", "noloc")
+
+    available_venders = unique(credit_cards[:, :credit_card_vendor] .|> String) 
+    provided_vendors = unique(mask)
+
+    @assert [pv in available_venders for pv in provided_vendors] |> all
+
+    return mask
+end
+
 
 
 """

@@ -1,4 +1,4 @@
 locale
 country_code
-country_name
-official_country_name
+country
+country_official_name

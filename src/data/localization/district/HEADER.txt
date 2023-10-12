@@ -1,2 +1,2 @@
-city_name
-district_name
+city
+district

@@ -13,6 +13,7 @@ DataContainer(s::Vector{<:AbstractString}) = DataContainer(Dict(), s)
 
 Base.empty!(d::DataContainer) = empty!(d.data)
 
+
 """
     session_locale() :: Vector{String}
 

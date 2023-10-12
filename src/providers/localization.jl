@@ -1,10 +1,14 @@
 # TODO replace target-level with target_provider
 # TODO replace options_level with optionlevel
+"""
+    _hierarchical_localization_fallback(target_level, level, locale)
+
+"""
 function _hierarchical_localization_fallback(target_level, level, locale)
     target_found = false  # helps identify the correct element in 'hiarchical_order'
     hiarchical_order = [
         ["district", nothing],
-        ["city", :city_name],
+        ["city", :city],
         ["state", :state_code],
         ["country", :country_code],
     ]
@@ -12,7 +16,6 @@ function _hierarchical_localization_fallback(target_level, level, locale)
     df = _load!("localization", target_level, locale)
 
     for hiarchy_member in hiarchical_order
-
         current_level = hiarchy_member[begin]
         mergekey = hiarchy_member[end]
 
@@ -83,6 +86,48 @@ function country(mask::Vector{<:AbstractString};
     for value in mask
         associated_mask_rows = get(gb, (value,), nothing)
         push!(selected_values, rand(associated_mask_rows[:, :country_name]))
+    end
+    return selected_values |> coerse_string_type
+end
+
+
+
+"""
+    country_official_name(n::Integer = 1; kwargs...)
+    country_official_name(options::Vector{<:AbstractString}, n::Integer; level::Symbol, kwargs...)
+    country_official_name(mask::Vector{<:AbstractString}; level::Symbol, kwargs...)
+
+"""
+function country_official_name(n::Integer = 1; locale = session_locale())
+    return rand(_load!("localization", "country", locale)[:, :country_official_name], n) |> coerse_string_type
+end
+
+function country_official_name(options::Vector{<:AbstractString}, n::Integer;
+    level::Symbol = :country_code,
+    locale = session_locale()
+)
+
+    @assert level == :country_code "invalid 'level' provided: \"$level\""
+
+    countries = _load!("localization", "country", locale)
+    filter!(r -> r[:country_code] in options, countries)
+    return rand(countries[:, :country_official_name], n) |> coerse_string_type
+end
+
+function country_official_name(mask::Vector{<:AbstractString};
+    level::Symbol = :country_code,
+    locale = session_locale()
+)
+    @assert level == :country_code "invalid 'level' provided: \"$level\""
+
+    multi_locale_countries = _load!("localization", "country", locale)
+    gb = groupby(multi_locale_countries, level)
+
+    selected_values = Vector{String}()
+
+    for value in mask
+        associated_mask_rows = get(gb, (value,), nothing)
+        push!(selected_values, rand(associated_mask_rows[:, :country_official_name]))
     end
     return selected_values |> coerse_string_type
 end

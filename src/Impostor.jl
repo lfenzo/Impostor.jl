@@ -3,6 +3,7 @@ module Impostor
 
 using CSV
 using DataFrames
+using DataStructures
 using StatsBase
 using Dates
 using Tokenize
@@ -33,6 +34,7 @@ export address
 export address_complement
 export city
 export country
+export country_official_name
 export country_code
 export district
 export state

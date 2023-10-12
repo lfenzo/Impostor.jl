@@ -31,3 +31,29 @@ const SEXES::Dict{Symbol, Vector} = Dict(
         "F", # female
     ]
 )
+
+const LOCALIZATIONS::Dict{Symbol, Vector} = Dict(
+    :provider => [
+        "localization",
+    ],
+    :provider_functions => [
+        :country,
+        :country_official_name,
+        :country_code,
+        :state,
+        :state_code,
+        :city,
+        :district,
+        :address,
+    ],
+)
+
+const CREDIT_CARDS::Dict{Symbol, Vector} = Dict(
+    :provider => [
+        "finance",
+    ],
+    :provider_functions => [
+        :credit_card_vendor,
+        :credit_card_number,
+    ],
+)
