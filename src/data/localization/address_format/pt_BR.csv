@@ -1,2 +1,2 @@
-"street street_number, district_name, city_name - postcode, state_name - state_code, country_name"
-"street street_number, (address_complement) district_name city_name - postcode, state_name - state_code, country_name"
+"street street_number, district, city- postcode, state- state_code, country"
+"street street_number, (address_complement) district city - postcode, state- state_code, country"
