@@ -16,7 +16,7 @@ setformat!(i::ImpostorTemplate, format::Vector{Symbol}) = setfield!(i, :format, 
 """
     _sanitize_formats(formats::Vector)
 
-Verify if all `formats` are available and exported by Impostor.jl
+Verify if all `formats` are available and exported by Impostor.jl, otherwise throw 
 """
 function _verify_formats(formats::Vector{Symbol})
     invalid_formats = Symbol[]
@@ -40,8 +40,17 @@ end
 
 Generates `n` entries with information specified in the formats.
 
+# Parameters
+- `n`: number of entries/rows to generate in each format
+- `sink = Dict`: type sink for the generated table.
+
 # Kwargs
 - `locale::Vector{String}`: locale(s) from which entries are sampled. If no `locale` is provided, the current session locale is used.
+
+# Examples
+```@repl
+
+```
 """
 function (impostor::ImpostorTemplate)(n::Integer = 1, sink = Dict;
     locale = session_locale(),

@@ -1,9 +1,8 @@
 ## What is Impostor.jl?
 
 Impostor is a synthetic tabular-data generator based on random samplings over pre-defined
-values. Its structure and design allows for extense customization when generating data, one of
-the main selling points of Impostor is its ability to generate and manipulate hierarchical data
-producing entries which make sense when considered the relations between columns.
+values. One of the main features of Impostor is its ability to generate data making sense
+of relations between columns.
 
 ### Avaliable Providers
 
@@ -18,7 +17,7 @@ Depth = 1
 
 ## Getting Started
 
-First of all, let't make sure that the Impostor package is installed:
+First of all, let's make sure that the Impostor package is installed in your current environment:
 
 ```@julia
 using Pkg; Pkg.add("Impostor")
@@ -56,8 +55,7 @@ In order to change the default `locale` used by the session use the [`setlocale!
 
 ```@repl
 using Impostor # hide
-firstname(2)
-setlocale!(["pt_BR"]);
+setlocale!("pt_BR");
 firstname(2)
 resetlocale!(); # hide
 ```
@@ -75,7 +73,7 @@ template = ImpostorTemplate([:firstname, :surname, :country_code, :state, :city]
 
 template(3)
 
-template(3, DataFrame) # optionally, provide a `sink` argument
+template(5, DataFrame; locale = ["pt_BR", "en_US"]) # optionally, provide a `sink` type
 ```
 
 ## Concepts
@@ -100,14 +98,14 @@ In order to facilitate naming and referencing later on the major concepts implem
     | Implementation | Method Signature | Desctiption |
     |:---------------|:-----------------|:------------|
     | *Value-based* | `func(n::Int)` | Simply generate an output with `n` entries produced by `func`. |
-    | *Option-based* | `func(v::Vector, n::Int)` | This approach will generate an output with `n` entries produced by the generator function `func` but **restricting the generated entries to the specified options in `v`**, which specific contents will depend on `func`. Generator functions taking on options in different levels accept the `optionlevel` kwarg, when it is the case, docstrings will explain each specific behavior. |
-    | *Mask-based* | `func(v::Vector)` | This approach will generate an output with `length(v)` entries produced by the generator function `func`. **The contents of `v` specify element-wise options to restrict the output of `func`.** Equivalent *in terms of output* with calling `[func(opt, 1) for opt in v]` (*i.e.* the option-based generation), but sub-optimal in terms of performance. Generator functions taking on masks in different levels accept the `masklevel` kwarg, when it is the case, docstrings will explain each specific behavior.|
+    | *Option-based* | `func(v::Vector, n::Int)` | Generates an output with `n` entries produced by `func` but **restricting the generated entries to specified options in `v`**, which specific contents will depend on `func`. Generator functions taking on options in different levels accept the `optionlevel` kwarg, when that is the case, docstrings will explain each specific behavior. |
+    | *Mask-based* | `func(v::Vector)` | Generates an output with `length(v)` entries produced by `func`. **The contents of `v` specify element-wise options to restrict the output of `func`.** Equivalent *in terms of output* with calling `[func(opt, 1) for opt in v]` (*i.e.* the option-based generation), but sub-optimal in terms of performance. Generator functions taking on masks in different levels accept the `masklevel` kwarg, when it is the case, docstrings will explain each specific behavior.|
 
     ```@repl
     using Impostor # hide
     firstname(3)  # value-based generation
     firstname(["F"], 3)  # option-based generation
-    firstname(["F", "M", "F", "M"])  # mask-based generation
+    firstname(["F", "M", "F"])  # mask-based generation
     ```
 
 ## Contributing
@@ -136,3 +134,5 @@ Future developments in Impostor will target the addition of different providers 
     - Phone number
     - Social media
 - **Color**
+    - RGB Color
+    - Hex-Color

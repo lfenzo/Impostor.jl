@@ -8,11 +8,13 @@ address_complement
 city
 country
 country_code
+country_official_name
 district
 postcode
 state
 state_code
 street
-street_suffix
+street_number
 street_prefix
+street_suffix
 ```

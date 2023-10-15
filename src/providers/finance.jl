@@ -13,7 +13,7 @@
 - `locale::Vector{String}`: locale(s) from which entries are sampled. If no `locale` is provided, the current session locale is used.
 
 # Example
-```jldoctest
+```@repl
 julia> bank_name(5; locale = ["pt_BR"])
 5-element Vector{String}:
  "Broker"
@@ -48,7 +48,7 @@ function bank_name(mask::Vector; level::Symbol = :bank_code, locale = session_lo
     )
 
     bank_info = _load!("finance", "bank", locale)
-    bank_institutions = Vector{String}()
+    bank_institutions = String[]
 
     for m in mask
         # accessing with '[1, :]' because we are sure to have exactly one match for the
@@ -120,7 +120,21 @@ end
 
 
 """
+    _generate_credit_card_number(prefix::String, n_digits::Integer)
 
+Generate a valid credit card number from card `prefix` with a fixed `n_digits`.
+
+# Parameters
+- `prefix::String`: numbers to prefix the generated credit card, *e.g.:* "12345".
+- `n_digits::Integer`: number of digits in the generated credit card.
+
+See also: [credit_card_number](@ref).
+
+# Example
+```@repl
+julia> Impostor._generate_credit_card_number("12345", 16)
+"1234506267207985"
+```
 """
 function _generate_credit_card_number(prefix::String, n_digits::Integer)
     card_prefix = parse(Int, prefix) |> digits |> reverse
@@ -181,6 +195,11 @@ end
     credit_card_number(options::Vector{<:AbstractString}, n::Integer; kwargs...)
     credit_card_number(mask::Vector{<:AbstractString}; kwargs...)
 
+Generate valid credit card numbers according to the credit card vendor. Available vendors are:
+- `"Visa"`
+- `"American Express"`
+- `"MasterCard"`
+
 # Parameters
 - `n::Integer = 1`: number of credit card numbers to generate.
 - `options::Vector{<:AbstractString}`: vector with options restricting the possible values generated.
@@ -188,6 +207,15 @@ end
 
 # Kwargs
 - `formatted::Bool`: whether to return the raw credit card numbers *e.g.* `"3756808757861311"` or to format the output *e.g.* `"3756-8087-5786-1311"`
+
+# Examples
+```@repl
+julia> credit_card_number()
+"5186794250685172"
+
+julia> credit_card_number(; formatted = true)
+"4046-7508-2101-2729"
+```
 """
 function credit_card_number(n::Integer = 1; formatted::Bool=false, kwargs...)
     credit_card_references = _load!("finance", "credit_card", "noloc")
@@ -204,7 +232,7 @@ end
 function credit_card_number(options::Vector{<:AbstractString}, n::Integer; formatted::Bool=false, kwargs...)
     credit_card_references = _load!("finance", "credit_card", "noloc")
     filter!(r -> r[:credit_card_vendor] in options, credit_card_references)
-    generated_cards = Vector{String}()
+    generated_cards = String[]
 
     for _ in 1:n
         selected_vendor_dfrow = rand(eachrow(credit_card_references))
@@ -216,7 +244,7 @@ end
 
 function credit_card_number(mask::Vector{<:AbstractString}; formatted::Bool=false, kwargs...)
     credit_card_references = _load!("finance", "credit_card", "noloc")
-    generated_cards = Vector{String}()
+    generated_cards = String[]
 
     for m in mask
         # accessing with '[1, :]' because we are sure to have exactly one match for the
@@ -235,6 +263,16 @@ end
     credit_card_vendor(n::Integer = 1; kwargs...)
     credit_card_vendor(options::Vector{<:AbstractString}, n::Integer; kwargs...)
 
+Generate `n` credit card vendor names.
+
+# Example
+```@repl
+julia> credit_card_vendor(3)
+3-element Vector{String}:
+ "American Express"
+ "American Express"
+ "Visa"
+```
 """
 function credit_card_vendor(n::Integer = 1; kwargs...)
     credit_cards = _load!("finance", "credit_card", "noloc")
@@ -264,6 +302,16 @@ end
     credit_card_cvv(n::Integer = 1; kwargs...)
 
 Generate `n` credit card ccvs, e.g. `034`
+
+# Examples
+```@repl
+julia> credit_card_cvv(3)
+3-element Vector{Int64}:
+ 636
+ 429
+ 117
+
+```
 """
 function credit_card_cvv(n::Integer = 1; kwargs...)
     generated = rand(0:999, n)
@@ -276,6 +324,14 @@ end
     credit_card_expiry(n::Integer = 1; kwargs...)
 
 Generate `n` credit card expiry entries, e.g. `05/2029`.
+# Examples
+```@repl
+julia> credit_card_expiry(3)
+3-element Vector{String}:
+ "4/2014"
+ "7/2013"
+ "10/2010"
+```
 """
 function credit_card_expiry(n::Integer = 1; kwargs...)
     expiries = String[]
@@ -284,5 +340,5 @@ function credit_card_expiry(n::Integer = 1; kwargs...)
         year = rand(2008:2030) |> string
         push!(expiries, "$month/$year")
     end
-    return expiries
+    return expiries |> coerse_string_type
 end

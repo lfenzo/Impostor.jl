@@ -17,19 +17,21 @@ Base.empty!(d::DataContainer) = empty!(d.data)
 """
     session_locale() :: Vector{String}
 
-Return the current session locale
+Return the current session locale.
 """
 session_locale() = SESSION_CONTAINER.locale
 
 
+
 """
     setlocale!(loc::String)
-    setlocale!(locs::Vector{<:AbstractString})
+    setlocale!(loc::Vector{<:AbstractString})
 
 Set `loc` as the default locale for the current session.
 """
 setlocale!(loc::String) = setproperty!(SESSION_CONTAINER, :locale, [loc])
-setlocale!(locs::Vector{<:AbstractString}) = setproperty!(SESSION_CONTAINER, :locale, locs)
+setlocale!(loc::Vector{<:AbstractString}) = setproperty!(SESSION_CONTAINER, :locale, loc)
+
 
 """
     resetlocale!()
@@ -41,6 +43,7 @@ function resetlocale!() :: Nothing
     SESSION_CONTAINER.locale = DEFAULT_SESSION_LOCALE
     return nothing
 end
+
 
 
 """
@@ -89,17 +92,39 @@ end
 
 
 
+"""
+    _provider_loaded(d::DataContainer, provider::AbstractString) :: Bool
+
+Return whether the DataContainer `d` has already loaded the information associated to the content `c`.
+"""
 @inline function _provider_loaded(d::DataContainer, provider::AbstractString) :: Bool
     return haskey(d.data,  provider)
 end
 
+
+
+"""
+    _content_loaded(d::DataContainer, provider::T, content::T) :: Bool 
+
+Return whether the DataContainer `d` has already loaded the information associated to the content `c`
+from provider `p`.
+"""
 @inline function _content_loaded(d::DataContainer, provider::T, content::T) :: Bool where {T <: AbstractString}
     return _provider_loaded(d, provider) && haskey(d.data[provider], content)
 end
 
+
+
+"""
+    _locale_loaded(d::DataContainer, provider::T, content::T, locale::T) :: Bool
+
+Return whether the DataContainer `d` has already loaded the information associated to the content `c`
+from provider `p` related to locale `l`.
+"""
 @inline function _locale_loaded(d::DataContainer, provider::T, content::T, locale::T) :: Bool where {T <: AbstractString}
     return _content_loaded(d, provider, content) && haskey(d.data[provider][content], locale)
 end
+
 
 
 """
@@ -113,7 +138,7 @@ specific contents without any locale assocated to them.
 # Parameters
 - `provider::AbstractString`: provider name, *e.g.* `"localization"`.
 - `content::AbstractString`: content name, *e.g.* `"street_prefix"`.
-- `locale::Union{AbstractString, Vector{AbstractString}}`: locale(s) associated to the `content` and `provider` provided.
+- `locale::Union{AbstractString, Vector{AbstractString}} = "nolod"`: locale(s) associated to the `content` and `provider` provided. Defaults to the `"noloc"` placeholder for contents which are considered "locale-less".
 """
 function _load!(provider::T, content::T, locale::Vector{T}) :: DataFrame where {T <: AbstractString}
     df = DataFrame()

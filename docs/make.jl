@@ -14,10 +14,14 @@ makedocs(
             "Finance" => "providers/finance.md",
             "Localization" => "providers/localization.md",
         ],
+        "Utilities" => [
+            "Impostor Templates" => "utilities/impostor_templates.md",
+            "Utility Functions" => "utilities/utility_functions.md",
+        ],
         "Developer Guide" => [
             "Developer Guide" => "developer_guide.md",
-            "Internals" => "core/internals.md",
-            "Utilities" => "core/utilities.md",
+            "Data Interface" => "core/data_interface.md",
+            "Templatization" => "core/templatization.md",
         ],
         "API Reference" => "api_reference.md",
     ]
