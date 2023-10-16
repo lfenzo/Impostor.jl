@@ -1,10 +1,46 @@
 """
-    ImpostorTemplate(format::Vector{Symbol})
+    ImpostorTemplate(formats::Union{T, S, Vector{Union{T, S}}}) where {T<:AbstractString, S<:Symbol}
 
-Struct storing the formats used to 
+Struct storing the `formats` used to generate new tables. Each of the elements in `formats` maps to
+a generator function exported by Impostor. This struct is later used as a *functor* in order to
+generate data, that is, after instantiating a new `ImpostorTemplate` object, this object will be
+called providing arguments in order to generate the data entries.
+
+# Parameters
+- `formats` (`String`, `Symbol` or `Vector{Union{String, Symbol}}`): table output format specified in terms of generator functions to be used in each column (see examples below).
+
+# Examples
+```@repl
+julia> imp = ImpostorTemplate("firstname")
+ImpostorTemplate([:firstname])
+
+julia> imp = ImpostorTemplate(:firstname)
+ImpostorTemplate([:firstname])
+
+julia> imp = ImpostorTemplate(["firstname"])
+ImpostorTemplate([:firstname])
+
+julia> imp = ImpostorTemplate([:firstname])
+ImpostorTemplate([:firstname])
+```
 """
 Base.@kwdef mutable struct ImpostorTemplate
     format::Vector{Symbol}
+
+    function ImpostorTemplate(formats::Union{T, S, Vector{Union{T, S}}}) where {T<:AbstractString, S<:Symbol}
+        if formats isa Vector
+            symbol_formats = eltype(formats) <: String ? Symbol.(formats) : formats
+        else
+            symbol_formats = if formats isa String
+                [Symbol.(formats)]
+            elseif formats isa Symbol
+                [formats]
+            end
+        end
+        if _all_formats_availabe(symbol_formats)
+            return new(symbol_formats)
+        end
+    end
 end
 
 
@@ -14,11 +50,11 @@ setformat!(i::ImpostorTemplate, format::Vector{Symbol}) = setfield!(i, :format, 
 
 
 """
-    _sanitize_formats(formats::Vector)
+    _all_formats_available(formats::Vector)
 
-Verify if all `formats` are available and exported by Impostor.jl, otherwise throw 
+Verify if all `formats` are available and exported by Impostor.jl, otherwise throw `ArgumentError`
 """
-function _verify_formats(formats::Vector{Symbol})
+function _all_formats_availabe(formats::Vector{Symbol})
     invalid_formats = Symbol[]
     valid_formats = names(Impostor; all = false)
 
@@ -30,6 +66,8 @@ function _verify_formats(formats::Vector{Symbol})
 
     if !isempty(invalid_formats)
         ArgumentError("Invalid formats provided: $(invalid_formats)") |> throw
+    else
+        return true
     end
 end
 
@@ -38,7 +76,7 @@ end
 """
     (impostor::ImpostorTemplate)(n::Integer = 1, sink = Dict; kwargs...)
 
-Generates `n` entries with information specified in the formats.
+Generate `n` entries according to the `format` provided when `impostor` was instantiated.
 
 # Parameters
 - `n`: number of entries/rows to generate in each format
@@ -49,14 +87,34 @@ Generates `n` entries with information specified in the formats.
 
 # Examples
 ```@repl
+julia> formats = ["complete_name", "credit_card_number", "credit_card_expiry"];
 
+julia> template = ImpostorTemplate(formats)
+ImpostorTemplate([:complete_name, :credit_card_number, :credit_card_expiry])
+
+julia> template(3, DataFrame)
+3×3 DataFrame
+ Row │ complete_name                  credit_card_number  credit_card_expiry
+     │ String                         String              String
+─────┼───────────────────────────────────────────────────────────────────────
+   1 │ Sophie Cornell Collins         52583708162384822   6/2008
+   2 │ Mary Collins Cornell           3442876938992966    10/2022
+   3 │ John Sheffard Cornell Collins  4678055537702596    10/2021
+
+julia> template(3, DataFrame; locale = ["pt_BR"])
+3×3 DataFrame
+ Row │ complete_name                      credit_card_number  credit_card_expiry
+     │ String                             String              String
+─────┼───────────────────────────────────────────────────────────────────────────
+   1 │ João Camargo da Silva Pereira      3418796429393351    4/2018
+   2 │ João Pereira da Silva              4305288858368967    6/2018
+   3 │ Bernardo Pereira Camargo da Silva  3751513143972989    3/2024
 ```
 """
 function (impostor::ImpostorTemplate)(n::Integer = 1, sink = Dict;
     locale = session_locale(),
     kwargs...
 )
-    _verify_formats(impostor.format)
     generated_values = OrderedDict()
 
     if !isempty(intersect(SEXES[:provider_functions], impostor.format))

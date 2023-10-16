@@ -75,10 +75,6 @@ end
 # Kwargs
 - `level::Symbol = :bank_code`: Level of values in `options` or `mask` when using option-based or mask-based eneration.
 - `locale::Vector{String}`: locale(s) from which entries are sampled. If no `locale` is provided, the current session locale is used.
-
-# Example
-```jldoctest
-
 """
 function bank_official_name(n::Integer = 1; locale = session_locale())
     return rand(_load!("finance", "bank", locale)[:, :bank_official_name], n) |> coerse_string_type

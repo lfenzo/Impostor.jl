@@ -82,8 +82,8 @@ Impostor._load!("localization", "state", "en_US")
 the structured archive is checked for the existance of a `"state"` *content* in the `"localization"`
 *provider* associated to the United States english (`"en_US"`) *locale*. If such file is available,
 a `DataFrame` object is returned with the associated data for further manipulation. Since the column
-names for a given (`"localization"`, `"state"`) tuple are restricted by design, multiple locales
-may be loaded at once:
+names for a given (`"localization"`, `"state"`) tuple are garanteed to be equal by design, multiple
+locales may be loaded at once:
 
 ```julia
 Impostor._load!("localization", "state", ["en_US", "pt_BR"])
@@ -100,16 +100,18 @@ Impostor._load!("localization", "state", ["en_US", "pt_BR"])
 In order to add new data files, contents or providers, carefully follow the same directory structure
 described in the previous section paying attention to the format of the `HEADER.txt` file. Some of
 the scenarios you will find while adding new data to the archive are shown below:
-- **Incrementing existing locale files**: corresponds to the simplest case, just add new rows to the respective `.csv` file. Typically, to ease navigation for users adding new data, the `.csv` are usually sorted by some of its columns, make your changes so that this property is kept in the modified file.
-- **Adding new contents or providers**: in both cases the creation of a new directory/set of directories is needed. Although this my be slightly subjective, try to do it so that the new set of directories resambles the current organization structure in `data/`.
+- **Incrementing existing locale files**: corresponds to the simplest case, just add new rows to the respective `.csv` file. Typically, to ease navigation for users adding new data, the `.csv` are usually sorted by some of its columns, make your changes so that this property remains valid in the modified file.
+- **Adding new contents or providers**: in both cases the creation of a new directory/set of directories is needed. Although this my be slightly subjective, try to do it so that the new set of directories resambles the current organization structure in `data/` (when in doubt reach out via GitHub so we can discuss the best organization for the files).
+    - Make sure that a set of unit tests exist for the new content in order to ensure its consistency, place the implementation under the `tests/data_integrity/` directory in a file called `test_<your provider>.jl`
+    - If your data requires any kind of restriction (*e.g.* a certain column may only contain a restricted set of values), register such restrictions in the `src/relation_restrictions.jl` file.
 
 ## Adding New Functions
 
 Some guide-lines on adding new generator-functions are:
 1. Make sure that that contents required for the new generator-function are available under the data archive in `src/data/`. If not, then proceed to the previous section on adding new data.
-1. Use exclusively the [`Impostor._load!`](@ref) to interact with the data archive. In order to manipulate the dataframe(s) according to your needs, the functions exported by [DataFrames.jl](https://dataframes.juliadata.org/stable/lib/functions/) should suffice most use cases.
+1. Use *exclusively* the [`Impostor._load!`](@ref) function to interact with the data archive. In order to manipulate the dataframe(s) according to your needs, the functions exported by [DataFrames.jl](https://dataframes.juliadata.org/stable/lib/functions/) should suffice most use cases. If you need other package(s) to manipulate the dataframes in order to get the desired output, file an issue explaining the situation and we will discuss the addition of a new dependency.
 1. Add the new generator-function to the `export` list in the `src/Impostor.jl` in the appropriate Provider grouping. Make sure to add it in alphabetical order in each group.
-1. Add docstrings with examples, when possible.
+1. Add docstrings with examples, when possible/applicable.
 
 ## Testing Philosophy
 

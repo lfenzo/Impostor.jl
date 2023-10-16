@@ -30,9 +30,12 @@ is to generate single and multiple values specifying the number of expected valu
 
 ```@repl
 using Impostor # hide
-firstname()  # equivalent to firstname(1)
 firstname(5)
+firstname()  # equivalent to firstname(1)
 ```
+
+Generator functions may be found in each of the Providers individual pages or via the
+[API Reference](./api_reference.md) page.
 
 !!! note
     When a single value is produced by the generator function, as in `firstname(1)` from the
@@ -62,8 +65,8 @@ resetlocale!(); # hide
 
 ### Impostor Templates
 
-Besides providing several *generator-functions* which may be used as standalone data series
-generators, Impostor also exports the `ImpostorTemplate` which is a utility struct to encapsulate
+Besides providing several *generator functions* which may be used as standalone data series
+generators, Impostor also exports the [`ImpostorTemplate`](@ref) which is a utility struct to encapsulate
 formats and generate a fully fledgned table.
 
 ```@repl
@@ -73,7 +76,7 @@ template = ImpostorTemplate([:firstname, :surname, :country_code, :state, :city]
 
 template(3)
 
-template(5, DataFrame; locale = ["pt_BR", "en_US"]) # optionally, provide a `sink` type
+template(5, DataFrame; locale = ["pt_BR", "en_US"]) # optionally provide a `sink` type
 ```
 
 ## Concepts
