@@ -116,7 +116,7 @@ In order to facilitate naming and referencing later on the major concepts implem
 Contributions are welcome, both in implementation, documentation and data addition to the static files. 
 Don't hesitate to reach out and request features, file issues or make any suggestions.
 
-For the specific cases of contributing with code and/or data addition, we strongly suggest that you skim though the [Developer Guide](./developer_guide.md) in order to get familiar with the structure and overall design of the package.
+For the specific cases of contributing with code and/or data addition, we strongly suggest that you skim through the [Developer Guide](./developer_guide.md) in order to get familiar with the structure and overall design of the package.
 
 ### Roadmap
 

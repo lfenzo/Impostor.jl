@@ -9,7 +9,7 @@ covered in this page are:
 
 ## Design and Structure
 
-Impostor doesn't magically generates valid names, street names, addreses or credit card numbers
+Impostor doesn't magically generate valid names, street names, addreses or credit card numbers
 out of thin air, of course. Its generation process is based on the information contained in several
 `.csv` files structured according to which provider, content and locale each data refers to.
 
