@@ -460,7 +460,7 @@ function street(n::Integer = 1; locale = session_locale())
     for _ in 1:n
         loc = rand(locale)
         format = rand(street_formats[loc]) |> String
-        push!(streets, _materialize_template(format; locale = loc))
+        push!(streets, materialize_template(format; locale = loc))
     end
     return streets |> coerse_string_type
 end
@@ -530,7 +530,7 @@ function address(n::Integer = 1; locale = session_locale())
         loc = rand(locale)
         address_format = rand(locale_address_formats[loc])
         reference_localization_dfrow = rand(eachrow(locale_hiarchical_dfs[loc]))
-        push!(addresses, _materialize_template(address_format, reference_localization_dfrow; locale = loc))
+        push!(addresses, materialize_template(address_format, reference_localization_dfrow; locale = loc))
     end
 
     return addresses |> coerse_string_type
@@ -565,7 +565,7 @@ function address(options::Vector{<:AbstractString}, n::Integer;
         loc = rand(locale)
         address_format = rand(locale_address_formats[loc])
         reference_localization_dfrow = rand(eachrow(locale_hiarchical_dfs[loc]))
-        push!(addresses, _materialize_template(address_format, reference_localization_dfrow; locale = loc))
+        push!(addresses, materialize_template(address_format, reference_localization_dfrow; locale = loc))
     end
 
     return addresses |> coerse_string_type
@@ -603,7 +603,7 @@ function address(mask::Vector{<:AbstractString};
         value_locale = value_reference_dfrow[:locale] |> String
         address_format = rand(locale_address_formats[value_locale]) |> String
 
-        push!(addresses, _materialize_template(address_format, value_reference_dfrow; locale = value_locale))
+        push!(addresses, materialize_template(address_format, value_reference_dfrow; locale = value_locale))
     end
 
     return addresses |> coerse_string_type
@@ -660,7 +660,7 @@ function postcode(n::Integer = 1; locale = session_locale())
     for _ in 1:n
         loc = rand(locale)
         format = rand(postcode_formats[loc])
-        push!(postcodes, _materialize_numeric_template(format))
+        push!(postcodes, materialize_numeric_template(format))
     end
     return postcodes |> coerse_string_type
 end

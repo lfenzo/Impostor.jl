@@ -17,11 +17,11 @@ makedocs(
         "Utilities" => [
             "Impostor Templates" => "utilities/impostor_templates.md",
             "Utility Functions" => "utilities/utility_functions.md",
+            "Templatization" => "utilities/templatization.md",
         ],
         "Developer Guide" => [
-            "Developer Guide" => "developer_guide.md",
-            "Data Interface" => "core/data_interface.md",
-            "Templatization" => "core/templatization.md",
+            "Quick Tour (Start Here)" => "developer_guide/quick_tour.md",
+            "Data Interface" => "developer_guide/data_interface.md",
         ],
         "API Reference" => "api_reference.md",
     ]
