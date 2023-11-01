@@ -1,4 +1,4 @@
-# Data Interace
+# Data Interface
 
 ```@docs
 Impostor._load!

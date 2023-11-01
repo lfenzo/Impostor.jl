@@ -26,8 +26,8 @@ end
 
 
 """
-    _materialize_numeric_template(template::String) :: String
-    _materialize_numeric_template(template::AbstractString, number::Integer) :: String
+    materialize_numeric_template(template::String) :: String
+    materialize_numeric_template(template::AbstractString, number::Integer) :: String
 
 Receive a numeric template string (e.g. `"###-#"`) and generate a string replacing the '#' chars
 by random integers between [0, 9]; pass fixed numbers in the numeric template (e.g. `"(15) 9####-####"`)
@@ -39,23 +39,23 @@ not smaller.**
 
 # Examples
 ```@repl
-julia> Impostor._materialize_numeric_template("####-#")
+julia> materialize_numeric_template("####-#")
 "1324-8"
 
-julia> Impostor._materialize_numeric_template("1/####-9")
+julia> materialize_numeric_template("1/####-9")
 "1/5383-9"
 
-julia> Impostor._materialize_numeric_template("####-#", 12345)
+julia> materialize_numeric_template("####-#", 12345)
 "1234-5"
 
-julia> Impostor._materialize_numeric_template("1/####-9", 4321)
+julia> materialize_numeric_template("1/####-9", 4321)
 "1/4321-9"
 
-julia> Impostor._materialize_numeric_template("####", 87654321)
+julia> materialize_numeric_template("####", 87654321)
 "8765"
 ```
 """
-function _materialize_numeric_template(template::AbstractString) :: String
+function materialize_numeric_template(template::AbstractString) :: String
     materialized = ""
     for char in template
         materialized *= char == '#' ? string(rand(0:9)) : char
@@ -63,7 +63,7 @@ function _materialize_numeric_template(template::AbstractString) :: String
     return materialized
 end
 
-function _materialize_numeric_template(template::AbstractString, number::Union{Integer, String}) :: String
+function materialize_numeric_template(template::AbstractString, number::Union{Integer, String}) :: String
     if number isa Integer
         number_digits = digits(number) 
         converted_number = string(number)
@@ -91,7 +91,7 @@ end
 
 
 """
-    _materialize_numeric_range_template(template::AbstractString) :: String
+    materialize_numeric_range_template(template::AbstractString) :: String
 
 Generate a string containing a number from a *numeric range* template. Such numeric templates may
 contain options separated by a `';'` caracter. Additionally, options can assume a single template
@@ -100,20 +100,20 @@ specifies numbers between 200 and 399).
 
 # Example
 ```@repl
-julia> Impostor._materialize_numeric_range_template("4#####")
+julia> materialize_numeric_range_template("4#####")
 "412345"
 
-julia> Impostor._materialize_numeric_range_template("34####;37####")  # will select 34#### or 37####
+julia> materialize_numeric_range_template("34####;37####")  # will select 34#### or 37####
 "349790"
 
-julia> Impostor._materialize_numeric_range_template("51####:55####")
+julia> materialize_numeric_range_template("51####:55####")
 "532489"
 
-julia> Impostor._materialize_numeric_range_template("2221##:2720##;51####:55####")  # will select 2221##:2720## or 51####:55####
+julia> materialize_numeric_range_template("2221##:2720##;51####:55####")  # will select 2221##:2720## or 51####:55####
 "250000"
 ```
 """
-function _materialize_numeric_range_template(template::AbstractString) :: String
+function materialize_numeric_range_template(template::AbstractString) :: String
     possible_formats = split(template, ';')
     selected_format = rand(possible_formats)
 
@@ -124,7 +124,7 @@ function _materialize_numeric_range_template(template::AbstractString) :: String
         upper_limit = parse(Int, replace(last, '#' => '9'))
         selected_format = rand(lower_limit:upper_limit) |> string
     else
-        selected_format = _materialize_numeric_template(selected_format)
+        selected_format = materialize_numeric_template(selected_format)
     end
 
     return selected_format
@@ -133,11 +133,62 @@ end
 
 
 """
-    _materialize_template(template::String; locale::String) :: String
-    _materialize_template(template::String, reference_dfrow::DataFrames.DataFrameRow; locale::String) :: String
+    materialize_template(template locale) :: String
+    materialize_template(template, reference_dfrow; locale) :: String
 
+Materialize a given pre-defined template by splitting `template` into tokens; each token *may*
+by associated to a generator-function exported by Impostor. For practicality, tokens not exported
+by Impostor (see example below) are just repeated in the materialized template since it is not
+possible for Impostor to distinguish between badly spelled generator functions and raw text
+which should be present in materialized template.
+
+Optionally, provide a `reference_dfrow` with column names which may be referenced by
+tokens in `template`. This is useful in the context of hierarchical data manipulation
+
+# Parameters
+- `template::String`: templaate to be materialized.
+- `reference_dfrow::DataFrames.DataFrameRow`: Reference values stored in a single-row DataFrame (`DataFrameRow`); access to values is made through references to column names of `reference_dfrow` (see examples below).
+
+# Examples
+
+## String Materialization
+```@repl
+julia> template = "firstname surname occupation";
+
+julia> materialize_template(template; locale="en_US")
+"Charles Fraser Anthropologyst"
+
+julia> template = "I know firstname surname, this person is a(n) occupation";
+
+julia> materialize_template(template; locale="en_US")
+"I know Charles Jameson, this person is a(n) Mathematician"
+```
+
+## Missing Tokens
+```@repl
+julia> template = "firstname lastname"  # not that there is no such 'lastname' function
+"firstname lastname"
+
+julia> materialize_template(template; locale="en_US")
+"Kate lastname"
+```
+
+## Using `DataFrameRow`s
+```@repl
+julia> dfrow = DataFrame(state="California", city="San Francisco")[1, :]
+1×2 DataFrame
+ Row │ state       city
+     │ String      String
+─────┼───────────────────────────
+   1 │ California  San Francisco
+
+julia> template = "I live in city (state)"
+
+julia> materialize_template(template, dfrow; locale = "en_US")
+"I live in San Francisco (California)"
+```
 """
-function _materialize_template(template::String, reference_dfrow::DataFrames.DataFrameRow; locale::String) :: String
+function materialize_template(template::String, reference_dfrow::DataFrames.DataFrameRow; locale::String) :: String
     materialized = ""
 
     for t in tokenize(template) 
@@ -159,7 +210,7 @@ function _materialize_template(template::String, reference_dfrow::DataFrames.Dat
     return materialized
 end
 
-function _materialize_template(template::String; locale::String) :: String
+function materialize_template(template::String; locale::String) :: String
     materialized = ""
 
     for token in tokenize(convert(String, template))

@@ -9,13 +9,16 @@ using Dates
 using Tokenize
 
 
-# internals
+# utilities
 export session_locale
 export setlocale!
 export resetlocale!
 export provider_exists
 export content_exists
 export locale_exists
+export materialize_template
+export materialize_numeric_template
+export materialize_numeric_range_template
 
 # identity
 export birthdate
@@ -53,6 +56,7 @@ export credit_card_expiry
 export credit_card_number
 export credit_card_vendor
 
+# Impostor-template related
 export ImpostorTemplate
 export addfield!
 

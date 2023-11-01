@@ -7,11 +7,11 @@
 end
 
 
-@testset "_materialize_numeric_template" begin
+@testset "materialize_numeric_template" begin
 
     @testset "All no pre-defined digits" begin
         template = "###-###-####" 
-        materialized_string = Impostor._materialize_numeric_template(template)
+        materialized_string = materialize_numeric_template(template)
 
         bool_test_mask = Bool[]
         for (materialized, original) in zip(materialized_string, template)
@@ -22,7 +22,7 @@ end
 
     @testset "Some pre-defined digits" begin
         template = "(15) 9###-##3#" 
-        materialized_string = Impostor._materialize_numeric_template(template)
+        materialized_string = materialize_numeric_template(template)
 
         bool_test_mask = Bool[]
         for (materialized, original) in zip(materialized_string, template)

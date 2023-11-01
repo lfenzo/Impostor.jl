@@ -1,4 +1,4 @@
-# Developer Guide
+# Quick Tour
 
 This guide aims to provide a general overview of the internals of Impostor.jl. Some of the topics
 covered in this page are:
@@ -93,7 +93,7 @@ Impostor._load!("localization", "state", ["en_US", "pt_BR"])
     The [`Impostor._load!`](@ref) is designed in such way that **the DataFrames loaded in each
     interaction with the archive are memoized** to prevent reading the same information more than
     once per session. This functionality is aided by the functions present in the
-    [Utility Function](utilities/utility_functions.md) page.
+    [Utility Function](../utilities/utility_functions.md) page.
 
 ## Adding New Data
 
