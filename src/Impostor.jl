@@ -7,6 +7,7 @@ using DataStructures
 using StatsBase
 using Dates
 using Tokenize
+using Chain
 
 
 # utilities
