@@ -53,9 +53,9 @@ my_custom_template(4, DataFrame; locale = ["pt_BR", "en_US"])
 
 template_string = "I know firstname surname, this person is a(n) occupation";
 
-materialize_template(template_string)
+render_template(template_string)
 # "I know Charles Jameson, this person is a(n) Mathematician"
 
-println("My new car plate is $(materialize_numeric_template("A#C-#####90"))")
-# My new car plate is A3C-0057090
+println("My new car plate is $(render_alphanumeric("^^^-####"))")
+# My new car plate is TXP-9236
 ```

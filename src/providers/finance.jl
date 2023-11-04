@@ -160,8 +160,8 @@ function _generate_credit_card_number(prefix::String, n_digits::Integer)
 end
 
 function _generate_credit_card_number(reference_dfrow::DataFrames.DataFrameRow, formatted::Bool)
-    card_prefix = materialize_numeric_range_template(reference_dfrow[:iin_format])
-    card_length = parse(Int, materialize_numeric_range_template(string(reference_dfrow[:length])))
+    card_prefix = render_alphanumeric_range(reference_dfrow[:iin_format])
+    card_length = parse(Int, render_alphanumeric_range(string(reference_dfrow[:length])))
 
     generated_card = _generate_credit_card_number(card_prefix, card_length)
 
@@ -180,7 +180,7 @@ function _generate_credit_card_number(reference_dfrow::DataFrames.DataFrameRow, 
             format *= (i == 1) ? "-#" : "#"
         end
 
-        return materialize_numeric_template(format, generated_card)
+        return render_alphanumeric(format; numbers = generated_card)
     end
 end
 

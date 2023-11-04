@@ -2,7 +2,7 @@
     
 
 """
-function materialize_localization_map(; src = nothing, dst = nothing, locale = nothing, joinhow = :outer)
+function render_localization_map(; src = nothing, dst = nothing, locale = nothing, joinhow = :outer)
 
     joinfunc = Dict(
         :inner => DataFrames.innerjoin,
@@ -58,7 +58,7 @@ function country(options::Vector{<:AbstractString}, n::Integer;
     level::Symbol = :state_code,
     locale = session_locale()
 )
-    df = materialize_localization_map(; src = "country", dst = string(level), locale)
+    df = render_localization_map(; src = "country", dst = string(level), locale)
     filter!(r -> r[level] in options, df)
     return rand(convert.(String, df[:, :country]), n) |> coerse_string_type
 end
@@ -70,7 +70,7 @@ function country(mask::Vector{<:AbstractString};
     selected_values = Vector{String}()
 
     gb = @chain begin
-        materialize_localization_map(; src = "country", dst = string(level), locale)
+        render_localization_map(; src = "country", dst = string(level), locale)
         groupby([level])
     end
 
@@ -108,7 +108,7 @@ function country_official_name(options::Vector{<:AbstractString}, n::Integer;
     level::Symbol = :state_code,
     locale = session_locale()
 )
-    df = materialize_localization_map(; src = "country_official_name", dst = string(level), locale)
+    df = render_localization_map(; src = "country_official_name", dst = string(level), locale)
     filter!(r -> r[level] in options, df)
     return rand(convert.(String, df[:, :country_official_name]), n) |> coerse_string_type
 end
@@ -117,7 +117,7 @@ function country_official_name(mask::Vector{<:AbstractString}; level::Symbol = :
     selected_values = Vector{String}()
 
     gb = @chain begin
-        materialize_localization_map(; src = "country_official_name", dst = string(level), locale)
+        render_localization_map(; src = "country_official_name", dst = string(level), locale)
         groupby([level])
     end
 
@@ -152,14 +152,14 @@ function country_code(n::Integer = 1; locale = session_locale())
 end
 
 function country_code(options::Vector{<:AbstractString}, n::Integer; level::Symbol = :state_code, locale = session_locale())
-    df = materialize_localization_map(; src = "country_code", dst = string(level), locale)
+    df = render_localization_map(; src = "country_code", dst = string(level), locale)
     filter!(r -> r[level] in options, df)
     return rand(convert.(String, df[:, :country_code]), n) |> coerse_string_type
 end
 
 function country_code(mask::Vector{<:AbstractString}; level::Symbol = :state_code, locale = session_locale())
     gb = @chain begin
-        materialize_localization_map(; src = "country_code", dst = string(level), locale)
+        render_localization_map(; src = "country_code", dst = string(level), locale)
         groupby([level])
     end
 
@@ -196,7 +196,7 @@ function state(options::Vector{<:AbstractString}, n::Integer;
     level::Symbol = :country_code,
     locale = session_locale()
 )
-    df = materialize_localization_map(; src = "state", dst = string(level), locale)
+    df = render_localization_map(; src = "state", dst = string(level), locale)
     filter!(r -> r[level] in options, df)
     return rand(convert.(String, df[:, :state]), n) |> coerse_string_type
 end
@@ -206,7 +206,7 @@ function state(mask::Vector{<:AbstractString};
     locale = session_locale()
 )
     gb = @chain begin
-        materialize_localization_map(; src = "state", dst = string(level), locale)
+        render_localization_map(; src = "state", dst = string(level), locale)
         groupby([level])
     end
 
@@ -243,7 +243,7 @@ function state_code(options::Vector{<:AbstractString}, n::Integer;
     level::Symbol = :country_code,
     locale = session_locale()
 )
-    df = materialize_localization_map(; src = "state_code", dst = string(level), locale)
+    df = render_localization_map(; src = "state_code", dst = string(level), locale)
     filter!(r -> r[level] in options, df)
     return rand(convert.(String, df[:, :state_code]), n) |> coerse_string_type
 end
@@ -253,7 +253,7 @@ function state_code(mask::Vector{<:AbstractString};
     locale = session_locale()
 )
     gb = @chain begin
-        materialize_localization_map(; src = "state_code", dst = string(level), locale)
+        render_localization_map(; src = "state_code", dst = string(level), locale)
         groupby([level])
     end
 
@@ -290,14 +290,14 @@ function city(options::Vector{<:AbstractString}, n::Integer;
     level::Symbol = :state_code,
     locale = session_locale()
 )
-    df = materialize_localization_map(; src = "city", dst = string(level), locale)
+    df = render_localization_map(; src = "city", dst = string(level), locale)
     filter!(r -> r[level] in options, df)
     return rand(convert.(String, df[:, :city]), n) |> coerse_string_type
 end
 
 function city(mask::Vector{<:AbstractString}; level::Symbol = :city, locale = session_locale())
     gb = @chain begin
-        materialize_localization_map(; src = "city", dst = string(level), locale)
+        render_localization_map(; src = "city", dst = string(level), locale)
         groupby([level])
     end
 
@@ -338,7 +338,7 @@ function district(options::Vector{<:AbstractString}, n::Integer;
     level::Symbol = :city_name,
     locale = session_locale()
 )
-    df = materialize_localization_map(; src = "district", dst = string(level), locale)
+    df = render_localization_map(; src = "district", dst = string(level), locale)
     filter!(r -> r[level] in options, df)
     return rand(convert.(String, df[:, :district]), n) |> coerse_string_type
 end
@@ -348,7 +348,7 @@ function district(mask::Vector{<:AbstractString};
     locale = session_locale()
 )
     gb = @chain begin
-        materialize_localization_map(; src = "district", dst = string(level), locale)
+        render_localization_map(; src = "district", dst = string(level), locale)
         groupby([level])
     end
 
@@ -385,7 +385,7 @@ function street(n::Integer = 1; locale = session_locale())
     for _ in 1:n
         loc = rand(locale)
         format = rand(street_formats[loc]) |> String
-        push!(streets, materialize_template(format; locale = loc))
+        push!(streets, render_template(format; locale = loc))
     end
     return streets |> coerse_string_type
 end
@@ -441,7 +441,7 @@ function address(n::Integer = 1; locale = session_locale())
     )
     
     gb = @chain begin
-        materialize_localization_map(; locale, joinhow = :inner)
+        render_localization_map(; locale, joinhow = :inner)
         groupby(:locale)
     end
 
@@ -450,7 +450,7 @@ function address(n::Integer = 1; locale = session_locale())
         associated_rows = get(gb, (loc,), nothing)
         address_format = rand(locale_address_formats[loc])
         reference_localization_dfrow = rand(eachrow(associated_rows))
-        push!(addresses, materialize_template(address_format, reference_localization_dfrow; locale = loc))
+        push!(addresses, render_template(address_format, reference_localization_dfrow; locale = loc))
     end
 
     return addresses |> coerse_string_type
@@ -468,7 +468,7 @@ function address(options::Vector{<:AbstractString}, n::Integer;
     )
 
     gb = @chain begin
-        materialize_localization_map(; locale, joinhow = :inner)
+        render_localization_map(; locale, joinhow = :inner)
         filter(row -> row[level] in options, _)  # that's the difference of the option-based version
         groupby(:locale)
     end
@@ -478,7 +478,7 @@ function address(options::Vector{<:AbstractString}, n::Integer;
         associated_rows = get(gb, (loc,), nothing)
         address_format = rand(locale_address_formats[loc])
         reference_localization_dfrow = rand(eachrow(associated_rows))
-        push!(addresses, materialize_template(address_format, reference_localization_dfrow; locale = loc))
+        push!(addresses, render_template(address_format, reference_localization_dfrow; locale = loc))
     end
 
     return addresses |> coerse_string_type
@@ -496,7 +496,7 @@ function address(mask::Vector{<:AbstractString};
     )
 
     df = @chain begin
-        materialize_localization_map(; locale, joinhow = :inner)
+        render_localization_map(; locale, joinhow = :inner)
         filter(row -> row[level] in unique(mask), _)
     end
 
@@ -504,7 +504,7 @@ function address(mask::Vector{<:AbstractString};
         value_reference_dfrow = rand(eachrow(filter(r -> r[level] == value, df)))
         value_locale = value_reference_dfrow[:locale] |> String
         address_format = rand(locale_address_formats[value_locale]) |> String
-        push!(addresses, materialize_template(address_format, value_reference_dfrow; locale = value_locale))
+        push!(addresses, render_template(address_format, value_reference_dfrow; locale = value_locale))
     end
 
     return addresses |> coerse_string_type
@@ -561,7 +561,7 @@ function postcode(n::Integer = 1; locale = session_locale())
     for _ in 1:n
         loc = rand(locale)
         format = rand(postcode_formats[loc])
-        push!(postcodes, materialize_numeric_template(format))
+        push!(postcodes, render_alphanumeric(format))
     end
     return postcodes |> coerse_string_type
 end

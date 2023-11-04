@@ -6,28 +6,23 @@
     @test Impostor.coerse_string_type(returned_value) == "bar"
 end
 
+@testset "render_alphanumeric" begin
+    template = "1111-###-^^^-____-====" 
+    rendered = render_alphanumeric(template)
+    bool_test_mask = Bool[]
 
-@testset "materialize_numeric_template" begin
-
-    @testset "All no pre-defined digits" begin
-        template = "###-###-####" 
-        materialized_string = materialize_numeric_template(template)
-
-        bool_test_mask = Bool[]
-        for (materialized, original) in zip(materialized_string, template)
-            original == '#' && push!(bool_test_mask, isdigit(materialized))
+    for (rendered, original) in zip(rendered, template)
+        if original == '#'
+            push!(bool_test_mask, isdigit(rendered))
+        elseif original == '^'
+            push!(bool_test_mask, isuppercase(rendered))
+        elseif original == '_'
+            push!(bool_test_mask, islowercase(rendered))
+        elseif original == '='
+            push!(bool_test_mask, islowercase(rendered) || isuppercase(rendered))
+        else  
+            push!(bool_test_mask, rendered == original)
         end
-        @test bool_test_mask |> all
     end
-
-    @testset "Some pre-defined digits" begin
-        template = "(15) 9###-##3#" 
-        materialized_string = materialize_numeric_template(template)
-
-        bool_test_mask = Bool[]
-        for (materialized, original) in zip(materialized_string, template)
-            original == '#' && push!(bool_test_mask, isdigit(materialized))
-        end
-        @test bool_test_mask |> all
-    end
+    @test all(bool_test_mask)
 end
