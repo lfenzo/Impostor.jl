@@ -2,22 +2,17 @@
     
 
 """
-function render_localization_map(; src = nothing, dst = nothing, locale = nothing, joinhow = :outer)
-
-    joinfunc = Dict(
-        :inner => DataFrames.innerjoin,
-        :outer => DataFrames.outerjoin,
-    )
+function render_localization_map(; src = nothing, dst = nothing, locale = nothing)
 
     locales = _load!("localization", "locale", "noloc")
     all_locales = convert.(String, unique(locales[:, :locale]))
 
     df = @chain begin
         locales
-        joinfunc[joinhow](_load!("localization", "country", all_locales); on = ["country_code", "locale"])
-        joinfunc[joinhow](_load!("localization", "state", all_locales); on = "country_code")
-        joinfunc[joinhow](_load!("localization", "city", all_locales); on = "state_code")
-        joinfunc[joinhow](_load!("localization", "district", all_locales); on = "city")
+        innerjoin(_load!("localization", "country", all_locales); on = ["country_code", "locale"])
+        innerjoin(_load!("localization", "state", all_locales); on = "country_code")
+        innerjoin(_load!("localization", "city", all_locales); on = ["state_code", "country_code"])
+        innerjoin(_load!("localization", "district", all_locales); on = "city")
     end
 
     if !isnothing(locale)
@@ -101,16 +96,26 @@ Generate `n` or `length(mask)` country offiical names.
 - `locale::Vector{String}`: locale(s) from which entries are sampled. If no `locale` is provided, the current session locale is used.
 """
 function country_official_name(n::Integer = 1; locale = session_locale())
-    return rand(_load!("localization", "country", locale)[:, :country_official_name], n) |> coerse_string_type
+    return @chain begin
+        _load!("localization", "country", locale)
+        getindex(:, :country_official_name)
+        rand(n)
+        coerse_string_type
+    end
 end
 
 function country_official_name(options::Vector{<:AbstractString}, n::Integer;
     level::Symbol = :state_code,
     locale = session_locale()
 )
-    df = render_localization_map(; src = "country_official_name", dst = string(level), locale)
-    filter!(r -> r[level] in options, df)
-    return rand(convert.(String, df[:, :country_official_name]), n) |> coerse_string_type
+    return @chain begin
+        render_localization_map(; src = "country_official_name", dst = string(level), locale)
+        filter(r -> r[level] in options, _)
+        getindex(:, :country_official_name)
+        convert.(String, _)
+        rand(n)
+        coerse_string_type
+    end
 end
 
 function country_official_name(mask::Vector{<:AbstractString}; level::Symbol = :state_code, locale = session_locale())
@@ -148,13 +153,23 @@ Generate `n` or `length(mask)` country codes.
 - `locale::Vector{String}`: locale(s) from which entries are sampled. If no `locale` is provided, the current session locale is used.
 """
 function country_code(n::Integer = 1; locale = session_locale())
-    return rand(_load!("localization", "country", locale)[:, :country_code], n) |> coerse_string_type
+    return @chain begin
+        _load!("localization", "country", locale)
+        getindex(:, :country_code)
+        rand(n)
+        coerse_string_type
+    end
 end
 
 function country_code(options::Vector{<:AbstractString}, n::Integer; level::Symbol = :state_code, locale = session_locale())
-    df = render_localization_map(; src = "country_code", dst = string(level), locale)
-    filter!(r -> r[level] in options, df)
-    return rand(convert.(String, df[:, :country_code]), n) |> coerse_string_type
+    return @chain begin
+        render_localization_map(; src = "country_code", dst = string(level), locale)
+        filter(r -> r[level] in options, _)
+        getindex(:, :country_code)
+        convert.(String, _)
+        rand(n)
+        coerse_string_type
+    end
 end
 
 function country_code(mask::Vector{<:AbstractString}; level::Symbol = :state_code, locale = session_locale())
@@ -441,7 +456,7 @@ function address(n::Integer = 1; locale = session_locale())
     )
     
     gb = @chain begin
-        render_localization_map(; locale, joinhow = :inner)
+        render_localization_map(; locale)
         groupby(:locale)
     end
 
