@@ -1,4 +1,5 @@
 locale
 country_code
+country_code_short
 country
 country_official_name

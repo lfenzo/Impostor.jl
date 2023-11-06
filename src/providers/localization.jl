@@ -51,7 +51,7 @@ Generate `n` or `length(mask)` country names.
 - `locale::Vector{String}`: locale(s) from which entries are sampled. If no `locale` is provided, the current session locale is used.
 """
 function country(n::Integer = 1; locale = session_locale())
-    return rand(_load!("localization", "country", locale)[:, :country_name], n) |> coerse_string_type
+    return rand(_load!("localization", "country", locale)[:, :country], n) |> coerse_string_type
 end
 
 function country(options::Vector{<:AbstractString}, n::Integer;
@@ -331,11 +331,11 @@ end
 - `locale::Vector{String}`: locale(s) from which entries are sampled. If no `locale` is provided, the current session locale is used.
 """
 function district(n::Integer = 1; locale = session_locale())
-    return rand(_load!("localization", "district", locale)[:, :district_name], n) |> coerse_string_type
+    return rand(_load!("localization", "district", locale)[:, :district], n) |> coerse_string_type
 end
 
 function district(options::Vector{<:AbstractString}, n::Integer;
-    level::Symbol = :city_name,
+    level::Symbol = :city,
     locale = session_locale()
 )
     df = render_localization_map(; src = "district", dst = string(level), locale)
