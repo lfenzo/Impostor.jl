@@ -35,12 +35,32 @@ Receive an alphanumeric template string (e.g. `"^^^-####"`) and generate a strin
 - `'='` chars by random uppercase or lowercase letters between a-z|A-Z.
 
 Optionally, provide `numbers` to fill the `'#'` placeholders in `template`; or `letters` to fill
-`^`,`_` or `=` placeholders. Note that if the length of `letters` or `numbers` is smaller than
-the number of placeholders in each category, the remaining placeholders will be randomly filled
-according to the character in `template`.
+`'^'`,`'_'` or `'='` placeholders. Note that if the length of `letters` or `numbers` is smaller
+than the number of placeholders in each category, the remaining placeholders will be randomly
+filled according to the character in `template`.
 
 # Examples
 ```@repl
+julia> render_alphanumeric("####")
+"6273"
+
+julia> render_alphanumeric("123-####-AAA")
+"123-5509-AAA"
+
+julia> render_alphanumeric("__-^^-==-ZZZ123")
+"vw-CX-fA-ZZZ123"
+
+julia> render_alphanumeric("__-^^-==-ZZZ###"; numbers = "12345")
+"qu-RT-St-ZZZ123"
+
+julia> render_alphanumeric("__-^^-==-ZZZ###"; letters = "AABBCCDD")
+"AA-BB-CC-ZZZ427"
+
+julia> render_alphanumeric("__-^^-==-ZZZ###"; letters = "AABBCCDD", numbers = "12345")
+"AA-BB-CC-ZZZ123"
+
+julia> render_alphanumeric("_______"; letters = "abc")
+"abcomhd"
 ```
 """
 function render_alphanumeric(template::AbstractString; numbers = nothing, letters = nothing) :: String
@@ -79,13 +99,13 @@ specifies numbers between 200 and 399).
 julia> render_alphanumeric_range("4#####")
 "412345"
 
-julia> render_alphanumeric_range("34####;37####")  # will select 34#### or 37####
+julia> render_alphanumeric_range("34####;37####")  # selects 34#### or 37####
 "349790"
 
 julia> render_alphanumeric_range("51####:55####")
 "532489"
 
-julia> render_alphanumeric_range("2221##:2720##;51####:55####")  # will select 2221##:2720## or 51####:55####
+julia> render_alphanumeric_range("2221##:2720##;51####:55####")  # selects 2221##:2720## or 51####:55####
 "250000"
 ```
 """
@@ -112,10 +132,13 @@ end
     render_template(template, reference_dfrow; locale) :: String
 
 Materialize a given pre-defined template by splitting `template` into tokens; each token *may*
-by associated to a generator-function exported by Impostor. For practicality, tokens not exported
-by Impostor (see example below) are just repeated in the materialized template since it is not
-possible for Impostor to distinguish between badly spelled generator functions and raw text
-which should be present in materialized template.
+by associated to a generator-function exported by Impostor. Tokens associated to generator-functions
+are excpected to have the excact same spelling as their generator-function correspondents (*e.g.*
+the token "address" is associated to the generator-function `address`).
+
+For practicality, tokens not exported by Impostor (see example below) are just repeated in the
+materialized template since it is not possible for Impostor to distinguish between badly spelled
+generator functions and raw text which should be present in materialized template.
 
 Optionally, provide a `reference_dfrow` with column names which may be referenced by
 tokens in `template`. This is useful in the context of hierarchical data manipulation

@@ -37,6 +37,13 @@ city(["BRA", "USA"], 4; level=:country_code)
 #  "São Paulo"
 #  "Rio de Janeiro"
 
+address(["BRA", "USA", "BRA", "USA"]; level = :country_code)
+# 4-element Vector{String}:
+#  "Avenida Paulo Lombardi 1834, Ba" ⋯ 25 bytes ⋯ "84-514, Porto Alegre-RS, Brasil"
+#  "Abgail Smith Alley, Los Angeles" ⋯ 42 bytes ⋯ "ornia, United States of America"
+#  "Avenida Tomas Lins 4324, (Apto " ⋯ 23 bytes ⋯ "orocaba - 89457-346, SP, Brasil"
+#  "South-side Street 1st Floor, Li" ⋯ 52 bytes ⋯ "as-AR, United States of America"
+
 
 my_custom_template = ImpostorTemplate([:firstname, :surname, :country_code, :state, :city]);
 

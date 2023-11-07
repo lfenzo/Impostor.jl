@@ -221,7 +221,6 @@ function credit_card_number(n::Integer = 1; formatted::Bool=false, kwargs...)
         selected_vendor_dfrow = rand(eachrow(credit_card_references))
         push!(generated_cards, _generate_credit_card_number(selected_vendor_dfrow, formatted))
     end
-
     return generated_cards |> coerse_string_type
 end
 
@@ -234,7 +233,6 @@ function credit_card_number(options::Vector{<:AbstractString}, n::Integer; forma
         selected_vendor_dfrow = rand(eachrow(credit_card_references))
         push!(generated_cards, _generate_credit_card_number(selected_vendor_dfrow, formatted))
     end
-
     return generated_cards |> coerse_string_type
 end
 
@@ -249,7 +247,6 @@ function credit_card_number(mask::Vector{<:AbstractString}; formatted::Bool=fals
         selected_vendor_dfrow = filter(r -> r[:credit_card_vendor] == m, credit_card_references)[1, :]
         push!(generated_cards, _generate_credit_card_number(selected_vendor_dfrow, formatted))
     end
-
     return generated_cards |> coerse_string_type
 end
 

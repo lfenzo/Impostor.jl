@@ -69,7 +69,7 @@ src/data/
 In the structure above:
 - `provider` encapsulates the associated *Provider*, *e.g.* Localization
 - `content` stores the `.csv` files for a given *Content*, *e.g.* state codes. Each `.csv` content file is named after the locale it refers to.
-- `HEADER.txt` is a text file storing exclusively names of columns for all files stored in the `src/data/<provider>/<content>/` directory, one column name per line. This file ensures column naming consistency across all locales and prevents individual files from needlessly repeating the same column names. For that reason, every `.csv` file **must contain only the associated *data*, leaving headers for the respective `HEADER.txt` files**.
+- `HEADER.txt` is a text file storing exclusively names of columns for all files stored in the `src/data/<provider>/<content>/` directory, one column name per line. This file ensures column naming consistency across all locales and prevents individual files from needlessly repeating the same column names. For that reason, every `.csv` file **must contain only the associated *data*, leaving *headers* for the respective `HEADER.txt` files**.
 
 The interface between the data file structure shown above and the generator functions is stablished
 by the [`Impostor._load!`](@ref) method, which serves as a single point of access to all information
@@ -94,6 +94,10 @@ Impostor._load!("localization", "state", ["en_US", "pt_BR"])
     interaction with the archive are memoized** to prevent reading the same information more than
     once per session. This functionality is aided by the functions present in the
     [Utility Function](../utilities/utility_functions.md) page.
+
+Once loaded, the data is manipulated according to the needs of the particular generator-function
+and always returned though the [`Impostor.coerse_string_type`](@ref) function which output
+formatting consistency.
 
 ## Adding New Data
 

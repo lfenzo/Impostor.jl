@@ -69,7 +69,7 @@ The valid options values for `options` and `mask` are:
 - `locale::Vector{String}`: locale(s) from which entries are sampled. If no `locale` is provided, the current session locale is used.
 
 # Example
-```repl
+```@juliarepl
 julia> prefix(["female", "male", "female"])
 3-element Vector{String}:
 "Ms."
@@ -125,7 +125,7 @@ The valid options values for `options` and `mask` are:
 - `locale::Vector{String}`: locale(s) from which entries are sampled. If no `locale` is provided, the current session locale is used.
 
 # Examples
-```repl
+```@juliarepl
 julia> firstname(["F"], 4)
 4-element Vector{String}:
 "Sophie"
@@ -207,7 +207,7 @@ The valid options values for `options` and `mask` are:
 - `locale::Vector{String}`: locale(s) from which entries are sampled. If no `locale` is provided, the current session locale is used.
 
 # Examples
-```julia
+```@juliarepl
 julia> Impostor.complete_name(["F"], 5)
 5-element Vector{String}:
 "Melissa Sheffard"
