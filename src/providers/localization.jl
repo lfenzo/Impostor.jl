@@ -1,6 +1,7 @@
 """
     
 
+using Base: ocachefile_from_cachefile
 """
 function render_localization_map(; src = nothing, dst = nothing, locale = nothing)
 
@@ -208,19 +209,13 @@ function state(n::Integer = 1; locale = session_locale())
     return rand(_load!("localization", "state", locale)[:, :state], n) |> coerse_string_type
 end
 
-function state(options::Vector{<:AbstractString}, n::Integer;
-    level::Symbol = :country_code,
-    locale = session_locale()
-)
+function state(options::Vector{<:AbstractString}, n::Integer; level::Symbol = :country_code, locale = session_locale())
     df = render_localization_map(; src = "state", dst = string(level), locale)
     filter!(r -> r[level] in options, df)
     return rand(convert.(String, df[:, :state]), n) |> coerse_string_type
 end
 
-function state(mask::Vector{<:AbstractString};
-    level::Symbol = :country_code,
-    locale = session_locale()
-)
+function state(mask::Vector{<:AbstractString}; level::Symbol = :country_code, locale = session_locale())
     gb = @chain begin
         render_localization_map(; src = "state", dst = string(level), locale)
         groupby([level])
@@ -350,19 +345,13 @@ function district(n::Integer = 1; locale = session_locale())
     return rand(_load!("localization", "district", locale)[:, :district], n) |> coerse_string_type
 end
 
-function district(options::Vector{<:AbstractString}, n::Integer;
-    level::Symbol = :city,
-    locale = session_locale()
-)
+function district(options::Vector{<:AbstractString}, n::Integer; level::Symbol = :city, locale = session_locale())
     df = render_localization_map(; src = "district", dst = string(level), locale)
     filter!(r -> r[level] in options, df)
     return rand(convert.(String, df[:, :district]), n) |> coerse_string_type
 end
 
-function district(mask::Vector{<:AbstractString};
-    level::Symbol = :district_name,
-    locale = session_locale()
-)
+function district(mask::Vector{<:AbstractString}; level::Symbol = :district_name, locale = session_locale())
     gb = @chain begin
         render_localization_map(; src = "district", dst = string(level), locale)
         groupby([level])
@@ -446,7 +435,6 @@ end
 
 # Kwargs
 - `level::Symbol = :state_code`: option level to be used when using option-based generation.
-- `locale::Vector{String}`: locale(s) from which entries are sampled. If no `locale` is provided, the current session locale is used.
 """
 function address(n::Integer = 1; locale = session_locale())
     addresses = String[]
@@ -472,25 +460,26 @@ function address(n::Integer = 1; locale = session_locale())
     return addresses |> coerse_string_type
 end
 
-function address(options::Vector{<:AbstractString}, n::Integer;
-    level::Symbol = :state_cide,
-    locale = session_locale()
-)
+function address(options::Vector{<:AbstractString}, n::Integer; level::Symbol = :state_cide, kws...)
     addresses = String[]
 
-    locale_address_formats = Dict(
-        loc => _load!("localization", "address_format", loc)[:, :address_format]
-        for loc in locale
-    )
-
     gb = @chain begin
-        render_localization_map(; locale)
+        render_localization_map()
         filter(row -> row[level] in options, _)  # that's the difference of the option-based version
+        # this innerjoin removes the duplication of locales (e.g. pt_BR Brasil and en_US Brazil,
+        # keeping the link between countries and locales)
+        innerjoin(_load!("localization", "locale"); on=[:country_code, :locale])
+        @aside associated_locales = unique(_[:, :locale]) .|> String
         groupby(:locale)
     end
 
+    locale_address_formats = Dict(
+        loc => _load!("localization", "address_format", loc)[:, :address_format]
+        for loc in associated_locales
+    )
+
     for _ in 1:n
-        loc = rand(locale)
+        loc = rand(associated_locales)
         associated_rows = get(gb, (loc,), nothing)
         address_format = rand(locale_address_formats[loc])
         reference_localization_dfrow = rand(eachrow(associated_rows))
@@ -500,21 +489,22 @@ function address(options::Vector{<:AbstractString}, n::Integer;
     return addresses |> coerse_string_type
 end
 
-function address(mask::Vector{<:AbstractString};
-    level::Symbol = :state_code,
-    locale = session_locale()
-)
+function address(mask::Vector{<:AbstractString}; level::Symbol = :state_code, kws...)
     addresses = String[]
+
+    df = @chain begin
+        render_localization_map()
+        filter(row -> row[level] in unique(mask), _)
+        # this innerjoin removes the duplication of locales (e.g. pt_BR Brasil and en_US Brazil,
+        # keeping the link between countries and locales)
+        innerjoin(_load!("localization", "locale"); on=[:country_code, :locale])
+        @aside associated_locales = unique(_[:, :locale]) .|> String
+    end
 
     locale_address_formats = Dict(
         loc => _load!("localization", "address_format", loc)[:, :address_format]
-        for loc in locale
+        for loc in associated_locales
     )
-
-    df = @chain begin
-        render_localization_map(; locale)
-        filter(row -> row[level] in unique(mask), _)
-    end
 
     for value in mask
         value_reference_dfrow = rand(eachrow(filter(r -> r[level] == value, df)))
