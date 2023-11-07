@@ -9,10 +9,10 @@ function render_localization_map(; src = nothing, dst = nothing, locale = nothin
 
     df = @chain begin
         locales
-        innerjoin(_load!("localization", "country", all_locales); on = ["country_code", "locale"])
-        innerjoin(_load!("localization", "state", all_locales); on = "country_code")
-        innerjoin(_load!("localization", "city", all_locales); on = ["state_code", "country_code"])
-        innerjoin(_load!("localization", "district", all_locales); on = "city")
+        rightjoin(_load!("localization", "country", all_locales); on = ["country_code", "locale"])
+        rightjoin(_load!("localization", "state", all_locales); on = "country_code")
+        rightjoin(_load!("localization", "city", all_locales); on = ["state_code", "country_code"])
+        rightjoin(_load!("localization", "district", all_locales); on = "city")
     end
 
     if !isnothing(locale)
@@ -29,9 +29,9 @@ end
 
 
 """
-    country(n::Integer = 1; kwargs...)
-    country(options::Vector{<:AbstractString}, n::Integer; level::Symbol, kwargs...)
-    country(mask::Vector{<:AbstractString}; level::Symbol, kwargs...)
+    country(n::Integer = 1; kws...)
+    country(options::Vector{<:AbstractString}, n::Integer; level::Symbol, kws...)
+    country(mask::Vector{<:AbstractString}; level::Symbol, kws...)
 
 Generate `n` or `length(mask)` country names.
 
@@ -54,6 +54,7 @@ function country(options::Vector{<:AbstractString}, n::Integer;
     locale = session_locale()
 )
     df = render_localization_map(; src = "country", dst = string(level), locale)
+    return df
     filter!(r -> r[level] in options, df)
     return rand(convert.(String, df[:, :country]), n) |> coerse_string_type
 end
@@ -79,9 +80,9 @@ end
 
 
 """
-    country_official_name(n::Integer = 1; kwargs...)
-    country_official_name(options::Vector{<:AbstractString}, n::Integer; level::Symbol, kwargs...)
-    country_official_name(mask::Vector{<:AbstractString}; level::Symbol, kwargs...)
+    country_official_name(n::Integer = 1; kws...)
+    country_official_name(options::Vector{<:AbstractString}, n::Integer; level::Symbol, kws...)
+    country_official_name(mask::Vector{<:AbstractString}; level::Symbol, kws...)
 
 Generate `n` or `length(mask)` country offiical names.
 
@@ -136,9 +137,9 @@ end
 
 
 """
-    country_code(n::Integer = 1; kwargs...)
-    country_code(options::Vector{<:AbstractString}, n::Integer; level::Symbol, kwargs...)
-    country_code(mask::Vector{<:AbstractString}; level::Symbol, keargs...)
+    country_code(n::Integer = 1; kws...)
+    country_code(options::Vector{<:AbstractString}, n::Integer; level::Symbol, kws...)
+    country_code(mask::Vector{<:AbstractString}; level::Symbol, kws...)
 
 Generate `n` or `length(mask)` country codes.
 
@@ -190,9 +191,9 @@ end
 
 
 """
-    state(n::Integer = 1; kwargs...)
-    state(options::Vector{<:AbstractString}, n::Integer; level::Symbol, kwargs...)
-    state(mask::Vector{<:AbstractString}; level::Symbol, kwargs...)
+    state(n::Integer = 1; kws...)
+    state(options::Vector{<:AbstractString}, n::Integer; level::Symbol, kws...)
+    state(mask::Vector{<:AbstractString}; level::Symbol, kws...)
 
 # Parameters
 - `n::Integer = 1`: number of country codes to generate.
@@ -237,9 +238,9 @@ end
 
 
 """
-    state_code(n::Integer = 1; kwargs...)
-    state_code(options::Vector{<:AbstractString}, n::Integer; level::Symbol, kwargs...)
-    state_code(mask::Vector{<:AbstractString}; level::Symbol, kwargs...)
+    state_code(n::Integer = 1; kws...)
+    state_code(options::Vector{<:AbstractString}, n::Integer; level::Symbol, kws...)
+    state_code(mask::Vector{<:AbstractString}; level::Symbol, kws...)
 
 # Parameters
 - `n::Integer = 1`: number of state codes to generate.
@@ -284,9 +285,9 @@ end
 
 
 """
-    city(n::Integer = 1; kwargs...)
-    city(options::Vector{<:AbstractString}, n::Integer; level, kwargs...)
-    city(mask::Vector{<:AbstractString}; level::Symbol, kwargs...)
+    city(n::Integer = 1; kws...)
+    city(options::Vector{<:AbstractString}, n::Integer; level, kws...)
+    city(mask::Vector{<:AbstractString}; level::Symbol, kws...)
 
 # Parameters
 - `n::Integer = 1`: number of country codes to generate.
@@ -328,9 +329,9 @@ end
 
 
 """
-    district(n::Integer = 1; kwargs...)
-    district(options::Vector{<:AbstractString}, n::Integer; level::Symbol, kwargs...)
-    district(mask::Vector{<:AbstractString}; level::Symbol, kwargs...)
+    district(n::Integer = 1; kws...)
+    district(options::Vector{<:AbstractString}, n::Integer; level::Symbol, kws...)
+    district(mask::Vector{<:AbstractString}; level::Symbol, kws...)
 
 # Parameters
 - `n::Integer = 1`: number of district names to generate.
@@ -379,7 +380,7 @@ end
 
 
 """
-    street(n::Integer = 1; kwargs...)
+    street(n::Integer = 1; kws...)
 
 Generate `n` street names.
 
@@ -408,7 +409,7 @@ end
 
 
 """
-    street_prefix(n::Integer = 1; kwargs...)
+    street_prefix(n::Integer = 1; kws...)
 
 # Kwargs
 - `locale::Vector{String}`: locale(s) from which entries are sampled. If no `locale` is provided, the current session locale is used.
@@ -421,7 +422,7 @@ end
 
 
 """
-    street_suffix(n::Integer = 1; kwargs...)
+    street_suffix(n::Integer = 1; kws...)
 
 # Kwargs
 - `locale::Vector{String}`: locale(s) from which entries are sampled. If no `locale` is provided, the current session locale is used.
@@ -434,9 +435,9 @@ end
 
 
 """
-    address(n::Integer = 1; kwargs...)
-    address(options::Vector{<:AbstractString}, n::Integer = 1; level::Symbol, kwargs...)
-    address(mask::Vector{<:AbstractString}; level::Symbol, kwargs...)
+    address(n::Integer = 1; kws...)
+    address(options::Vector{<:AbstractString}, n::Integer = 1; level::Symbol, kws...)
+    address(mask::Vector{<:AbstractString}; level::Symbol, kws...)
 
 # Parameters
 - `n::Integer = 1`: number of addresses to generate.
@@ -483,7 +484,7 @@ function address(options::Vector{<:AbstractString}, n::Integer;
     )
 
     gb = @chain begin
-        render_localization_map(; locale, joinhow = :inner)
+        render_localization_map(; locale)
         filter(row -> row[level] in options, _)  # that's the difference of the option-based version
         groupby(:locale)
     end
@@ -511,7 +512,7 @@ function address(mask::Vector{<:AbstractString};
     )
 
     df = @chain begin
-        render_localization_map(; locale, joinhow = :inner)
+        render_localization_map(; locale)
         filter(row -> row[level] in unique(mask), _)
     end
 
@@ -528,7 +529,7 @@ end
 
 
 """
-    address_complement(n::Integer = 1; kwargs...)
+    address_complement(n::Integer = 1; kws...)
     
 # Parameters
 - `n::Integer = 1`: number of address complements to generate.
@@ -549,7 +550,7 @@ end
 # Parameters
 - `n::Integer = 1`: number of street numbers to generate.
 """
-function street_number(n::Integer = 1; kwargs...)
+function street_number(n::Integer = 1; kws...)
     generated = rand(30:9999, n)
     return n == 1 ? only(generated) : generated
 end
@@ -557,7 +558,7 @@ end
 
 
 """
-    postcode(n::Integer = 1; kwargs...)
+    postcode(n::Integer = 1; kws...)
 
 # Parameters
 - `n::Integer = 1`: number of postcodes to generate.

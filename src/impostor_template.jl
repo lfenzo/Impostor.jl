@@ -113,7 +113,7 @@ julia> template(3, DataFrame; locale = ["pt_BR"])
 """
 function (impostor::ImpostorTemplate)(n::Integer = 1, sink = Dict;
     locale = session_locale(),
-    kwargs...
+    kws...
 )
     generated_values = OrderedDict()
 
@@ -130,21 +130,9 @@ function (impostor::ImpostorTemplate)(n::Integer = 1, sink = Dict;
         credit_card_mask = rand(vendors, n)
     end
 
-    # 'intersect' will maintain the order of the first argument, so we can use it
-    # to determine the lowerst level of the localization dataframe
-    localization_formats = intersect(LOCALIZATIONS[:provider_functions], impostor.format)
-    if !isempty(localization_formats)
-        minimum_level_remap = Dict(
-            :state => :state_code,
-            :country => :country_code
-        )
-        minimum_level = last(localization_formats)
-        localization_df = Impostor._hierarchical_localization_fallback(minimum_level |> String, "country", locale) 
-        localization_df_indexes = rand(1:size(localization_df, 1), n)
-
-        if minimum_level in keys(minimum_level_remap)
-            minimum_level = minimum_level_remap[minimum_level]
-        end
+    if !isempty(intersect(LOCALIZATIONS[:provider_functions], impostor.format))
+        localizations = render_localization_map(; locale)
+        localization_df_indexes = rand(1:size(localizations, 1), n)
     end
 
     for f in impostor.format
@@ -157,7 +145,7 @@ function (impostor::ImpostorTemplate)(n::Integer = 1, sink = Dict;
         elseif f in CREDIT_CARDS[:provider_functions]
             generated_values[f] = generator_function(credit_card_mask; locale)
         elseif f in LOCALIZATIONS[:provider_functions]
-            generated_values[f] = localization_df[localization_df_indexes, f]
+            generated_values[f] = localizations[localization_df_indexes, f]
         else
             generated_values[f] = generator_function(n; locale)
         end
