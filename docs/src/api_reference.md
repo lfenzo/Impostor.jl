@@ -22,9 +22,7 @@ Order = [:function]
 
 ```@index
 Pages = [
-    "utilities/impostor_template.md",
     "utilities/templatization.md",
-    "utilities/utility_functions.md",
 ]
 Depth = 1
 Order = [:function]

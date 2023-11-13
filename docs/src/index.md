@@ -101,8 +101,8 @@ In order to facilitate naming and referencing later on the major concepts implem
     | Implementation | Method Signature | Desctiption |
     |:---------------|:-----------------|:------------|
     | *Value-based* | `func(n::Int)` | Simply generate an output with `n` entries produced by `func`. |
-    | *Option-based* | `func(v::Vector, n::Int)` | Generates an output with `n` entries produced by `func` but **restricting the generated entries to specified options in `v`**, which specific contents will depend on `func`. Generator functions taking on options in different levels accept the `optionlevel` kwarg, when that is the case, docstrings will explain each specific behavior. |
-    | *Mask-based* | `func(v::Vector)` | Generates an output with `length(v)` entries produced by `func`. **The contents of `v` specify element-wise options to restrict the output of `func`.** Equivalent *in terms of output* with calling `[func(opt, 1) for opt in v]` (*i.e.* the option-based generation), but sub-optimal in terms of performance. Generator functions taking on masks in different levels accept the `masklevel` kwarg, when it is the case, docstrings will explain each specific behavior.|
+    | *Option-based* | `func(v::Vector, n::Int)` | Generates an output with `n` entries produced by `func` but **restricting the generated entries to specified options in `v`**, which specific contents will depend on `func`. Generator functions taking on options in different levels accept the `level` kwarg, when that is the case, docstrings will explain each specific behavior. |
+    | *Mask-based* | `func(v::Vector)` | Generates an output with `length(v)` entries produced by `func`. **The contents of `v` specify element-wise options to restrict the output of `func`.** Equivalent *in terms of output* with calling `[func(opt, 1) for opt in v]` (*i.e.* the option-based generation), but sub-optimal in terms of performance. Generator functions taking on masks in different levels accept the `level` kwarg, when it is the case, docstrings will explain each specific behavior.|
 
     ```@repl
     using Impostor # hide

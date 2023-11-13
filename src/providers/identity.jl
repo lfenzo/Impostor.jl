@@ -49,9 +49,9 @@ end
 
 
 """
-    prefix(n::Integer = 1; kwargs...)
-    prefix(options::Vector{String}, n::Integer; kwargs...)
-    prefix(mask::Vector{<:AbstractString}; kwargs...)
+    prefix(n::Integer = 1; kws...)
+    prefix(options::Vector{String}, n::Integer; kws...)
+    prefix(mask::Vector{<:AbstractString}; kws...)
 
 Generate `n` name prefixes, *e.g.* `"Mr."` and `"Ms."`, from a given locale.
 
@@ -70,7 +70,7 @@ The valid options values for `options` and `mask` are:
 
 # Example
 ```@juliarepl
-julia> prefix(["female", "male", "female"])
+julia> prefix(["F", "M", "F"])
 3-element Vector{String}:
 "Ms."
 "Mr."
@@ -105,9 +105,9 @@ end
 
 
 """
-    firstname(n::Integer = 1; kwargs...)
-    firstname(sexes::Vector{<:AbstractString}, n::Integer; kwargs...)
-    firstname(sexes::Vector{<:AbstractString}; kargs...))
+    firstname(n::Integer = 1; kws...)
+    firstname(sexes::Vector{<:AbstractString}, n::Integer; kws...)
+    firstname(sexes::Vector{<:AbstractString}; kws...))
 
 Generate `n` or `length(mask)` first names.
 
@@ -170,7 +170,7 @@ end
 
 
 """
-    surname(n::Integer = 1; kwargs...)
+    surname(n::Integer = 1; kws...)
 
 Generate a `surname` using the provided `locale` as source.
 
@@ -188,9 +188,9 @@ end
 
 
 """
-    complete_name(n::Integer = 1; kwargs...)
-    complete_name(sexes::Vector{<:AbstractString}, n::Integer; kwargs...)
-    complete_name(sexes::Vector{<:AbstractString}; kwargs...)
+    complete_name(n::Integer = 1; kws...)
+    complete_name(options::Vector{<:AbstractString}, n::Integer; kws...)
+    complete_name(mask::Vector{<:AbstractString}; kws...)
 
 Generate `n` or `length(mask)` full (complete) names from a given locale.
 
@@ -203,8 +203,8 @@ The valid options values for `options` and `mask` are:
 - `"F"` for "female"
 
 # Kwargs
-- `max_surnames::Integer = 3`: maximum number of surnames in each of the generated entries, note that the actual number may be smaller than `max_surnames`.
 - `locale::Vector{String}`: locale(s) from which entries are sampled. If no `locale` is provided, the current session locale is used.
+- `max_surnames::Integer = 3`: maximum number of surnames in each of the generated entries, note that the actual number may be smaller than `max_surnames`.
 
 # Examples
 ```@juliarepl
@@ -225,10 +225,7 @@ julia> complete_name(["F", "M", "F", "F", "M"])
 "Alfred Fraser Collins"
 ```
 """
-function complete_name(n::Integer = 1; 
-    max_surnames::Integer = 3,
-    locale = session_locale()
-)
+function complete_name(n::Integer = 1; locale = session_locale(), max_surnames::Integer = 3)
     complete_names = Vector{String}()
     for _ in 1:n
         fname = Impostor.firstname(; locale = locale)
@@ -242,8 +239,8 @@ function complete_name(n::Integer = 1;
 end
 
 function complete_name(sexes::Vector{<:AbstractString}, n::Integer;
+    locale = session_locale(),
     max_surnames::Integer = 3,
-    locale = session_locale()
 )
     complete_names = Vector{String}()
     for _ in 1:n
@@ -258,8 +255,8 @@ function complete_name(sexes::Vector{<:AbstractString}, n::Integer;
 end
 
 function complete_name(mask::Vector{<:AbstractString};
+    locale = session_locale(),
     max_surnames::Integer = 3,
-    locale = session_locale()
 )
     complete_names = Vector{String}()
     for value in mask
@@ -276,9 +273,9 @@ end
 
 
 """
-    occupation(n::Integer = 1; kwargs...)
-    occupation(options::Vector{<:AbstractString}, n::Integer; kwargs...)
-    occupation(mask::Vector{<:AbstractString}; kwargs...)
+    occupation(n::Integer = 1; kws...)
+    occupation(options::Vector{<:AbstractString}, n::Integer; kws...)
+    occupation(mask::Vector{<:AbstractString}; kws...)
 
 Generate `n` or `length(mask)` occupation entries.
 
@@ -328,9 +325,9 @@ end
 
 
 """
-    university(n::Integer = 1; kwargs...)
-    university(fields::Vector{<:AbstractString}, n::Integer; kwargs...)
-    university(field_mask::Vector{<:AbstractString}; kwargs...)
+    university(n::Integer = 1; kws...)
+    university(fields::Vector{<:AbstractString}, n::Integer; kws...)
+    university(field_mask::Vector{<:AbstractString}; kws...)
 
 # Parameters
 - `n::Integer = 1`: number of university entries to generate.
@@ -378,9 +375,9 @@ end
 
 
 """
-    nationality(n::Integer = 1; kwargs...)
-    nationality(options::Vector{<:AbstractString}, n::Integer; level::Symbol, kwargs...)
-    nationality(mask::Vector{<:AbstractString}; level::Symbol, kwargs...)
+    nationality(n::Integer = 1; kws...)
+    nationality(options::Vector{<:AbstractString}, n::Integer; level::Symbol, kws...)
+    nationality(mask::Vector{<:AbstractString}; level::Symbol, kws...)
 
 # Parameters
 - `n::Integer = 1`: number of nationality entries to generate.
