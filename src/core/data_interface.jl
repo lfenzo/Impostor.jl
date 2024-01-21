@@ -47,20 +47,20 @@ end
 
 
 """
-    provider_exists(p::AbstractString) :: Bool
+    is_provider_available(p::AbstractString) :: Bool
 
 Return whether the provided `p` is available.
 
 # Parameters
 - `p::AbstractString`: provider name
 """
-@inline function provider_exists(p::AbstractString) :: Bool
+@inline function is_provider_available(p::AbstractString) :: Bool
     return p in readdir(joinpath(ASSETS_ROOT))
 end
 
 
 """
-    content_exists(p::T, c::T) :: Bool where {T <: AbstractString}
+    is_content_available(p::T, c::T) :: Bool where {T <: AbstractString}
 
 Return whether the content `c` is available for provider `p`.
 
@@ -68,13 +68,13 @@ Return whether the content `c` is available for provider `p`.
 - `p::AbstractString`: provider name
 - `c::AbstractString`: content name
 """
-@inline function content_exists(p::T, c::T) :: Bool where {T <: AbstractString}
-    return provider_exists(p) && c in readdir(joinpath(ASSETS_ROOT, p))
+@inline function is_content_available(p::T, c::T) :: Bool where {T <: AbstractString}
+    return is_provider_available(p) && c in readdir(joinpath(ASSETS_ROOT, p))
 end
 
 
 """
-    locale_exists(p::T, c::T, l::T) :: Bool where {T <: AbstractString}
+    is_locale_available(p::T, c::T, l::T) :: Bool where {T <: AbstractString}
 
 Return whether the provided locale `l` is available for content `c` from provider `p`.
 
@@ -83,9 +83,9 @@ Return whether the provided locale `l` is available for content `c` from provide
 - `c::AbstractString`: content name
 - `l::AbstractString`: locale name
 """
-@inline function locale_exists(p::T, c::T, l::T) :: Bool where {T <: AbstractString}
+@inline function is_locale_available(p::T, c::T, l::T) :: Bool where {T <: AbstractString}
     return (
-        content_exists(p, c)
+        is_content_available(p, c)
         && l * ".csv" in readdir(joinpath(ASSETS_ROOT, p, c))
     )
 end
@@ -93,36 +93,36 @@ end
 
 
 """
-    _provider_loaded(d::DataContainer, provider::AbstractString) :: Bool
+    is_provider_loaded(d::DataContainer, provider::AbstractString) :: Bool
 
 Return whether the DataContainer `d` has already loaded the information associated to the content `c`.
 """
-@inline function _provider_loaded(d::DataContainer, provider::AbstractString) :: Bool
+@inline function is_provider_loaded(d::DataContainer, provider::AbstractString) :: Bool
     return haskey(d.data,  provider)
 end
 
 
 
 """
-    _content_loaded(d::DataContainer, provider::T, content::T) :: Bool 
+    is_content_loaded(d::DataContainer, provider::T, content::T) :: Bool 
 
 Return whether the DataContainer `d` has already loaded the information associated to the content `c`
 from provider `p`.
 """
-@inline function _content_loaded(d::DataContainer, provider::T, content::T) :: Bool where {T <: AbstractString}
-    return _provider_loaded(d, provider) && haskey(d.data[provider], content)
+@inline function is_content_loaded(d::DataContainer, provider::T, content::T) :: Bool where {T <: AbstractString}
+    return is_provider_loaded(d, provider) && haskey(d.data[provider], content)
 end
 
 
 
 """
-    _locale_loaded(d::DataContainer, provider::T, content::T, locale::T) :: Bool
+    is_locale_loaded(d::DataContainer, provider::T, content::T, locale::T) :: Bool
 
 Return whether the DataContainer `d` has already loaded the information associated to the content `c`
 from provider `p` related to locale `l`.
 """
-@inline function _locale_loaded(d::DataContainer, provider::T, content::T, locale::T) :: Bool where {T <: AbstractString}
-    return _content_loaded(d, provider, content) && haskey(d.data[provider][content], locale)
+@inline function is_locale_loaded(d::DataContainer, provider::T, content::T, locale::T) :: Bool where {T <: AbstractString}
+    return is_content_loaded(d, provider, content) && haskey(d.data[provider][content], locale)
 end
 
 
@@ -150,29 +150,30 @@ end
 
 function _load!(provider::T, content::T, locale::T = "noloc") :: DataFrame where {T <: AbstractString}
 
-    @assert(provider_exists(provider),
+    @assert(is_provider_available(provider),
         "Provider '$provider' is not available.")
 
-    @assert(content_exists(provider, content),
+    @assert(is_content_available(provider, content),
         "Content '$content' not available for provider '$provider'")
 
-    @assert(locale_exists(provider, content, locale),
+    @assert(is_locale_available(provider, content, locale),
         "Locale '$locale' not available for content '$content' of provider '$provider'")
 
-    if !_provider_loaded(SESSION_CONTAINER, provider)
+    if !is_provider_loaded(SESSION_CONTAINER, provider)
         merge!(SESSION_CONTAINER.data, Dict(provider => Dict()))
     end
 
-    if !_content_loaded(SESSION_CONTAINER, provider, content)
+    if !is_content_loaded(SESSION_CONTAINER, provider, content)
         merge!(SESSION_CONTAINER.data[provider], Dict(content => Dict()))
     end
 
-    if !_locale_loaded(SESSION_CONTAINER, provider, content, locale)
-        data_path = joinpath(ASSETS_ROOT, provider, content, locale * ".csv")
-        header = joinpath(ASSETS_ROOT, provider, content, "HEADER.txt") |> readlines
+    if !is_locale_loaded(SESSION_CONTAINER, provider, content, locale)
+        data_archive_location = joinpath(ASSETS_ROOT, provider, content)
+        file = joinpath(data_archive_location, locale * ".csv")
+        header = joinpath(data_archive_location, "HEADER.txt") |> readlines
         merge!(
             SESSION_CONTAINER.data[provider][content],
-            Dict(locale => CSV.read(data_path, DataFrame; header, delim = ','))
+            Dict(locale => CSV.read(file, DataFrame; header, delim = ','))
         )
     end
 
