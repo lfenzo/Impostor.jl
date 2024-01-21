@@ -138,7 +138,7 @@ specific contents without any locale assocated to them.
 # Parameters
 - `provider::AbstractString`: provider name, *e.g.* `"localization"`.
 - `content::AbstractString`: content name, *e.g.* `"street_prefix"`.
-- `locale::Union{AbstractString, Vector{AbstractString}} = "nolod"`: locale(s) associated to the `content` and `provider` provided. Defaults to the `"noloc"` placeholder for contents which are considered "locale-less".
+- `locale::Union{AbstractString, Vector{AbstractString}} = "noloc"`: locale(s) associated to the `content` and `provider` provided. Defaults to the `"noloc"` placeholder for contents which are considered "locale-less".
 """
 function _load!(provider::T, content::T, locale::Vector{T}) :: DataFrame where {T <: AbstractString}
     df = DataFrame()

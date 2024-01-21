@@ -26,6 +26,28 @@ end
 
 
 """
+    get_all_locales(; root::AbstractString) :: Vector{String}
+
+Retrieve a list of all unique available locale codes (inclusing the "noloc" locale)
+available in all providers.
+"""
+function get_all_locales(;
+    root::AbstractString = pkgdir(Impostor, "src", "data"),
+    to_skip::Vector{String} = ["HEADER", "noloc"]
+) :: Vector{String}
+    unique_locales = Set{String}()
+    for (_, _, files) in walkdir(root)
+        for filename in files
+            locale = first(split(filename, '.'))
+            !(locale in to_skip) && push!(unique_locales, locale)
+        end
+    end
+    return collect(unique_locales)
+ end
+
+
+
+"""
     render_alphanumeric(template::AbstractString; numbers, letters) :: String
 
 Receive an alphanumeric template string (e.g. `"^^^-####"`) and generate a string replacing:

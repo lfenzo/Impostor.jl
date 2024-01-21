@@ -25,7 +25,7 @@
         available_values = _test_load("identity", "firstname", locales)
 
         for key in keys(available_values)
-            append!(df, available_values[key]) 
+            append!(df, available_values[key]; promote = true) 
         end
 
         loaded = Impostor._load!("identity", "firstname", locales)
