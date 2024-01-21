@@ -14,9 +14,9 @@ using Chain
 export session_locale
 export setlocale!
 export resetlocale!
-export provider_exists
-export content_exists
-export locale_exists
+export is_provider_available
+export is_content_available
+export is_locale_available
 export render_template
 export render_alphanumeric
 export render_alphanumeric_range

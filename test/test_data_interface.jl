@@ -38,12 +38,12 @@ end
 
 @testset "Data Loading Auxiliary Functions" begin
 
-    @test provider_exists("identity")
-    @test !provider_exists("indentity")  # typo in 'identity' on purpose
+    @test is_provider_available("identity")
+    @test !is_provider_available("indentity")  # typo in 'identity' on purpose
 
-    @test content_exists("identity", "firstname")
-    @test !content_exists("identity", "fisrtname")  # typo in 'firstname' on purpose
+    @test is_content_available("identity", "firstname")
+    @test !is_content_available("identity", "fisrtname")  # typo in 'firstname' on purpose
 
-    @test locale_exists("identity", "firstname", "en_US")
-    @test !locale_exists("identity", "fisrtname", "en_US")  # typo in 'firstnames' on purpose
+    @test is_locale_available("identity", "firstname", "en_US")
+    @test !is_locale_available("identity", "firstname", "xx_XX")
 end
