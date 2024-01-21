@@ -57,6 +57,9 @@ export credit_card_expiry
 export credit_card_number
 export credit_card_vendor
 
+# miscellaneous
+export locale_code
+
 # Impostor-template related
 export ImpostorTemplate
 export addfield!
@@ -70,6 +73,7 @@ include("core/data_interface.jl")
 include("providers/finance.jl")
 include("providers/identity.jl")
 include("providers/localization.jl")
+include("providers/miscellaneous.jl")
 
 include("impostor_template.jl")
 

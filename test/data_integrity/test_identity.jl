@@ -13,7 +13,7 @@
         locale_exists("identity", "nationality", locale) && @testset "[$locale] nationality" begin
             df = Impostor._load!("identity", "nationality", locale)
             country_codes = Impostor._load!("localization", "country", locale)[:, :country_code]
-            @test sort(unique(df[:, :sex])) == sort(SEXES[:options])
+            @test Set(df[:, :sex]) == Set(SEXES[:options])
             @test all([code in country_codes for code in df[:, :country_code]])
         end
 

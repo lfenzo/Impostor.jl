@@ -31,7 +31,7 @@
 
         locale_exists("localization", "city", locale) && @testset "[$locale] city" begin
             df = Impostor._load!("localization", "city", locale)
-            @test allunique(df, :city)
+            @test allunique(df, [:state_code, :city])
         end
 
         locale_exists("localization", "district", locale) && @testset "[$locale] district" begin

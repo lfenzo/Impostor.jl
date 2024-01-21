@@ -14,7 +14,7 @@ const OPTION_BASED::String = "Option-based Loading"
 const MASK_BASED::String = "Mask-based Loading"
 
 # list of all available locales to be checked for intetritty
-const ALL_LOCALES::Vector{String} = _get_all_locales(; root = pkgdir(Impostor, "src", "data"))
+const ALL_LOCALES::Vector{String} = Impostor.get_all_locales(; root = pkgdir(Impostor, "src", "data"), to_skip = ["HEADER"])
 
 testsets = Dict{String, Any}(
    "Data Interface" => "test_data_interface.jl",
