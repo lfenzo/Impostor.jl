@@ -131,6 +131,7 @@ Future developments in Impostor will target the addition of different providers 
     - IPV4/6
     - MAC address
     - File extension
+    - File name
     - Vendor
     - Device
 - **Contact**
