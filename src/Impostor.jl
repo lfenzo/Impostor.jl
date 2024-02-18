@@ -10,6 +10,10 @@ using Tokenize
 using Chain
 
 
+include("core/utils.jl")
+include("core/data_interface.jl")
+include("providers/relation_restrictions.jl")
+
 # utilities
 export session_locale
 export setlocale!
@@ -22,6 +26,7 @@ export render_alphanumeric
 export render_alphanumeric_range
 
 # identity
+include("providers/identity.jl")
 export birthdate
 export bloodtype
 export complete_name
@@ -34,6 +39,7 @@ export surname
 export university
 
 # localization
+include("providers/localization.jl")
 export address
 export address_complement
 export city
@@ -50,6 +56,7 @@ export street_suffix
 export postcode
 
 # finance
+include("providers/finance.jl")
 export bank_name
 export bank_official_name
 export credit_card_cvv
@@ -58,24 +65,14 @@ export credit_card_number
 export credit_card_vendor
 
 # miscellaneous
+include("providers/miscellaneous.jl")
 export locale_code
 
 # Impostor-template related
+include("impostor_template.jl")
 export ImpostorTemplate
 export addfield!
 
-
-include("providers/relation_restrictions.jl")
-
-include("core/utils.jl")
-include("core/data_interface.jl")
-
-include("providers/finance.jl")
-include("providers/identity.jl")
-include("providers/localization.jl")
-include("providers/miscellaneous.jl")
-
-include("impostor_template.jl")
 
 SESSION_CONTAINER::DataContainer = DataContainer()
 
