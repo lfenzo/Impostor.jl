@@ -8,10 +8,15 @@ check out the [documentation page](https://lfenzo.github.io/Impostor.jl/dev/).
 
 ## Getting Started
 
+First, add the Impostor.jl to the current environment:
+```
+] add Impostor
+```
+
+And then:
 ```julia
 using Impostor
 using DataFrames
-
 
 credit_card_number(; formatted = true)
 # "4767-6731-1326-5309"
