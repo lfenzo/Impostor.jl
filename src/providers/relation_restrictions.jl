@@ -45,6 +45,7 @@ const LOCALIZATIONS::Dict{Symbol, Vector} = Dict(
         :city,
         :district,
         :address,
+        :street,
     ],
 )
 

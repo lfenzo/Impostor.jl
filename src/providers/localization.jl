@@ -1,12 +1,11 @@
 """
-    
+    render_localization_map(; src = nothing, dst = nothing, locale = nothing)
 
-using Base: ocachefile_from_cachefile
 """
 function render_localization_map(; src = nothing, dst = nothing, locale = nothing)
 
     locales = _load!("localization", "locale", "noloc")
-    all_locales = convert.(String, unique(locales[:, :locale]))
+    all_locales = convert.(String, locales[:, :locale])
 
     df = @chain begin
         locales
@@ -15,6 +14,8 @@ function render_localization_map(; src = nothing, dst = nothing, locale = nothin
         rightjoin(_load!("localization", "city", all_locales); on = ["state_code", "country_code"])
         rightjoin(_load!("localization", "district", all_locales); on = "city")
     end
+
+    df[:, :street] = street(convert.(String, df[:, :country_code]))
 
     if !isnothing(locale)
         df = filter(r -> r[:locale] in locale, df)
@@ -363,11 +364,16 @@ end
 
 """
     street(n::Integer = 1; kws...)
+    street(options::Vector{<:AbstractString}, n::Integer; kws...)
+    street(mask::Vector{<:AbstractString}; kws...)
 
-Generate `n` street names.
+Generate `n` street names. Note that for option and mask-based generation the only valid options
+to provide are `country_code`s.
 
-# Kwargs
-- `locale::Vector{String}`: locale(s) from which entries are sampled. If no `locale` is provided, the current session locale is used.
+# Parameters
+- `n::Integer = 1`: number of street names entries to generate.
+- `options::Vector{<:AbstractString}`: vector with with options restricting the possible values generated.
+- `mask::Vector{<:AbstractString}`: mask vector with element-wise option restrictions.
 """
 function street(n::Integer = 1; locale = session_locale())
     streets = String[]
@@ -388,6 +394,47 @@ function street(n::Integer = 1; locale = session_locale())
     return streets |> coerse_string_type
 end
 
+function street(options::Vector{<:AbstractString}, n::Integer; kws...)
+    streets = String[]
+
+    locales = _load!("localization", "locale", "noloc")
+    country_code_locale_map = Dict(
+        String(row[:country_code]) => String(row[:locale]) for row in eachrow(locales)
+    )
+
+    street_formats = Dict(
+        code => _load!("localization", "street_format", country_code_locale_map[code])
+        for code in unique(options)
+    )
+
+    for _ in 1:n
+        country_code = rand(keys(country_code_locale_map))
+        format = rand(street_formats[country_code][:, :street_format]) |> String
+        push!(streets, render_template(format; locale = country_code_locale_map[country_code]))
+    end
+
+    return streets |> coerse_string_type
+end
+
+function street(mask::Vector{<:AbstractString}; kws...)
+    streets = String[]
+
+    locales = _load!("localization", "locale", "noloc")
+    country_code_locale_map = Dict(
+        String(row[:country_code]) => String(row[:locale]) for row in eachrow(locales)
+    )
+
+    street_formats = Dict(
+        code => _load!("localization", "street_format", country_code_locale_map[code])
+        for code in unique(mask)
+    )
+
+    for country_code in mask
+        format = rand(street_formats[country_code][:, :street_format]) |> String
+        push!(streets, render_template(format; locale = country_code_locale_map[country_code]))
+    end
+    return streets |> coerse_string_type
+end
 
 
 """
@@ -459,7 +506,7 @@ function address(n::Integer = 1; locale = session_locale())
     return addresses |> coerse_string_type
 end
 
-function address(options::Vector{<:AbstractString}, n::Integer; level::Symbol = :state_cide, kws...)
+function address(options::Vector{<:AbstractString}, n::Integer; level::Symbol = :state_code, kws...)
     addresses = String[]
 
     gb = @chain begin
