@@ -367,10 +367,13 @@ end
     street(options::Vector{<:AbstractString}, n::Integer; kws...)
     street(mask::Vector{<:AbstractString}; kws...)
 
-Generate `n` street names.
+Generate `n` street names. Note that for option and mask-based generation the only valid options
+to provide are `country_code`s.
 
-# Kwargs
-- `locale::Vector{String}`: locale(s) from which entries are sampled. If no `locale` is provided, the current session locale is used.
+# Parameters
+- `n::Integer = 1`: number of street names entries to generate.
+- `options::Vector{<:AbstractString}`: vector with with options restricting the possible values generated.
+- `mask::Vector{<:AbstractString}`: mask vector with element-wise option restrictions.
 """
 function street(n::Integer = 1; locale = session_locale())
     streets = String[]
