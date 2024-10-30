@@ -1,4 +1,4 @@
-BRA,M,Brazillian
-BRA,F,Brazillian
-USA,M,American
-USA,F,American
+USA;M;American
+USA;F;American
+BRA;M;Brazillian
+BRA;F;Brazillian

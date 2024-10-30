@@ -1,7 +1,7 @@
-business,Universidade de Negócios
-humanities,Universidade de Humanidades
-social-sciences,Universidade de Ciências Sociais
-natural-sciences,Universidade de Ciências Naturais
-formal-sciences,Universidade de Ciências Formais
-public-administration,Universidade de Administração
-military,Instituto Militar
+military;Instituto Militar
+public-administration;Universidade de Administração
+formal-sciences;Universidade de Ciências Formais
+natural-sciences;Universidade de Ciências Naturais
+social-sciences;Universidade de Ciências Sociais
+humanities;Universidade de Humanidades
+business;Universidade de Negócios

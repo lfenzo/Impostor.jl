@@ -38,11 +38,7 @@ Generate `n` birth date entries between the `start` and `stop` dates.
 - `start::Date = Date(1900, 1, 1)`: start of the sampling period.
 - `stop::Date = Dates.today()`: end of the sampling period.
 """
-function birthdate(n::Integer = 1;
-    start::Date = Date(1900, 1, 1),
-    stop::Date = today(),
-    kwargs...
-)
+function birthdate(n::Integer = 1; start::Date = Date(1900, 1, 1), stop::Date = today(), kwargs...)
     return Dates.format.(rand(start:Day(1):stop, n), "yyyy-mm-dd") |> coerse_string_type
 end
 

@@ -173,7 +173,7 @@ function _load!(provider::T, content::T, locale::T = "noloc") :: DataFrame where
         header = joinpath(data_archive_location, "HEADER.txt") |> readlines
         merge!(
             SESSION_CONTAINER.data[provider][content],
-            Dict(locale => CSV.read(file, DataFrame; header, delim = ','))
+            Dict(locale => CSV.read(file, DataFrame; header, delim = ';'))
         )
     end
 

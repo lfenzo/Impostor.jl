@@ -1,7 +1,7 @@
-business,Accountant
-humanities,Anthropologyst
-social-sciences,Sociologist
-natural-sciences,Phisician
-formal-sciences,Mathematician
-public-administration,Police Officer
-military,Aircraft Engineer
+business;Accountant
+military;Aircraft Engineer
+humanities;Anthropologyst
+formal-sciences;Mathematician
+natural-sciences;Phisician
+public-administration;Police Officer
+social-sciences;Sociologist

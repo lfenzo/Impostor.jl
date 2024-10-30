@@ -1,145 +1,143 @@
-bank_code,bank_name,bank_official_name
-1,BB,Banco do Brasil S.A
-3,Amazônia,Banco da Amazônia S.A
-4,Banco do Nordeste,Banco do Nordeste do Brasil S.A
-10,Credicoamo,Credicoamo
-11,Suisse Hedging,C. Suisse Hedging – Griffo CV S.A
-14,Natixis,Natixis Brasil S.A
-15,UBS,UBS Brasil CCTVM S.A
-18,Tricury,Banco Tricury
-25,Alfa,Banco Alfa S.A
-33,Santander,Banco Santander
-36,BBI,Banco Bradesco BBI S.A
-37,Banpará,Banco do Estado do Pará
-40,Cargill,Banco Cargill S.A
-41,Banrisul,Banrisul – Banco do Estado do Rio Grande do Sul S.A
-44,BVA,Banco BVA S.A
-47,BES,Banco BCO do Estado de Sergipe S.A
-62,Hipercard,Hipercard BM S.A
-64,Goldman Sachs,Goldman Sachs do Brasil BM S.A
-66,Morgan,Banco Morgan Stanley S.A
-69,Crefisa,Banco Crefisa S.A
-70,BRB,Banco de Brasília 
-74,Safra,Banco J.Safra S.A
-75,ABN,Banco ABN AMRO S.A
-76,KDB,Banco KDB Brasil S.A
-77,Inter,Banco Inter S.A.
-79,Original,Banco Original do Agronegócio S.A
-80,B&T,B&T CC LTDA
-82,Topázio,Banco Topázio S.A
-83,BCB,Banco da China Brasil S.A
-84,Uniprime,Uniprime Norte do Paraná
-85,Ailos,Coop Central Ailos
-91,Unicred,Unicred Central
-92,BRK,BRK S.A
-93,Pólocred,Pólocred SCMEPP Ltda
-94,Finaxis,Banco Finaxis
-95,Confidence,Banco Confidence de Câmbio S.A
-96,B3,Banco B3 S.A
-98,Credialiança,Credialiança CCR
-99,Uniprime,Uniprime Central CCC LTDA
-100,Planner,Planner Corretora de Valores S.A
-101,Renascenca,Renascença DTVM LTDA
-102,XP,XP Investimentos S.A
-104,CEF,Caixa Econômica Federal
-105,Lecca,Lecca CFI S.A
-107,BBM,Banco BBM S.A
-108,Portocred,Portocred S.A
-114,Copp. ES,Central Cooperativa de Credito no Estado do Espirito Santo
-117,Advanced,Advanced CC Ltda
-119,Western,Banco Western Union
-121,Agibank,Banco Agibank S.A
-124,Woori Bank,Banco Woori Bank do Brasil S.A
-127,Codepe,Codepe CVC S.A
-130,Caruana,Caruana SCFI
-131,Tullett Prebon Brasil,Tullett Prebon Brasil CVC LTDA
-133,Cresol,Cresol Confederação
-136,Unicred,Unicred Cooperativa
-138,Get Money,Get Money CC Ltda
-139,Intesa,Intesa Sanpaolo Brasil S.A
-140,Easynvest,Easynvest – Titulo CV S.A
-142,Broker,Broker Brasil CC Ltda
-143,Treviso,Treviso CC S.A
-144,Bexs,Bexs Banco Cambio S.A
-149,Facta,Facta S.A CFI
-157,Icap do Brasil,Icap do Brasil CTVM
-159,Casa Credito,Casa Credito S.A
-169,Olé,Banco Olé Bonsucesso Consignado S.A
-173,BRL,BRL Trust DTVM S.A
-177,Guide,Guide
-183,Socred,Socred S.A
-189,HS,HS Financeira
-190,Serviccop,Servicoop
-191,Nova Futura,Nova Futura CTVM Ltda
-197,Stone,Stone Pagamentos S.A
-204,Bradesco Cartões,Banco Bradesco Cartões S.A
-212,Original,Banco Original S.A
-213,Arbi,BCO Arbi S.A
-217,John Deere,Banco John Deere S.A
-218,BS2,Banco BS2 S.A
-222,Crédit Agricole,Banco Crédit Agricole BR S.A
-224,Fibra,Banco Fibra S.A
-225,BRKB,Banco Brascan S.A
-237,Bradesco,Banco Bradesco S.A
-246,ABC,Banco ABC Brasil S.A
-253,Bexs,Bexs CC S.A
-254,Paraná,Paraná Banco S.A
-260,Nubank,Nu Pagamentos S.A 
-268,Barigui,Barigui CH
-270,Sagitur,Sagitur CC Ltda
-276,Senff,Senff S.A
-283,RB,RB Capital Investimentos DTVM LTDA
-285,Frente CC,Frente CC LTDA
-288,Carol DTVM,Carol DTVM Ltda
-290,PagSeguro,PagSeguro Internet S.A 
-292,BS2 Distrib.,BS2 Distrib. de Títulos e Investimentos
-293,Lastro,Lastro RDV DTVM Ltda
-301,BPP,BPP Instituição de Pagamentos S.A
-318,BMG,Banco BMG S.A
-320,CCB,Banco CCB Brasil S.A
-323,Mercado Pago,Mercado Pago 
-335,Digio,Banco Digio S.A
-336,C6,Banco C6 S.A
-340,Superdigital,Super Pagamentos S/A 
-341,Itáu,Banco Itaú S.A
-348,XP,Banco XP S/A
-364,Gerencianet,Gerencianet Pagamentos do Brasil
-366,Societe,Banco Societe Generale Brasil
-370,Mizuho,Banco Mizuho S.A
-380,PicPay,PicPay Servicos S.A
-389,Mercantil,Banco Mercantil do Brasil S.A
-394,Bradesco Financiamentos,Banco Bradesco Financiamentos S.A
-399,Kirton,Kirton Bank
-412,Capital,Banco Capital S.A
-422,Safra,Banco Safra S.A
-456,Mufg,Banco Mufg Brasil S.A
-464,Mitsui,Banco Sumitomo Mitsui Brasil S.A
-473,Caixa Geral,Banco Caixa Geral – Brasil S.A
-479,Itaubank,Banco Itaubank
-487,Deutsche,Deutsche Bank S.A Banco Alemão
-600,Luso,Banco Luso Brasileiro S.A
-610,VR,Banco VR S.A
-611,Paulista,Banco Paulista
-613,Omni,Omni Banco S.A
-623,Pan,Banco Pan
-626,Ficsa,Banco Ficsa S.A
-633,Rendimento,Banco Rendimento S.A
-637,Sofisa,Banco Sofisa S.A.
-643,Pine,Banco Pine S.A
-652,Itaú,Itaú Unibanco Holding S.A
-653,Indusval,Banco Indusval S.A
-654,Digimais,Banco Digimais S.A
-655,BV,Banco Votorantim S.A
-707,Daycoval,Banco Daycoval S.A
-712,Ourinvest,Banco Ourinvest S.A
-739,Cetelem,Banco Cetelem
-741,BRP,Banco Ribeirão Preto
-743,Semear,Banco Semear S.A
-745,Citibank,Banco Citibank S.A
-747,Radobank,Banco Radobank Internacional do Brasil S.A
-748,Sicredi,Sicredi S.A
-752,BNP,Banco BNP Paribas Brasil S.A
-753,Novo Banco,Novo Banco Continental S.A BM
-755,Bofa Merrill,Bofa Merrill Lynch BM S.A
-756,Bancoob,Bancoob 
-757,Keb Hana,Banco Keb Hana do Brasil S.A
+1;BB;Banco do Brasil S/A
+3;Amazônia;Banco da Amazônia S.A
+4;Banco do Nordeste;Banco do Nordeste do Brasil S.A
+10;Credicoamo;Credicoamo
+11;Suisse Hedging;C. Suisse Hedging – Griffo CV S.A
+14;Natixis;Natixis Brasil S.A
+15;UBS;UBS Brasil CCTVM S.A
+18;Tricury;Banco Tricury
+25;Alfa;Banco Alfa S.A
+33;Santander;Banco Santander
+36;BBI;Banco Bradesco BBI S.A
+37;Banpará;Banco do Estado do Pará
+40;Cargill;Banco Cargill S.A
+41;Banrisul;Banrisul – Banco do Estado do Rio Grande do Sul S.A
+44;BVA;Banco BVA S.A
+47;BES;Banco BCO do Estado de Sergipe S.A
+62;Hipercard;Hipercard BM S.A
+64;Goldman Sachs;Goldman Sachs do Brasil BM S.A
+66;Morgan;Banco Morgan Stanley S.A
+69;Crefisa;Banco Crefisa S.A
+70;BRB;Banco de Brasília 
+74;Safra;Banco J.Safra S.A
+75;ABN;Banco ABN AMRO S.A
+76;KDB;Banco KDB Brasil S.A
+77;Inter;Banco Inter S.A.
+79;Original;Banco Original do Agronegócio S.A
+80;B&T;B&T CC LTDA
+82;Topázio;Banco Topázio S.A
+83;BCB;Banco da China Brasil S.A
+84;Uniprime;Uniprime Norte do Paraná
+85;Ailos;Coop Central Ailos
+91;Unicred;Unicred Central
+92;BRK;BRK S.A
+93;Pólocred;Pólocred SCMEPP Ltda
+94;Finaxis;Banco Finaxis
+95;Confidence;Banco Confidence de Câmbio S.A
+96;B3;Banco B3 S.A
+98;Credialiança;Credialiança CCR
+99;Uniprime;Uniprime Central CCC LTDA
+100;Planner;Planner Corretora de Valores S.A
+101;Renascenca;Renascença DTVM LTDA
+102;XP;XP Investimentos S.A
+104;CEF;Caixa Econômica Federal
+105;Lecca;Lecca CFI S.A
+107;BBM;Banco BBM S.A
+108;Portocred;Portocred S.A
+114;Copp. ES;Central Cooperativa de Credito no Estado do Espirito Santo
+117;Advanced;Advanced CC Ltda
+119;Western;Banco Western Union
+121;Agibank;Banco Agibank S.A
+124;Woori Bank;Banco Woori Bank do Brasil S.A
+127;Codepe;Codepe CVC S.A
+130;Caruana;Caruana SCFI
+131;Tullett Prebon Brasil;Tullett Prebon Brasil CVC LTDA
+133;Cresol;Cresol Confederação
+136;Unicred;Unicred Cooperativa
+138;Get Money;Get Money CC Ltda
+139;Intesa;Intesa Sanpaolo Brasil S.A
+140;Easynvest;Easynvest – Titulo CV S.A
+142;Broker;Broker Brasil CC Ltda
+143;Treviso;Treviso CC S.A
+144;Bexs;Bexs Banco Cambio S.A
+149;Facta;Facta S.A CFI
+157;Icap do Brasil;Icap do Brasil CTVM
+159;Casa Credito;Casa Credito S.A
+169;Olé;Banco Olé Bonsucesso Consignado S.A
+173;BRL;BRL Trust DTVM S.A
+177;Guide;Guide
+183;Socred;Socred S.A
+189;HS;HS Financeira
+190;Serviccop;Servicoop
+191;Nova Futura;Nova Futura CTVM Ltda
+197;Stone;Stone Pagamentos S.A
+204;Bradesco Cartões;Banco Bradesco Cartões S.A
+212;Original;Banco Original S.A
+213;Arbi;BCO Arbi S.A
+217;John Deere;Banco John Deere S.A
+218;BS2;Banco BS2 S.A
+222;Crédit Agricole;Banco Crédit Agricole BR S.A
+224;Fibra;Banco Fibra S.A
+225;BRKB;Banco Brascan S.A
+237;Bradesco;Banco Bradesco S.A
+253;Bexs;Bexs CC S.A
+254;Paraná;Paraná Banco S.A
+260;Nubank;Nu Pagamentos S.A 
+268;Barigui;Barigui CH
+270;Sagitur;Sagitur CC Ltda
+276;Senff;Senff S.A
+283;RB;RB Capital Investimentos DTVM LTDA
+285;Frente CC;Frente CC LTDA
+288;Carol DTVM;Carol DTVM Ltda
+290;PagSeguro;PagSeguro Internet S.A 
+292;BS2 Distrib.;BS2 Distrib. de Títulos e Investimentos
+293;Lastro;Lastro RDV DTVM Ltda
+301;BPP;BPP Instituição de Pagamentos S.A
+318;BMG;Banco BMG S.A
+320;CCB;Banco CCB Brasil S.A
+323;Mercado Pago;Mercado Pago 
+335;Digio;Banco Digio S.A
+336;C6;Banco C6 S.A
+340;Superdigital;Super Pagamentos S/A 
+341;Itáu;Banco Itaú S.A
+348;XP;Banco XP S/A
+364;Gerencianet;Gerencianet Pagamentos do Brasil
+366;Societe;Banco Societe Generale Brasil
+370;Mizuho;Banco Mizuho S.A
+380;PicPay;PicPay Servicos S.A
+389;Mercantil;Banco Mercantil do Brasil S.A
+394;Bradesco Financiamentos;Banco Bradesco Financiamentos S.A
+399;Kirton;Kirton Bank
+412;Capital;Banco Capital S.A
+422;Safra;Banco Safra S.A
+456;Mufg;Banco Mufg Brasil S.A
+464;Mitsui;Banco Sumitomo Mitsui Brasil S.A
+473;Caixa Geral;Banco Caixa Geral – Brasil S.A
+479;Itaubank;Banco Itaubank
+487;Deutsche;Deutsche Bank S.A Banco Alemão
+600;Luso;Banco Luso Brasileiro S.A
+610;VR;Banco VR S.A
+611;Paulista;Banco Paulista
+613;Omni;Omni Banco S.A
+623;Pan;Banco Pan
+626;Ficsa;Banco Ficsa S.A
+633;Rendimento;Banco Rendimento S.A
+637;Sofisa;Banco Sofisa S.A.
+643;Pine;Banco Pine S.A
+652;Itaú;Itaú Unibanco Holding S.A
+653;Indusval;Banco Indusval S.A
+654;Digimais;Banco Digimais S.A
+655;BV;Banco Votorantim S.A
+707;Daycoval;Banco Daycoval S.A
+712;Ourinvest;Banco Ourinvest S.A
+739;Cetelem;Banco Cetelem
+741;BRP;Banco Ribeirão Preto
+743;Semear;Banco Semear S.A
+745;Citibank;Banco Citibank S.A
+747;Radobank;Banco Radobank Internacional do Brasil S.A
+748;Sicredi;Sicredi S.A
+752;BNP;Banco BNP Paribas Brasil S.A
+753;Novo Banco;Novo Banco Continental S.A BM
+755;Bofa Merrill;Bofa Merrill Lynch BM S.A
+756;Bancoob;Bancoob 
+757;Keb Hana;Banco Keb Hana do Brasil S.A

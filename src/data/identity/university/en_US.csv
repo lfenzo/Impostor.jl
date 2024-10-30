@@ -1,7 +1,7 @@
-business,University of Business
-humanities,University of Humanities
-social-sciences,University of Social Sciences
-natural-sciences,University of Natural Sciencies
-formal-sciences,University of Formal Sciencies
-public-administration,University of Public Administration
-military,University of Military
+business;University of Business
+formal-sciences;University of Formal Sciencies
+humanities;University of Humanities
+military;University of Military
+natural-sciences;University of Natural Sciencies
+public-administration;University of Public Administration
+social-sciences;University of Social Sciences

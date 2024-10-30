@@ -1,83 +1,83 @@
-USA,AL,Montgomery
-USA,AK,Juneau
-USA,AR,Little Rock
-USA,CA,Sacramento
-USA,CO,Denver
-USA,CT,Hartford
-USA,DE,Dover
-USA,FL,Tallahassee
-USA,GA,Atlanta
-USA,HI,Honolulu
-USA,ID,Boise
-USA,IL,Springfield
-USA,IN,Indianapolis
-USA,IA,Des Moines
-USA,KS,Topeka
-USA,KY,Frankfort
-USA,LA,Baton Rouge
-USA,ME,Augusta
-USA,MD,Annapolis
-USA,MA,Boston
-USA,MI,Lansing
-USA,MN,Saint Paul
-USA,MS,Jackson
-USA,MO,Jefferson City
-USA,MT,Helena
-USA,NE,Lincoln
-USA,NV,Carson City
-USA,NH,Concord
-USA,NJ,Trenton
-USA,NM,Santa Fe
-USA,NY,Albany
-USA,NC,Raleigh
-USA,ND,Bismarck
-USA,OH,Columbus
-USA,OK,Oklahoma City
-USA,OR,Salem
-USA,PA,Harrisburg
-USA,RI,Providence
-USA,SC,Columbia
-USA,SD,Pierre
-USA,TN,Nashville
-USA,TX,Austin
-USA,UT,Salt Lake City
-USA,VT,Montpelier
-USA,VA,Richmond
-USA,WA,Olympia
-USA,WV,Charleston
-USA,WI,Madison
-USA,WY,Cheyenne
-USA,AL,Huntsville
-USA,AK,Anchorage
-USA,AZ,Phoenix
-USA,CA,Los Angeles
-USA,CT,Bridgeport
-USA,DE,Wilmington
-USA,FL,Jacksonville
-USA,IL,Chicago
-USA,KS,Wichita
-USA,KY,Louisville
-USA,LA,New Orleans
-USA,ME,Portland
-USA,MD,Baltimore
-USA,MI,Detroit
-USA,MN,Minneapolis
-USA,MO,Kansas City
-USA,MT,Billings
-USA,NE,Omaha
-USA,NV,Las Vegas
-USA,NH,Manchester
-USA,NJ,Newark
-USA,NM,Albuquerque
-USA,NY,New York City
-USA,NC,Charlotte
-USA,ND,Fargo
-USA,OR,Portland
-USA,PA,Philadelphia
-USA,SC,Charleston
-USA,SD,Sioux Falls
-USA,TX,Houston
-USA,VT,Burlington
-USA,VA,Virginia Beach
-USA,WA,Seattle
-USA,WI,Milwaukee
+USA;NY;Albany
+USA;NM;Albuquerque
+USA;AK;Anchorage
+USA;MD;Annapolis
+USA;GA;Atlanta
+USA;ME;Augusta
+USA;TX;Austin
+USA;MD;Baltimore
+USA;LA;Baton Rouge
+USA;MT;Billings
+USA;ND;Bismarck
+USA;ID;Boise
+USA;MA;Boston
+USA;CT;Bridgeport
+USA;VT;Burlington
+USA;NV;Carson City
+USA;WV;Charleston
+USA;SC;Charleston
+USA;NC;Charlotte
+USA;WY;Cheyenne
+USA;IL;Chicago
+USA;SC;Columbia
+USA;OH;Columbus
+USA;NH;Concord
+USA;CO;Denver
+USA;IA;Des Moines
+USA;MI;Detroit
+USA;DE;Dover
+USA;ND;Fargo
+USA;KY;Frankfort
+USA;PA;Harrisburg
+USA;CT;Hartford
+USA;MT;Helena
+USA;HI;Honolulu
+USA;TX;Houston
+USA;AL;Huntsville
+USA;IN;Indianapolis
+USA;MS;Jackson
+USA;FL;Jacksonville
+USA;MO;Jefferson City
+USA;AK;Juneau
+USA;MO;Kansas City
+USA;MI;Lansing
+USA;NV;Las Vegas
+USA;NE;Lincoln
+USA;AR;Little Rock
+USA;CA;Los Angeles
+USA;KY;Louisville
+USA;WI;Madison
+USA;NH;Manchester
+USA;WI;Milwaukee
+USA;MN;Minneapolis
+USA;AL;Montgomery
+USA;VT;Montpelier
+USA;TN;Nashville
+USA;LA;New Orleans
+USA;NY;New York City
+USA;NJ;Newark
+USA;OK;Oklahoma City
+USA;WA;Olympia
+USA;NE;Omaha
+USA;PA;Philadelphia
+USA;AZ;Phoenix
+USA;SD;Pierre
+USA;ME;Portland
+USA;OR;Portland
+USA;RI;Providence
+USA;NC;Raleigh
+USA;VA;Richmond
+USA;CA;Sacramento
+USA;MN;Saint Paul
+USA;OR;Salem
+USA;UT;Salt Lake City
+USA;NM;Santa Fe
+USA;WA;Seattle
+USA;SD;Sioux Falls
+USA;IL;Springfield
+USA;FL;Tallahassee
+USA;KS;Topeka
+USA;NJ;Trenton
+USA;VA;Virginia Beach
+USA;KS;Wichita
+USA;DE;Wilmington
