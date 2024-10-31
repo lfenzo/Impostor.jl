@@ -7,7 +7,7 @@ Impostor.coerse_string_type
 setlocale!
 session_locale
 resetlocale!
-provider_exists
-content_exists
-locale_exists
+is_provider_available
+is_content_available
+is_locale_available
 ```

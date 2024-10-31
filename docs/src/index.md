@@ -1,3 +1,10 @@
+```@setup main
+using Impostor
+using DataFrames
+using CSV
+```
+
+
 ## What is Impostor.jl?
 
 Impostor is a synthetic tabular-data generator based on random samplings over pre-defined
@@ -28,8 +35,7 @@ using Pkg; Pkg.add("Impostor")
 To get started with Impostor, select your generator function of choice, the simplest example
 is to generate single and multiple values specifying the number of expected values in the output.
 
-```@repl
-using Impostor # hide
+```@repl main
 firstname(5)
 firstname()  # equivalent to firstname(1)
 ```
@@ -48,16 +54,14 @@ Generator functions may be found in each of the Providers individual pages or vi
 All generator functions accept a `locale` keyword argument, in case no value is provided in the
 `locale` kwarg the **Session Locale** is used (see section *Concepts* below).
 
-```@repl
-using Impostor # hide
+```@repl main
 firstname(2; locale = ["pt_BR"])
 firstname(2; locale = ["en_US", "pt_BR"])
 ```
 
 In order to change the default `locale` used by the session use the [`setlocale!`](@ref) function:
 
-```@repl
-using Impostor # hide
+```@repl main
 setlocale!("pt_BR");
 firstname(2)
 resetlocale!(); # hide
@@ -69,9 +73,7 @@ Besides providing several *generator functions* which may be used as standalone 
 generators, Impostor also exports the [`ImpostorTemplate`](@ref) which is a utility struct to encapsulate
 formats and generate a fully fledgned table.
 
-```@repl
-using Impostor # hide
-using DataFrames # hide
+```@repl main
 template = ImpostorTemplate([:firstname, :surname, :country_code, :state, :city]);
 
 template(3)
@@ -104,8 +106,7 @@ In order to facilitate naming and referencing later on the major concepts implem
     | *Option-based* | `func(v::Vector, n::Int)` | Generates an output with `n` entries produced by `func` but **restricting the generated entries to specified options in `v`**, which specific contents will depend on `func`. Generator functions taking on options in different levels accept the `level` kwarg, when that is the case, docstrings will explain each specific behavior. |
     | *Mask-based* | `func(v::Vector)` | Generates an output with `length(v)` entries produced by `func`. **The contents of `v` specify element-wise options to restrict the output of `func`.** Equivalent *in terms of output* with calling `[func(opt, 1) for opt in v]` (*i.e.* the option-based generation), but sub-optimal in terms of performance. Generator functions taking on masks in different levels accept the `level` kwarg, when it is the case, docstrings will explain each specific behavior.|
 
-    ```@repl
-    using Impostor # hide
+    ```@repl main
     firstname(3)  # value-based generation
     firstname(["F"], 3)  # option-based generation
     firstname(["F", "M", "F"])  # mask-based generation

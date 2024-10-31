@@ -12,5 +12,3 @@ function to_semicolon(provider::String, content::String)
         @info file
     end
 end
-
-to_semicolon("localization", "country")
