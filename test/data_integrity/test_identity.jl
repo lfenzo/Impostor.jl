@@ -2,12 +2,12 @@
     for locale in ALL_LOCALES
         @testset "[$locale]" begin
 
-            _test_all_unique("identity", "highschool", locale; column = :highschool)
-            _test_all_unique("identity", "surname", locale; column = :surname)
+            _test_all_unique("identity", "highschool", locale; columns = [:highschool])
+            _test_all_unique("identity", "surname", locale; columns = [:surname])
 
             is_locale_available("identity", "nationality", locale) && @testset "nationality" begin
                 df = Impostor._load!("identity", "nationality", locale)
-                country_codes = Impostor._load!("localization", "country", locale)[:, :country_code]
+                country_codes = Impostor._load!("localization", "country", locale)[:, :country_code] |> Set
                 @test Set(df[:, :sex]) == Set(SEXES[:options])
                 @test all([code in country_codes for code in unique(df[:, :country_code])])
             end

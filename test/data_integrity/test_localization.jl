@@ -1,21 +1,14 @@
 @testset "Localization" begin
     for locale in ALL_LOCALES
         @testset "[$locale]" begin
-            is_locale_available("localization", "address_complement", locale) && @testset "address_complement" begin
-                df = Impostor._load!("localization", "address_complement", locale)
-                @test uppercase.(df[:, :address_complement]) |> allunique
-            end
-
-            is_locale_available("localization", "address_format", locale) && @testset "address_format" begin
-                df = Impostor._load!("localization", "address_format", locale)
-                @test uppercase.(df[:, :address_format]) |> allunique
-            end
-
-            is_locale_available("localization", "locale", locale) && @testset "locale" begin
-                df = Impostor._load!("localization", "locale", locale)
-                @test allunique(df, :locale)
-                @test uppercase.(df[:, :country_code]) |> allunique
-            end
+            
+            _test_all_unique("localization", "address_complement", locale; columns=[:address_complement], case_sensitive=true)
+            _test_all_unique("localization", "address_format", locale; columns=[:address_format], case_sensitive=true)
+            _test_all_unique("localization", "locale", locale; columns=[:locale, :country_code], case_sensitive=true)
+            _test_all_unique("localization", "state", locale; columns=[:state, :state_code], case_sensitive=true)
+            _test_all_unique("localization", "district", locale; columns=[:district])
+            _test_all_unique("localization", "street_prefix", locale; columns=[:street_prefix])
+            _test_all_unique("localization", "street_suffix", locale; columns=[:street_suffix])
 
             is_locale_available("localization", "country", locale) && @testset "country" begin
                 df = Impostor._load!("localization", "country", locale)
@@ -24,30 +17,9 @@
                 @test (df[:, :locale] .== locale) |> all
             end
 
-            is_locale_available("localization", "state", locale) && @testset "state" begin
-                df = Impostor._load!("localization", "state", locale)
-                @test allunique(df, :state)
-                @test uppercase.(df[:, :state_code]) |> allunique
-            end
-
             is_locale_available("localization", "city", locale) && @testset "city" begin
                 df = Impostor._load!("localization", "city", locale)
                 @test allunique(df, [:state_code, :city])
-            end
-
-            is_locale_available("localization", "district", locale) && @testset "district" begin
-                df = Impostor._load!("localization", "district", locale)
-                @test allunique(df, :district)
-            end
-
-            is_locale_available("localization", "street_prefix", locale) && @testset "street_prefix" begin
-                df = Impostor._load!("localization", "street_prefix", locale)
-                @test allunique(df, :street_prefix)
-            end
-
-            is_locale_available("localization", "street_suffix", locale) && @testset "street_suffix" begin
-                df = Impostor._load!("localization", "street_suffix", locale)
-                @test allunique(df, :street_suffix)
             end
 
             is_locale_available("localization", "street_format", locale) && @testset "street_format" begin
