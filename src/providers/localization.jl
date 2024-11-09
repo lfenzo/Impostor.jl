@@ -85,7 +85,7 @@ end
     country_official_name(options::Vector{<:AbstractString}, n::Integer; level::Symbol, kws...)
     country_official_name(mask::Vector{<:AbstractString}; level::Symbol, kws...)
 
-Generate `n` or `length(mask)` country offiical names.
+Generate `n` or `length(mask)` country official names.
 
 # Parameters
 - `n::Integer = 1`: number of country official names entries to generate.

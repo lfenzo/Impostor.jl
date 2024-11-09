@@ -1,23 +1,171 @@
-BRA;MG;Belo Horizonte
-BRA;MG;Betim
-BRA;PR;Cascavel
-BRA;MG;Contagem
-BRA;PR;Curitiba
-BRA;SP;Ibiúna
-BRA;SP;Itu
-BRA;SC;Joinville
-BRA;RS;Pelotas
-BRA;SP;Piracicaba
-BRA;RS;Porto Alegre
-BRA;SP;Porto Feliz
-BRA;AC;Porto Velho
-BRA;MG;Poços de Caldas
-BRA;RJ;Rio de Janeiro
-BRA;BA;Salvador
-BRA;SP;Santo André
-BRA;SP;Sorocaba
-BRA;SP;São Bernardo
-BRA;SP;São Caetano
-BRA;SP;São Carlos
-BRA;SP;São Paulo
-BRA;BA;Una
+BRA;BR-AC;Rio Branco
+BRA;BR-AC;Cruzeiro do Sul
+BRA;BR-AC;Sena Madureira
+BRA;BR-AC;Tarauacá
+BRA;BR-AL;Maceió
+BRA;BR-AL;Arapiraca
+BRA;BR-AL;Palmeira dos Índios
+BRA;BR-AL;Rio Largo
+BRA;BR-AP;Macapá
+BRA;BR-AP;Santana
+BRA;BR-AM;Manaus
+BRA;BR-AM;Parintins
+BRA;BR-AM;Itacoatiara
+BRA;BR-AM;Tefé
+BRA;BR-AM;Coari
+BRA;BR-BA;Salvador
+BRA;BR-BA;Feira de Santana
+BRA;BR-BA;Vitória da Conquista
+BRA;BR-BA;Camaçari
+BRA;BR-BA;Itabuna
+BRA;BR-BA;Ilhéus
+BRA;BR-BA;Porto Seguro
+BRA;BR-BA;Jequié
+BRA;BR-BA;Lauro de Freitas
+BRA;BR-BA;Barreiras
+BRA;BR-BA;Paulo Afonso
+BRA;BR-CE;Fortaleza
+BRA;BR-CE;Caucaia
+BRA;BR-CE;Sobral
+BRA;BR-CE;Juazeiro do Norte
+BRA;BR-CE;Maracanaú
+BRA;BR-CE;Crato
+BRA;BR-CE;Quixadá
+BRA;BR-DF;Brasília
+BRA;BR-ES;Vitória
+BRA;BR-ES;Vila Velha
+BRA;BR-ES;Serra
+BRA;BR-ES;Cariacica
+BRA;BR-ES;Guarapari
+BRA;BR-GO;Goiânia
+BRA;BR-GO;Anápolis
+BRA;BR-GO;Aparecida de Goiânia
+BRA;BR-GO;Rio Verde
+BRA;BR-GO;Luziânia
+BRA;BR-GO;Itumbiara
+BRA;BR-MA;São Luís
+BRA;BR-MA;Imperatriz
+BRA;BR-MA;Caxias
+BRA;BR-MA;Timon
+BRA;BR-MA;Codó
+BRA;BR-MA;Paço do Lumiar
+BRA;BR-MA;Açailândia
+BRA;BR-MG;Belo Horizonte
+BRA;BR-MG;Contagem
+BRA;BR-MG;Betim
+BRA;BR-MG;Uberlândia
+BRA;BR-MG;Juiz de Fora
+BRA;BR-MG;Montes Claros
+BRA;BR-MG;Governador Valadares
+BRA;BR-MG;Ipatinga
+BRA;BR-MG;Uberaba
+BRA;BR-MG;Poços de Caldas
+BRA;BR-MG;Sete Lagoas
+BRA;BR-MS;Campo Grande
+BRA;BR-MS;Dourados
+BRA;BR-MS;Três Lagoas
+BRA;BR-MS;Corumbá
+BRA;BR-MS;Ponta Porã
+BRA;BR-MT;Cuiabá
+BRA;BR-MT;Várzea Grande
+BRA;BR-MT;Rondonópolis
+BRA;BR-MT;Sinop
+BRA;BR-MT;Tangará da Serra
+BRA;BR-PA;Belém
+BRA;BR-PA;Ananindeua
+BRA;BR-PA;Santarém
+BRA;BR-PA;Marabá
+BRA;BR-PA;Altamira
+BRA;BR-PB;João Pessoa
+BRA;BR-PB;Campina Grande
+BRA;BR-PB;Santa Rita
+BRA;BR-PB;Patos
+BRA;BR-PB;Bayeux
+BRA;BR-PE;Recife
+BRA;BR-PE;Olinda
+BRA;BR-PE;Jaboatão dos Guararapes
+BRA;BR-PE;Caruaru
+BRA;BR-PE;Petrolina
+BRA;BR-PE;Garanhuns
+BRA;BR-PE;Vitória de Santo Antão
+BRA;BR-PI;Teresina
+BRA;BR-PI;Parnaíba
+BRA;BR-PI;Picos
+BRA;BR-PI;Floriano
+BRA;BR-PR;Curitiba
+BRA;BR-PR;Londrina
+BRA;BR-PR;Maringá
+BRA;BR-PR;Cascavel
+BRA;BR-PR;Ponta Grossa
+BRA;BR-PR;Foz do Iguaçu
+BRA;BR-PR;Guarapuava
+BRA;BR-RJ;Rio de Janeiro
+BRA;BR-RJ;Niterói
+BRA;BR-RJ;Duque de Caxias
+BRA;BR-RJ;Nova Iguaçu
+BRA;BR-RJ;São Gonçalo
+BRA;BR-RJ;Petrópolis
+BRA;BR-RJ;Volta Redonda
+BRA;BR-RJ;Cabo Frio
+BRA;BR-RJ;Campos dos Goytacazes
+BRA;BR-RN;Natal
+BRA;BR-RN;Mossoró
+BRA;BR-RN;Parnamirim
+BRA;BR-RN;Caicó
+BRA;BR-RO;Porto Velho
+BRA;BR-RO;Ji-Paraná
+BRA;BR-RO;Ariquemes
+BRA;BR-RO;Vilhena
+BRA;BR-RR;Boa Vista
+BRA;BR-RS;Porto Alegre
+BRA;BR-RS;Caxias do Sul
+BRA;BR-RS;Pelotas
+BRA;BR-RS;Santa Maria
+BRA;BR-RS;Passo Fundo
+BRA;BR-RS;Novo Hamburgo
+BRA;BR-RS;Gravataí
+BRA;BR-RS;Viamão
+BRA;BR-SC;Florianópolis
+BRA;BR-SC;Joinville
+BRA;BR-SC;Blumenau
+BRA;BR-SC;Chapecó
+BRA;BR-SC;Criciúma
+BRA;BR-SC;Itajaí
+BRA;BR-SC;Lages
+BRA;BR-SC;Balneário Camboriú
+BRA;BR-SP;São Paulo
+BRA;BR-SP;Campinas
+BRA;BR-SP;Santos
+BRA;BR-SP;Sorocaba
+BRA;BR-SP;Ribeirão Preto
+BRA;BR-SP;São José dos Campos
+BRA;BR-SP;Guarulhos
+BRA;BR-SP;Barueri
+BRA;BR-SP;Osasco
+BRA;BR-SP;Piracicaba
+BRA;BR-SP;Jundiaí
+BRA;BR-SP;São Bernardo do Campo
+BRA;BR-SP;São Caetano do Sul
+BRA;BR-SP;Taubaté
+BRA;BR-SP;Bauru
+BRA;BR-SP;Araçatuba
+BRA;BR-SP;Araraquara
+BRA;BR-SP;Franca
+BRA;BR-SP;Mogi das Cruzes
+BRA;BR-TO;Palmas
+BRA;BR-TO;Araguaína
+BRA;BR-TO;Gurupi
+BRA;BR-SE;Aracaju
+BRA;BR-SE;Nossa Senhora do Socorro
+BRA;BR-SE;Lagarto
+BRA;BR-MT;Lucas do Rio Verde
+BRA;BR-PR;Paranaguá
+BRA;BR-GO;Caldas Novas
+BRA;BR-SP;Marília
+BRA;BR-SP;Americana
+BRA;BR-MA;Bacabal
+BRA;BR-PA;Castanhal
+BRA;BR-CE;Horizonte
+BRA;BR-ES;Linhares
+BRA;BR-MG;Divinópolis
+BRA;BR-BA;Alagoinhas

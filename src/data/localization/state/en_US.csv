@@ -1,50 +1,57 @@
-USA;AK;Alaska
-USA;AL;Alabama
-USA;AR;Arkansas
-USA;AZ;Arizona
-USA;CA;California
-USA;CO;Colorado
-USA;CT;Connecticut
-USA;DE;Delaware
-USA;FL;Florida
-USA;GA;Georgia
-USA;HI;Hawaii
-USA;IA;Iowa
-USA;ID;Idaho
-USA;IL;Illinois
-USA;IN;Indiana
-USA;KS;Kansas
-USA;KY;Kentucky
-USA;LA;Louisiana
-USA;MA;Massachusetts
-USA;MD;Maryland
-USA;ME;Maine
-USA;MI;Michigan
-USA;MN;Minnesota
-USA;MO;Missouri
-USA;MS;Mississippi
-USA;MT;Montana
-USA;NC;North Carolina
-USA;ND;North Dakota
-USA;NE;Nebraska
-USA;NH;New Hampshire
-USA;NJ;New Jersey
-USA;NM;New Mexico
-USA;NV;Nevada
-USA;NY;New York
-USA;OH;Ohio
-USA;OK;Oklahoma
-USA;OR;Oregon
-USA;PA;Pennsylvania
-USA;RI;Rhode Island
-USA;SC;South Carolina
-USA;SD;South Dakota
-USA;TN;Tennessee
-USA;TX;Texas
-USA;UT;Utah
-USA;VA;Virginia
-USA;VT;Vermont
-USA;WA;Washington
-USA;WI;Wisconsin
-USA;WV;West Virginia
-USA;WY;Wyoming
+USA;US-AL;Alabama
+USA;US-AK;Alaska
+USA;US-AZ;Arizona
+USA;US-AR;Arkansas
+USA;US-CA;California
+USA;US-CO;Colorado
+USA;US-CT;Connecticut
+USA;US-DE;Delaware
+USA;US-FL;Florida
+USA;US-GA;Georgia
+USA;US-HI;Hawaii
+USA;US-ID;Idaho
+USA;US-IL;Illinois
+USA;US-IN;Indiana
+USA;US-IA;Iowa
+USA;US-KS;Kansas
+USA;US-KY;Kentucky
+USA;US-LA;Louisiana
+USA;US-ME;Maine
+USA;US-MD;Maryland
+USA;US-MA;Massachusetts
+USA;US-MI;Michigan
+USA;US-MN;Minnesota
+USA;US-MS;Mississippi
+USA;US-MO;Missouri
+USA;US-MT;Montana
+USA;US-NE;Nebraska
+USA;US-NV;Nevada
+USA;US-NH;New Hampshire
+USA;US-NJ;New Jersey
+USA;US-NM;New Mexico
+USA;US-NY;New York
+USA;US-NC;North Carolina
+USA;US-ND;North Dakota
+USA;US-OH;Ohio
+USA;US-OK;Oklahoma
+USA;US-OR;Oregon
+USA;US-PA;Pennsylvania
+USA;US-RI;Rhode Island
+USA;US-SC;South Carolina
+USA;US-SD;South Dakota
+USA;US-TN;Tennessee
+USA;US-TX;Texas
+USA;US-UT;Utah
+USA;US-VT;Vermont
+USA;US-VA;Virginia
+USA;US-WA;Washington
+USA;US-WV;West Virginia
+USA;US-WI;Wisconsin
+USA;US-WY;Wyoming
+USA;US-DC;District of Columbia
+USA;US-AS;American Samoa
+USA;US-GU;Guam
+USA;US-MP;Northern Mariana Islands
+USA;US-PR;Puerto Rico
+USA;US-UM;United States Minor Outlying Islands
+USA;US-VI;Virgin Islands (U.S.)

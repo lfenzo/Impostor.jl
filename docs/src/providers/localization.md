@@ -10,6 +10,10 @@ include(joinpath(pkgdir(Impostor), "snippets", "collect-statistics.jl")) # hide
 collect_provider_availability_statistics("localization") # hide
 ```
 
+The localization generator functions follow the standards defined by [ISO 3166](https://en.wikipedia.org/wiki/ISO_3166)
+in order to organize the entries and returned values. When appropriate, each docstring will point
+out the ISO 3166 variant being returned.
+
 -----------
 
 ```@docs
